@@ -2,6 +2,7 @@ package route
 
 import (
 	"cgi/handler"
+	"cgi/middleware"
 	"github.com/cloudwego/hertz/pkg/app/server"
 )
 
@@ -9,11 +10,11 @@ func RegisterGroupRoute(h *server.Hertz) {
 	tourist := h.Group("/douyin")
 	tourist.GET("/feed/", handler.GetFeedHandler)
 	tourist.POST("/user/register/", handler.RegisterHandler)
-	tourist.POST("/user/login/", handler.LoginHandler)
+	tourist.POST("/user/login/", middleware.JwtMiddleware.LoginHandler)
 
 	// 以下接口需要登录
 	user := h.Group("/douyin")
-	user.Use()
+	user.Use(middleware.JwtMiddleware.MiddlewareFunc())
 	user.GET("/user/", handler.CheckUserInfoHandler)
 	user.POST("/publish/action/", handler.PublishActionHandler)
 	user.GET("/publish/list/", handler.PublicListHandler)

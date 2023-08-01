@@ -1,20 +1,16 @@
 package main
 
 import (
-	"context"
-
-	"github.com/cloudwego/hertz/pkg/app"
+	"cgi/middleware"
+	"cgi/route"
 	"github.com/cloudwego/hertz/pkg/app/server"
-	"github.com/cloudwego/hertz/pkg/common/utils"
-	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )
 
 func main() {
 	h := server.Default(server.WithHostPorts("127.0.0.1:8888"))
-
-	h.GET("/ping", func(c context.Context, ctx *app.RequestContext) {
-		ctx.JSON(consts.StatusOK, utils.H{"message": "pong"})
-	})
-
+	// 初始化jwt
+	middleware.InitJwt()
+	// 注册路由
+	route.RegisterGroupRoute(h)
 	h.Spin()
 }
