@@ -7,11 +7,10 @@ require (
 	github.com/hertz-contrib/logger/zap v1.0.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 	gopkg.in/yaml.v2 v2.2.2
+	client v0.0.0
 )
-require (
-	github.com/cloudwego/hertz v0.6.6
-	github.com/hertz-contrib/jwt v1.0.2
-)
+
+require github.com/hertz-contrib/jwt v1.0.2
 
 require (
 	github.com/bytedance/go-tagexpr/v2 v2.9.2 // indirect
@@ -35,5 +34,7 @@ require (
 	go.uber.org/zap v1.23.0 // indirect
 	golang.org/x/arch v0.0.0-20210923205945-b76863e36670 // indirect
 	golang.org/x/sys v0.0.0-20220412211240-33da011f77ad // indirect
-	google.golang.org/protobuf v1.28.0 // indirect
+	google.golang.org/protobuf v1.31.0 // indirect
 )
+
+replace client v0.0.0 => ../client

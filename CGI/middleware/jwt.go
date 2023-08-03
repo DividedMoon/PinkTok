@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"cgi/handler"
-	"cgi/model"
+	"client/dto"
 	"context"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
@@ -31,12 +31,12 @@ func InitJwt() {
 		IdentityKey:   IdentityKey,
 		IdentityHandler: func(ctx context.Context, c *app.RequestContext) interface{} {
 			claims := jwt.ExtractClaims(ctx, c)
-			return &model.User{
+			return &dto.UserInfo{
 				Name: claims[IdentityKey].(string),
 			}
 		},
 		PayloadFunc: func(data interface{}) jwt.MapClaims {
-			if v, ok := data.(*model.User); ok {
+			if v, ok := data.(*dto.UserInfo); ok {
 				return jwt.MapClaims{
 					IdentityKey: v.Name,
 				}
