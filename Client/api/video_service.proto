@@ -1,7 +1,7 @@
 syntax = "proto3";
 package client;
 
-option go_package = "../dto";
+option go_package = "dto";
 
 import "entity.proto";
 
@@ -17,19 +17,6 @@ message feed_resp {
   int64 next_time = 4; // 本次返回的视频中，发布最早的时间，作为下次请求时的latest_time
 }
 
-message UserInfo {
-  int64 id = 1; // 用户id
-  string name = 2; // 用户名称
-  int64 follow_count = 3; // 关注总数
-  int64 follower_count = 4; // 粉丝总数
-  bool is_follow = 5; // true-已关注，false-未关注
-  string avatar = 6; //用户头像
-  string background_image = 7; //用户个人页顶部大图
-  string signature = 8; //个人简介
-  int64 total_favorited = 9; //获赞数量
-  int64 work_count = 10; //作品数量
-  int64 favorite_count = 11; //点赞数量
-}
 message publish_video_req {
   string token = 1; // 用户鉴权token
   bytes data = 2; // 视频数据
