@@ -3,14 +3,16 @@ module cgi
 go 1.17
 
 require (
+	client v0.0.0
 	github.com/cloudwego/hertz v0.6.6
 	github.com/hertz-contrib/logger/zap v1.0.0
-	gopkg.in/natefinch/lumberjack.v2 v2.2.1
-	gopkg.in/yaml.v2 v2.2.2
-	client v0.0.0
 )
 
-require github.com/hertz-contrib/jwt v1.0.2
+require (
+	github.com/hertz-contrib/jwt v1.0.2
+	golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550
+	gopkg.in/yaml.v3 v3.0.1
+)
 
 require (
 	github.com/bytedance/go-tagexpr/v2 v2.9.2 // indirect

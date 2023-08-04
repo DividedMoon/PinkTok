@@ -10,7 +10,7 @@ func RegisterGroupRoute(h *server.Hertz) {
 	tourist := h.Group("/douyin")
 	tourist.GET("/feed/", handler.GetFeedHandler)
 	tourist.POST("/user/register/", handler.RegisterHandler)
-	tourist.POST("/user/login/", middleware.JwtMiddleware.LoginHandler)
+	tourist.POST("/user/login/", handler.LoginHandler)
 
 	// 以下接口需要登录
 	user := h.Group("/douyin")
