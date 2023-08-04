@@ -11,6 +11,7 @@ require (
 require (
 	github.com/hertz-contrib/jwt v1.0.2
 	golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550
+	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 	gopkg.in/yaml.v3 v3.0.1
 )
 
