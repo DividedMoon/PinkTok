@@ -4,24 +4,28 @@ package handler
 
 import (
 	"context"
-
-	"client/dto"
 	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
+	"user_service/biz/model/client"
 )
 
 // Register .
 // @router /internal/user/register [POST]
 func Register(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req dto.UserRegisterReq
+	var req client.UserRegisterReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
+	hlog.CtxInfof(ctx, "request: %+v", req.Username)
 
-	resp := new(dto.UserRegisterResp)
+	resp := new(client.UserRegisterResp)
+	resp.StatusMsg = new(string)
+	resp.StatusCode = 0
+	resp.UserId = 3
 
 	c.JSON(consts.StatusOK, resp)
 }

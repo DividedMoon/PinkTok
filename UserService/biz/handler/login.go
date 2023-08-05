@@ -5,23 +5,23 @@ package handler
 import (
 	"context"
 
-	"client/dto"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
+	client "user_service/biz/model/client"
 )
 
 // Login .
 // @router /internal/user/login [POST]
 func Login(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req dto.UserLoginReq
+	var req client.UserLoginReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
 
-	resp := new(dto.UserLoginResp)
+	resp := new(client.UserLoginResp)
 
 	c.JSON(consts.StatusOK, resp)
 }

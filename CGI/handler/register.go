@@ -3,17 +3,20 @@ package handler
 import (
 	"cgi/internal/constant"
 	"cgi/internal/utils"
-	"client/client/user_service"
-	"client/dto"
+	"cgi/middleware"
 	"context"
+	"encoding/json"
+	"fmt"
 	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
-	"github.com/hertz-contrib/jwt"
+	"user_service/biz/model/client"
+	"user_service/biz/model/client/user_service"
 )
 
 type userRegisterReq struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
+	Username string `query:"username"`
+	Password string `query:"password"`
 }
 
 type userRegisterResp struct {
@@ -53,11 +56,14 @@ func RegisterHandler(ctx context.Context, c *app.RequestContext) {
 	}
 
 	// 请求userService
-	registerReq := &dto.UserRegisterReq{
+	registerReq := &client.UserRegisterReq{
 		Username: req.Username,
 		Password: cryPwd,
 	}
-	_, _, err = user_service.Register(ctx, registerReq)
+	bodyBytes, _ := json.Marshal(registerReq)
+	fmt.Println(string(bodyBytes))
+	hlog.CtxInfof(ctx, "request user_service for: %+v", registerReq)
+	userServiceClient, err := user_service.NewUserServiceClient("//127.0.0.1:8889")
 	if err != nil {
 		resp = utils.BuildBaseResp(err)
 		c.JSON(consts.StatusOK, userRegisterResp{
@@ -67,14 +73,29 @@ func RegisterHandler(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	LoginHandler(ctx, c)
-	token := c.GetString("token")
-	v, _ := c.Get(jwt.IdentityKey)
-	userId := v.(int)
+	registerResp, _, err := userServiceClient.Register(ctx, registerReq)
+	if err != nil {
+		resp = utils.BuildBaseResp(err)
+		c.JSON(consts.StatusOK, userRegisterResp{
+			StatusCode: resp.StatusCode,
+			StatusMsg:  resp.StatusMsg,
+		})
+		return
+	}
+
+	token, _, err := middleware.JwtMiddleware.TokenGenerator(registerResp.UserId)
+	if err != nil {
+		resp = utils.BuildBaseResp(err)
+		c.JSON(consts.StatusOK, userRegisterResp{
+			StatusCode: resp.StatusCode,
+			StatusMsg:  resp.StatusMsg,
+		})
+		return
+	}
 	c.JSON(consts.StatusOK, userRegisterResp{
 		StatusCode: constant.SuccessCode,
 		StatusMsg:  constant.SuccessMsg,
-		UserId:     int(userId),
+		UserId:     int(registerResp.UserId),
 		Token:      token,
 	})
 }

@@ -3,9 +3,9 @@ module cgi
 go 1.17
 
 require (
-	client v0.0.0
-	github.com/cloudwego/hertz v0.6.6
+	github.com/cloudwego/hertz v0.6.7
 	github.com/hertz-contrib/logger/zap v1.0.0
+	user_service v0.0.0
 )
 
 require (
@@ -40,4 +40,4 @@ require (
 	google.golang.org/protobuf v1.31.0 // indirect
 )
 
-replace client v0.0.0 => ../client
+replace user_service v0.0.0 => ../UserService
