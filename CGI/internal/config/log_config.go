@@ -3,6 +3,7 @@ package config
 import (
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	hertzzap "github.com/hertz-contrib/logger/zap"
+	"gopkg.in/natefinch/lumberjack.v2"
 	"io"
 	"log"
 	"os"
