@@ -4,6 +4,9 @@ package handler
 
 import (
 	"context"
+	"github.com/cloudwego/hertz/pkg/common/hlog"
+	"user_service/biz/internal/constant"
+	"user_service/biz/service"
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
@@ -13,15 +16,33 @@ import (
 // UserInfo .
 // @router /internal/user/info [POST]
 func UserInfo(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req client.UserInfoReq
+	var (
+		err error
+		req client.UserInfoReq
+	)
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		hlog.CtxErrorf(ctx, "bind and validate error: %+v", err)
+		c.JSON(consts.StatusOK, &client.UserInfoResp{
+			StatusCode: consts.StatusBadRequest,
+			StatusMsg:  err.Error(),
+			User:       nil,
+		})
 		return
 	}
-
-	resp := new(client.UserInfoResp)
-
-	c.JSON(consts.StatusOK, resp)
+	u, err := service.GetUserInfo(req.UserId)
+	if err != nil {
+		hlog.CtxErrorf(ctx, "get user info error: %+v", err)
+		c.JSON(consts.StatusOK, &client.UserInfoResp{
+			StatusCode: constant.ServiceErrCode,
+			StatusMsg:  err.Error(),
+			User:       nil,
+		})
+		return
+	}
+	c.JSON(consts.StatusOK, &client.UserInfoResp{
+		StatusCode: constant.SuccessCode,
+		StatusMsg:  constant.SuccessMsg,
+		User:       u,
+	})
 }

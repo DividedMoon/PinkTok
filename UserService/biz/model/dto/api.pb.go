@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.28.0
 // 	protoc        v4.23.4
-// source: dto.proto
+// source: api.proto
 
 package dto
 
@@ -25,217 +25,217 @@ var file_api_proto_extTypes = []protoimpl.ExtensionInfo{
 		ExtendedType:  (*descriptorpb.FieldOptions)(nil),
 		ExtensionType: (*string)(nil),
 		Field:         50101,
-		Name:          "dto.raw_body",
+		Name:          "api.raw_body",
 		Tag:           "bytes,50101,opt,name=raw_body",
-		Filename:      "dto.proto",
+		Filename:      "api.proto",
 	},
 	{
 		ExtendedType:  (*descriptorpb.FieldOptions)(nil),
 		ExtensionType: (*string)(nil),
 		Field:         50102,
-		Name:          "dto.query",
+		Name:          "api.query",
 		Tag:           "bytes,50102,opt,name=query",
-		Filename:      "dto.proto",
+		Filename:      "api.proto",
 	},
 	{
 		ExtendedType:  (*descriptorpb.FieldOptions)(nil),
 		ExtensionType: (*string)(nil),
 		Field:         50103,
-		Name:          "dto.header",
+		Name:          "api.header",
 		Tag:           "bytes,50103,opt,name=header",
-		Filename:      "dto.proto",
+		Filename:      "api.proto",
 	},
 	{
 		ExtendedType:  (*descriptorpb.FieldOptions)(nil),
 		ExtensionType: (*string)(nil),
 		Field:         50104,
-		Name:          "dto.cookie",
+		Name:          "api.cookie",
 		Tag:           "bytes,50104,opt,name=cookie",
-		Filename:      "dto.proto",
+		Filename:      "api.proto",
 	},
 	{
 		ExtendedType:  (*descriptorpb.FieldOptions)(nil),
 		ExtensionType: (*string)(nil),
 		Field:         50105,
-		Name:          "dto.body",
+		Name:          "api.body",
 		Tag:           "bytes,50105,opt,name=body",
-		Filename:      "dto.proto",
+		Filename:      "api.proto",
 	},
 	{
 		ExtendedType:  (*descriptorpb.FieldOptions)(nil),
 		ExtensionType: (*string)(nil),
 		Field:         50106,
-		Name:          "dto.path",
+		Name:          "api.path",
 		Tag:           "bytes,50106,opt,name=path",
-		Filename:      "dto.proto",
+		Filename:      "api.proto",
 	},
 	{
 		ExtendedType:  (*descriptorpb.FieldOptions)(nil),
 		ExtensionType: (*string)(nil),
 		Field:         50107,
-		Name:          "dto.vd",
+		Name:          "api.vd",
 		Tag:           "bytes,50107,opt,name=vd",
-		Filename:      "dto.proto",
+		Filename:      "api.proto",
 	},
 	{
 		ExtendedType:  (*descriptorpb.FieldOptions)(nil),
 		ExtensionType: (*string)(nil),
 		Field:         50108,
-		Name:          "dto.form",
+		Name:          "api.form",
 		Tag:           "bytes,50108,opt,name=form",
-		Filename:      "dto.proto",
+		Filename:      "api.proto",
 	},
 	{
 		ExtendedType:  (*descriptorpb.FieldOptions)(nil),
 		ExtensionType: (*string)(nil),
 		Field:         51001,
-		Name:          "dto.go_tag",
+		Name:          "api.go_tag",
 		Tag:           "bytes,51001,opt,name=go_tag",
-		Filename:      "dto.proto",
+		Filename:      "api.proto",
 	},
 	{
 		ExtendedType:  (*descriptorpb.FieldOptions)(nil),
 		ExtensionType: (*string)(nil),
 		Field:         50109,
-		Name:          "dto.js_conv",
+		Name:          "api.js_conv",
 		Tag:           "bytes,50109,opt,name=js_conv",
-		Filename:      "dto.proto",
+		Filename:      "api.proto",
 	},
 	{
 		ExtendedType:  (*descriptorpb.MethodOptions)(nil),
 		ExtensionType: (*string)(nil),
 		Field:         50201,
-		Name:          "dto.get",
+		Name:          "api.get",
 		Tag:           "bytes,50201,opt,name=get",
-		Filename:      "dto.proto",
+		Filename:      "api.proto",
 	},
 	{
 		ExtendedType:  (*descriptorpb.MethodOptions)(nil),
 		ExtensionType: (*string)(nil),
 		Field:         50202,
-		Name:          "dto.post",
+		Name:          "api.post",
 		Tag:           "bytes,50202,opt,name=post",
-		Filename:      "dto.proto",
+		Filename:      "api.proto",
 	},
 	{
 		ExtendedType:  (*descriptorpb.MethodOptions)(nil),
 		ExtensionType: (*string)(nil),
 		Field:         50203,
-		Name:          "dto.put",
+		Name:          "api.put",
 		Tag:           "bytes,50203,opt,name=put",
-		Filename:      "dto.proto",
+		Filename:      "api.proto",
 	},
 	{
 		ExtendedType:  (*descriptorpb.MethodOptions)(nil),
 		ExtensionType: (*string)(nil),
 		Field:         50204,
-		Name:          "dto.delete",
+		Name:          "api.delete",
 		Tag:           "bytes,50204,opt,name=delete",
-		Filename:      "dto.proto",
+		Filename:      "api.proto",
 	},
 	{
 		ExtendedType:  (*descriptorpb.MethodOptions)(nil),
 		ExtensionType: (*string)(nil),
 		Field:         50205,
-		Name:          "dto.patch",
+		Name:          "api.patch",
 		Tag:           "bytes,50205,opt,name=patch",
-		Filename:      "dto.proto",
+		Filename:      "api.proto",
 	},
 	{
 		ExtendedType:  (*descriptorpb.MethodOptions)(nil),
 		ExtensionType: (*string)(nil),
 		Field:         50206,
-		Name:          "dto.options",
+		Name:          "api.options",
 		Tag:           "bytes,50206,opt,name=options",
-		Filename:      "dto.proto",
+		Filename:      "api.proto",
 	},
 	{
 		ExtendedType:  (*descriptorpb.MethodOptions)(nil),
 		ExtensionType: (*string)(nil),
 		Field:         50207,
-		Name:          "dto.head",
+		Name:          "api.head",
 		Tag:           "bytes,50207,opt,name=head",
-		Filename:      "dto.proto",
+		Filename:      "api.proto",
 	},
 	{
 		ExtendedType:  (*descriptorpb.MethodOptions)(nil),
 		ExtensionType: (*string)(nil),
 		Field:         50208,
-		Name:          "dto.any",
+		Name:          "api.any",
 		Tag:           "bytes,50208,opt,name=any",
-		Filename:      "dto.proto",
+		Filename:      "api.proto",
 	},
 	{
 		ExtendedType:  (*descriptorpb.MethodOptions)(nil),
 		ExtensionType: (*string)(nil),
 		Field:         50301,
-		Name:          "dto.gen_path",
+		Name:          "api.gen_path",
 		Tag:           "bytes,50301,opt,name=gen_path",
-		Filename:      "dto.proto",
+		Filename:      "api.proto",
 	},
 	{
 		ExtendedType:  (*descriptorpb.MethodOptions)(nil),
 		ExtensionType: (*string)(nil),
 		Field:         50302,
-		Name:          "dto.api_version",
+		Name:          "api.api_version",
 		Tag:           "bytes,50302,opt,name=api_version",
-		Filename:      "dto.proto",
+		Filename:      "api.proto",
 	},
 	{
 		ExtendedType:  (*descriptorpb.MethodOptions)(nil),
 		ExtensionType: (*string)(nil),
 		Field:         50303,
-		Name:          "dto.tag",
+		Name:          "api.tag",
 		Tag:           "bytes,50303,opt,name=tag",
-		Filename:      "dto.proto",
+		Filename:      "api.proto",
 	},
 	{
 		ExtendedType:  (*descriptorpb.MethodOptions)(nil),
 		ExtensionType: (*string)(nil),
 		Field:         50304,
-		Name:          "dto.name",
+		Name:          "api.name",
 		Tag:           "bytes,50304,opt,name=name",
-		Filename:      "dto.proto",
+		Filename:      "api.proto",
 	},
 	{
 		ExtendedType:  (*descriptorpb.MethodOptions)(nil),
 		ExtensionType: (*string)(nil),
 		Field:         50305,
-		Name:          "dto.api_level",
+		Name:          "api.api_level",
 		Tag:           "bytes,50305,opt,name=api_level",
-		Filename:      "dto.proto",
+		Filename:      "api.proto",
 	},
 	{
 		ExtendedType:  (*descriptorpb.MethodOptions)(nil),
 		ExtensionType: (*string)(nil),
 		Field:         50306,
-		Name:          "dto.serializer",
+		Name:          "api.serializer",
 		Tag:           "bytes,50306,opt,name=serializer",
-		Filename:      "dto.proto",
+		Filename:      "api.proto",
 	},
 	{
 		ExtendedType:  (*descriptorpb.MethodOptions)(nil),
 		ExtensionType: (*string)(nil),
 		Field:         50307,
-		Name:          "dto.param",
+		Name:          "api.param",
 		Tag:           "bytes,50307,opt,name=param",
-		Filename:      "dto.proto",
+		Filename:      "api.proto",
 	},
 	{
 		ExtendedType:  (*descriptorpb.MethodOptions)(nil),
 		ExtensionType: (*string)(nil),
 		Field:         50308,
-		Name:          "dto.baseurl",
+		Name:          "api.baseurl",
 		Tag:           "bytes,50308,opt,name=baseurl",
-		Filename:      "dto.proto",
+		Filename:      "api.proto",
 	},
 	{
 		ExtendedType:  (*descriptorpb.EnumValueOptions)(nil),
 		ExtensionType: (*int32)(nil),
 		Field:         50401,
-		Name:          "dto.http_code",
+		Name:          "api.http_code",
 		Tag:           "varint,50401,opt,name=http_code",
-		Filename:      "dto.proto",
+		Filename:      "api.proto",
 	},
 }
 
@@ -407,9 +407,8 @@ var file_api_proto_rawDesc = []byte{
 	0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x45, 0x6e,
 	0x75, 0x6d, 0x56, 0x61, 0x6c, 0x75, 0x65, 0x4f, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x18, 0xe1,
 	0x89, 0x03, 0x20, 0x01, 0x28, 0x05, 0x52, 0x08, 0x68, 0x74, 0x74, 0x70, 0x43, 0x6f, 0x64, 0x65,
-	0x42, 0x23, 0x5a, 0x21, 0x50, 0x69, 0x6e, 0x6b, 0x54, 0x6f, 0x6b, 0x2f, 0x55, 0x73, 0x65, 0x72,
-	0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2f, 0x62, 0x69, 0x7a, 0x2f, 0x6d, 0x6f, 0x64, 0x65,
-	0x6c, 0x2f, 0x61, 0x70, 0x69,
+	0x42, 0x1c, 0x5a, 0x1a, 0x75, 0x73, 0x65, 0x72, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65,
+	0x2f, 0x62, 0x69, 0x7a, 0x2f, 0x6d, 0x6f, 0x64, 0x65, 0x6c, 0x2f, 0x64, 0x74, 0x6f,
 }
 
 var file_api_proto_goTypes = []interface{}{
@@ -418,33 +417,33 @@ var file_api_proto_goTypes = []interface{}{
 	(*descriptorpb.EnumValueOptions)(nil), // 2: google.protobuf.EnumValueOptions
 }
 var file_api_proto_depIdxs = []int32{
-	0,  // 0: dto.raw_body:extendee -> google.protobuf.FieldOptions
-	0,  // 1: dto.query:extendee -> google.protobuf.FieldOptions
-	0,  // 2: dto.header:extendee -> google.protobuf.FieldOptions
-	0,  // 3: dto.cookie:extendee -> google.protobuf.FieldOptions
-	0,  // 4: dto.body:extendee -> google.protobuf.FieldOptions
-	0,  // 5: dto.path:extendee -> google.protobuf.FieldOptions
-	0,  // 6: dto.vd:extendee -> google.protobuf.FieldOptions
-	0,  // 7: dto.form:extendee -> google.protobuf.FieldOptions
-	0,  // 8: dto.go_tag:extendee -> google.protobuf.FieldOptions
-	0,  // 9: dto.js_conv:extendee -> google.protobuf.FieldOptions
-	1,  // 10: dto.get:extendee -> google.protobuf.MethodOptions
-	1,  // 11: dto.post:extendee -> google.protobuf.MethodOptions
-	1,  // 12: dto.put:extendee -> google.protobuf.MethodOptions
-	1,  // 13: dto.delete:extendee -> google.protobuf.MethodOptions
-	1,  // 14: dto.patch:extendee -> google.protobuf.MethodOptions
-	1,  // 15: dto.options:extendee -> google.protobuf.MethodOptions
-	1,  // 16: dto.head:extendee -> google.protobuf.MethodOptions
-	1,  // 17: dto.any:extendee -> google.protobuf.MethodOptions
-	1,  // 18: dto.gen_path:extendee -> google.protobuf.MethodOptions
-	1,  // 19: dto.api_version:extendee -> google.protobuf.MethodOptions
-	1,  // 20: dto.tag:extendee -> google.protobuf.MethodOptions
-	1,  // 21: dto.name:extendee -> google.protobuf.MethodOptions
-	1,  // 22: dto.api_level:extendee -> google.protobuf.MethodOptions
-	1,  // 23: dto.serializer:extendee -> google.protobuf.MethodOptions
-	1,  // 24: dto.param:extendee -> google.protobuf.MethodOptions
-	1,  // 25: dto.baseurl:extendee -> google.protobuf.MethodOptions
-	2,  // 26: dto.http_code:extendee -> google.protobuf.EnumValueOptions
+	0,  // 0: api.raw_body:extendee -> google.protobuf.FieldOptions
+	0,  // 1: api.query:extendee -> google.protobuf.FieldOptions
+	0,  // 2: api.header:extendee -> google.protobuf.FieldOptions
+	0,  // 3: api.cookie:extendee -> google.protobuf.FieldOptions
+	0,  // 4: api.body:extendee -> google.protobuf.FieldOptions
+	0,  // 5: api.path:extendee -> google.protobuf.FieldOptions
+	0,  // 6: api.vd:extendee -> google.protobuf.FieldOptions
+	0,  // 7: api.form:extendee -> google.protobuf.FieldOptions
+	0,  // 8: api.go_tag:extendee -> google.protobuf.FieldOptions
+	0,  // 9: api.js_conv:extendee -> google.protobuf.FieldOptions
+	1,  // 10: api.get:extendee -> google.protobuf.MethodOptions
+	1,  // 11: api.post:extendee -> google.protobuf.MethodOptions
+	1,  // 12: api.put:extendee -> google.protobuf.MethodOptions
+	1,  // 13: api.delete:extendee -> google.protobuf.MethodOptions
+	1,  // 14: api.patch:extendee -> google.protobuf.MethodOptions
+	1,  // 15: api.options:extendee -> google.protobuf.MethodOptions
+	1,  // 16: api.head:extendee -> google.protobuf.MethodOptions
+	1,  // 17: api.any:extendee -> google.protobuf.MethodOptions
+	1,  // 18: api.gen_path:extendee -> google.protobuf.MethodOptions
+	1,  // 19: api.api_version:extendee -> google.protobuf.MethodOptions
+	1,  // 20: api.tag:extendee -> google.protobuf.MethodOptions
+	1,  // 21: api.name:extendee -> google.protobuf.MethodOptions
+	1,  // 22: api.api_level:extendee -> google.protobuf.MethodOptions
+	1,  // 23: api.serializer:extendee -> google.protobuf.MethodOptions
+	1,  // 24: api.param:extendee -> google.protobuf.MethodOptions
+	1,  // 25: api.baseurl:extendee -> google.protobuf.MethodOptions
+	2,  // 26: api.http_code:extendee -> google.protobuf.EnumValueOptions
 	27, // [27:27] is the sub-list for method output_type
 	27, // [27:27] is the sub-list for method input_type
 	27, // [27:27] is the sub-list for extension type_name

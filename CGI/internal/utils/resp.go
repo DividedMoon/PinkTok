@@ -1,9 +1,8 @@
 package utils
 
 import (
-	"errors"
-
 	"cgi/internal/constant"
+	"errors"
 )
 
 type BaseResp struct {

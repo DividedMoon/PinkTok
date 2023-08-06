@@ -5,10 +5,10 @@ package user_service
 import (
 	"context"
 	"fmt"
+	"user_service/biz/model/client"
 
 	"github.com/cloudwego/hertz/pkg/common/config"
 	"github.com/cloudwego/hertz/pkg/protocol"
-	"user_service/biz/model/client"
 )
 
 // unused protection

@@ -1,17 +1,15 @@
 package handler
 
 import (
+	cgi "cgi/internal/client"
 	"cgi/internal/constant"
 	"cgi/internal/utils"
 	"cgi/middleware"
 	"context"
-	"encoding/json"
-	"fmt"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 	"user_service/biz/model/client"
-	"user_service/biz/model/client/user_service"
 )
 
 type userRegisterReq struct {
@@ -60,10 +58,8 @@ func RegisterHandler(ctx context.Context, c *app.RequestContext) {
 		Username: req.Username,
 		Password: cryPwd,
 	}
-	bodyBytes, _ := json.Marshal(registerReq)
-	fmt.Println(string(bodyBytes))
-	hlog.CtxInfof(ctx, "request user_service for: %+v", registerReq)
-	userServiceClient, err := user_service.NewUserServiceClient("//127.0.0.1:8889")
+	hlog.CtxInfof(ctx, "request user_service : %+v with %+v", registerReq, c.ClientIP())
+	registerResp, _, err := cgi.UserServiceClient.Register(ctx, registerReq)
 	if err != nil {
 		resp = utils.BuildBaseResp(err)
 		c.JSON(consts.StatusOK, userRegisterResp{
@@ -72,16 +68,7 @@ func RegisterHandler(ctx context.Context, c *app.RequestContext) {
 		})
 		return
 	}
-
-	registerResp, _, err := userServiceClient.Register(ctx, registerReq)
-	if err != nil {
-		resp = utils.BuildBaseResp(err)
-		c.JSON(consts.StatusOK, userRegisterResp{
-			StatusCode: resp.StatusCode,
-			StatusMsg:  resp.StatusMsg,
-		})
-		return
-	}
+	hlog.CtxInfof(ctx, "response user_service: %+v with %+v", registerResp, c.ClientIP())
 
 	token, _, err := middleware.JwtMiddleware.TokenGenerator(registerResp.UserId)
 	if err != nil {
