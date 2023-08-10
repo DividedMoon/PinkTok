@@ -4,12 +4,11 @@ package handler
 
 import (
 	"context"
-	"github.com/cloudwego/hertz/pkg/common/hlog"
-	"user_service/biz/internal/constant"
-	"user_service/biz/service"
-
 	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
+	"user_service/biz/internal/constant"
+	"user_service/biz/internal/service"
 	"user_service/biz/model/client"
 )
 
