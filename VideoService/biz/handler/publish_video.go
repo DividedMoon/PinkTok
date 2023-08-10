@@ -5,23 +5,23 @@ package handler
 import (
 	"context"
 
+	client "PinkTok/VideoService/biz/model/client"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
-	dto "video_service/biz/model/dto"
 )
 
 // PublishVideo .
 // @router /internal/video/publish [POST]
 func PublishVideo(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req dto.PublishReq
+	var req client.PublishReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
 
-	resp := new(dto.PublishResp)
+	resp := new(client.PublishResp)
 
 	c.JSON(consts.StatusOK, resp)
 }

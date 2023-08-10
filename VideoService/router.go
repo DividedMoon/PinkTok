@@ -3,8 +3,8 @@
 package main
 
 import (
+	handler "PinkTok/VideoService/biz/handler"
 	"github.com/cloudwego/hertz/pkg/app/server"
-	handler "video_service/biz/handler"
 )
 
 // customizeRegister registers customize routers.

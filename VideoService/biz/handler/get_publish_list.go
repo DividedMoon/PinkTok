@@ -5,23 +5,23 @@ package handler
 import (
 	"context"
 
+	client "PinkTok/VideoService/biz/model/client"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
-	dto "video_service/biz/model/dto"
 )
 
 // GetPublishList .
 // @router /internal/video/list [GET]
 func GetPublishList(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req dto.GetPublishListReq
+	var req client.GetPublishListReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
 
-	resp := new(dto.GetPublishListResp)
+	resp := new(client.GetPublishListResp)
 
 	c.JSON(consts.StatusOK, resp)
 }

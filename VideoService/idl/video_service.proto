@@ -2,7 +2,7 @@ syntax = "proto3";
 package client;
 import "api.proto";
 
-option go_package = "dto";
+option go_package = "client";
 
 message publish_req {
    int64 user_id = 1[(api.body) = "user_id"]; // 用户鉴权token

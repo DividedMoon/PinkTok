@@ -6,9 +6,9 @@ import (
 	"context"
 	"fmt"
 
+	client "PinkTok/VideoService/biz/model/client"
 	"github.com/cloudwego/hertz/pkg/common/config"
 	"github.com/cloudwego/hertz/pkg/protocol"
-	dto "video_service/biz/model/dto"
 )
 
 // unused protection
@@ -17,9 +17,9 @@ var (
 )
 
 type Client interface {
-	PublishVideo(context context.Context, req *dto.PublishReq, reqOpt ...config.RequestOption) (resp *dto.PublishResp, rawResponse *protocol.Response, err error)
+	PublishVideo(context context.Context, req *client.PublishReq, reqOpt ...config.RequestOption) (resp *client.PublishResp, rawResponse *protocol.Response, err error)
 
-	GetPublishList(context context.Context, req *dto.GetPublishListReq, reqOpt ...config.RequestOption) (resp *dto.GetPublishListResp, rawResponse *protocol.Response, err error)
+	GetPublishList(context context.Context, req *client.GetPublishListReq, reqOpt ...config.RequestOption) (resp *client.GetPublishListResp, rawResponse *protocol.Response, err error)
 }
 
 type VideoServiceClient struct {
@@ -37,8 +37,8 @@ func NewVideoServiceClient(hostUrl string, ops ...Option) (Client, error) {
 	}, nil
 }
 
-func (s *VideoServiceClient) PublishVideo(context context.Context, req *dto.PublishReq, reqOpt ...config.RequestOption) (resp *dto.PublishResp, rawResponse *protocol.Response, err error) {
-	httpResp := &dto.PublishResp{}
+func (s *VideoServiceClient) PublishVideo(context context.Context, req *client.PublishReq, reqOpt ...config.RequestOption) (resp *client.PublishResp, rawResponse *protocol.Response, err error) {
+	httpResp := &client.PublishResp{}
 	ret, err := s.client.r().
 		setContext(context).
 		setQueryParams(map[string]interface{}{}).
@@ -59,8 +59,8 @@ func (s *VideoServiceClient) PublishVideo(context context.Context, req *dto.Publ
 	return resp, rawResponse, nil
 }
 
-func (s *VideoServiceClient) GetPublishList(context context.Context, req *dto.GetPublishListReq, reqOpt ...config.RequestOption) (resp *dto.GetPublishListResp, rawResponse *protocol.Response, err error) {
-	httpResp := &dto.GetPublishListResp{}
+func (s *VideoServiceClient) GetPublishList(context context.Context, req *client.GetPublishListReq, reqOpt ...config.RequestOption) (resp *client.GetPublishListResp, rawResponse *protocol.Response, err error) {
+	httpResp := &client.GetPublishListResp{}
 	ret, err := s.client.r().
 		setContext(context).
 		setQueryParams(map[string]interface{}{}).
@@ -88,10 +88,10 @@ func ConfigDefaultClient(ops ...Option) (err error) {
 	return
 }
 
-func PublishVideo(context context.Context, req *dto.PublishReq, reqOpt ...config.RequestOption) (resp *dto.PublishResp, rawResponse *protocol.Response, err error) {
+func PublishVideo(context context.Context, req *client.PublishReq, reqOpt ...config.RequestOption) (resp *client.PublishResp, rawResponse *protocol.Response, err error) {
 	return defaultClient.PublishVideo(context, req, reqOpt...)
 }
 
-func GetPublishList(context context.Context, req *dto.GetPublishListReq, reqOpt ...config.RequestOption) (resp *dto.GetPublishListResp, rawResponse *protocol.Response, err error) {
+func GetPublishList(context context.Context, req *client.GetPublishListReq, reqOpt ...config.RequestOption) (resp *client.GetPublishListResp, rawResponse *protocol.Response, err error) {
 	return defaultClient.GetPublishList(context, req, reqOpt...)
 }
