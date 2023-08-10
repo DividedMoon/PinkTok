@@ -4,9 +4,9 @@ package feed_service
 
 import (
 	"context"
+	dto "feed_service/biz/model/client"
 	"fmt"
 
-	client "feed_service/biz/model/client"
 	"github.com/cloudwego/hertz/pkg/common/config"
 	"github.com/cloudwego/hertz/pkg/protocol"
 )
@@ -17,7 +17,7 @@ var (
 )
 
 type Client interface {
-	Feed(context context.Context, req *client.FeedReq, reqOpt ...config.RequestOption) (resp *client.FeedResp, rawResponse *protocol.Response, err error)
+	Feed(context context.Context, req *dto.FeedReq, reqOpt ...config.RequestOption) (resp *dto.FeedResp, rawResponse *protocol.Response, err error)
 }
 
 type FeedServiceClient struct {
@@ -35,8 +35,8 @@ func NewFeedServiceClient(hostUrl string, ops ...Option) (Client, error) {
 	}, nil
 }
 
-func (s *FeedServiceClient) Feed(context context.Context, req *client.FeedReq, reqOpt ...config.RequestOption) (resp *client.FeedResp, rawResponse *protocol.Response, err error) {
-	httpResp := &client.FeedResp{}
+func (s *FeedServiceClient) Feed(context context.Context, req *dto.FeedReq, reqOpt ...config.RequestOption) (resp *dto.FeedResp, rawResponse *protocol.Response, err error) {
+	httpResp := &dto.FeedResp{}
 	ret, err := s.client.r().
 		setContext(context).
 		setQueryParams(map[string]interface{}{}).
@@ -64,6 +64,6 @@ func ConfigDefaultClient(ops ...Option) (err error) {
 	return
 }
 
-func Feed(context context.Context, req *client.FeedReq, reqOpt ...config.RequestOption) (resp *client.FeedResp, rawResponse *protocol.Response, err error) {
+func Feed(context context.Context, req *dto.FeedReq, reqOpt ...config.RequestOption) (resp *dto.FeedResp, rawResponse *protocol.Response, err error) {
 	return defaultClient.Feed(context, req, reqOpt...)
 }

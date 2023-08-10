@@ -5,9 +5,8 @@ package handler
 import (
 	"context"
 	"feed_service/biz/constants"
+	dto "feed_service/biz/model/client"
 	"feed_service/biz/service"
-
-	client "feed_service/biz/model/client"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )
@@ -16,28 +15,29 @@ import (
 // @router /internal/feed [GET]
 func Feed(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req client.FeedReq
+	var req dto.FeedReq
 	err = c.BindAndValidate(&req)
 
 	if err != nil {
 		//c.String(consts.StatusBadRequest, err.Error())
-		c.JSON(consts.StatusOK, client.FeedResp{
+		c.JSON(consts.StatusOK, dto.FeedResp{
 			StatusCode: constants.ServiceErrCode,
-			StatusMsg:  constants.ServiceErrMsg,
-			VideoList:  nil,
-			NextTime:   req.LatestTime,
-		})
+			StatusMsg: constants.ServiceErrMsg,
+			VideoList: nil,
+			NextTime: //TODO 好没想好填什么
+			})
 		return
 	}
 	resp, err := service.NewFeedService(ctx, c).GetFeed(&req)
 
+
 	if err != nil {
 
-		c.JSON(consts.StatusOK, client.FeedResp{
-			StatusCode: constants.InnerServiceErrCode,
-			StatusMsg:  err.Error(),
-			VideoList:  nil,
-			NextTime:   req.LatestTime,
+		c.JSON(consts.StatusOK, dto.FeedResp{
+			StatusCode: constants.ServiceErrCode,
+			StatusMsg: err.Error(),
+			VideoList: nil,
+			NextTime:
 		})
 	}
 

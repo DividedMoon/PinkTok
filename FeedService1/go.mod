@@ -8,7 +8,7 @@ require (
 	github.com/minio/minio-go/v7 v7.0.61
 	google.golang.org/protobuf v1.31.0
 	gorm.io/driver/mysql v1.5.1
-	gorm.io/gorm v1.25.3
+	gorm.io/gorm v1.25.2
 )
 
 require (

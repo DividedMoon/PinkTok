@@ -3,13 +3,12 @@
 package main
 
 import (
-	main2 "feed_service/cmd"
 	"github.com/cloudwego/hertz/pkg/app/server"
 )
 
 func main() {
 	h := server.Default()
 
-	main2.register(h)
+	register(h)
 	h.Spin()
 }
