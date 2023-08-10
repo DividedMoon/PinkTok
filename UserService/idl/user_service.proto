@@ -5,7 +5,7 @@ package client;
 import "api.proto";
 import "entity.proto";
 
-option go_package = "dto";
+option go_package = "client";
 
 message user_register_req {
     string username = 1[(api.body)="body"]; // 注册用户名，最长32个字符

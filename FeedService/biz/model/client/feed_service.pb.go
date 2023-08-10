@@ -4,7 +4,7 @@
 // 	protoc        v4.23.4
 // source: feed_service.proto
 
-package dto
+package client
 
 import (
 	_ "feed_service/biz/model/api"

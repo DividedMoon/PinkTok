@@ -3,7 +3,7 @@
 package router
 
 import (
-	dto "feed_service/biz/router/dto"
+	dto "feed_service/biz/router/client"
 	"github.com/cloudwego/hertz/pkg/app/server"
 )
 

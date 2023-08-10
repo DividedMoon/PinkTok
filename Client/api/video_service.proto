@@ -1,7 +1,7 @@
 syntax = "proto3";
 package client;
 
-option go_package = "dto";
+option go_package = "client";
 
 import "entity.proto";
 

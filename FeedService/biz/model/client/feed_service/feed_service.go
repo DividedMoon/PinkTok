@@ -4,9 +4,9 @@ package feed_service
 
 import (
 	"context"
+	dto "feed_service/biz/model/client"
 	"fmt"
 
-	dto "feed_service/biz/model/dto"
 	"github.com/cloudwego/hertz/pkg/common/config"
 	"github.com/cloudwego/hertz/pkg/protocol"
 )

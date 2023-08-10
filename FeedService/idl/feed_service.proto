@@ -3,7 +3,7 @@ package client;
 
 import "api.proto";
 
-option go_package = "dto";
+option go_package = "client";
 
 message feed_req {
    int64 latest_time = 1[(api.body) = "latest_time"]; // 可选参数，限制返回视频的最新投稿时间戳，精确到秒，不填表示当前时间
