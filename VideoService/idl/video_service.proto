@@ -36,7 +36,7 @@ message get_publish_list_req {
 message get_publish_list_resp {
    int32 status_code = 1; // 状态码，0-成功，其他值-失败
    string status_msg = 2; // 返回状态描述
-   VideoInfo video_list = 3; // 用户发布的视频列表
+   repeated VideoInfo video_list = 3; // 用户发布的视频列表
 }
 
 message VideoInfo {

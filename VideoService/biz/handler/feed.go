@@ -4,6 +4,8 @@ package handler
 
 import (
 	"context"
+	"video_service/biz/internal/constants"
+	"video_service/biz/service"
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
@@ -16,12 +18,32 @@ func Feed(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req client.FeedReq
 	err = c.BindAndValidate(&req)
+
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		//c.String(consts.StatusBadRequest, err.Error())
+		c.JSON(consts.StatusOK, client.FeedResp{
+			StatusCode: constants.ServiceErrCode,
+			StatusMsg:  constants.ServiceErrMsg,
+			VideoList:  nil,
+			NextTime:   req.LatestTime,
+		})
 		return
 	}
+	resp, err := service.NewFeedService(ctx, c).GetFeed(&req)
 
-	resp := new(client.FeedResp)
+	if err != nil {
+
+		c.JSON(consts.StatusOK, client.FeedResp{
+			StatusCode: constants.InnerServiceErrCode,
+			StatusMsg:  err.Error(),
+			VideoList:  nil,
+			NextTime:   req.LatestTime,
+		})
+	}
+
+	// TODO 正常处理
+	resp.StatusCode = constants.SuccessCode
+	resp.StatusMsg = constants.SuccessMsg
 
 	c.JSON(consts.StatusOK, resp)
 }
