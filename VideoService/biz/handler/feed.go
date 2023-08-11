@@ -10,18 +10,18 @@ import (
 	client "video_service/biz/model/client"
 )
 
-// GetPublishList .
-// @router /internal/video/list [GET]
-func GetPublishList(ctx context.Context, c *app.RequestContext) {
+// Feed .
+// @router /internal/feed [GET]
+func Feed(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req client.GetPublishListReq
+	var req client.FeedReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
 
-	resp := new(client.GetPublishListResp)
+	resp := new(client.FeedResp)
 
 	c.JSON(consts.StatusOK, resp)
 }

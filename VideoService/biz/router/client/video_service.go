@@ -3,8 +3,8 @@
 package client
 
 import (
-	handler "PinkTok/VideoService/biz/handler"
 	"github.com/cloudwego/hertz/pkg/app/server"
+	handler "video_service/biz/handler"
 )
 
 /*
@@ -19,6 +19,7 @@ func Register(r *server.Hertz) {
 	root := r.Group("/", rootMw()...)
 	{
 		_internal := root.Group("/internal", _internalMw()...)
+		_internal.GET("/feed", append(_feedMw(), handler.Feed)...)
 		{
 			_video := _internal.Group("/video", _videoMw()...)
 			_video.GET("/list", append(_getpublishlistMw(), handler.GetPublishList)...)

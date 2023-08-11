@@ -4,6 +4,19 @@ import "api.proto";
 
 option go_package = "client";
 
+message feed_req {
+   int64 latest_time = 1[(api.body) = "latest_time"]; // 可选参数，限制返回视频的最新投稿时间戳，精确到秒，不填表示当前时间
+   int64 user_id = 2[(api.body) = "user_id"]; // 可选参数，登录用户设置
+}
+
+message feed_resp {
+   int32 status_code = 1; // 状态码，0-成功，其他值-失败
+   string status_msg = 2; // 返回状态描述
+   VideoInfo video_list = 3; // 视频列表
+   int64 next_time = 4; // 本次返回的视频中，发布最早的时间，作为下次请求时的latest_time
+}
+
+
 message publish_req {
    int64 user_id = 1[(api.body) = "user_id"]; // 用户鉴权token
    bytes data = 2[(api.body) = "data"]; // 视频数据
@@ -52,6 +65,9 @@ message UserInfo {
 }
 
 service VideoService {
+   rpc Feed(feed_req) returns (feed_resp) {
+      option (api.get)="/internal/feed";
+   }
    rpc PublishVideo(publish_req) returns (publish_resp) {
       option (api.post)="/internal/video/publish";
    }

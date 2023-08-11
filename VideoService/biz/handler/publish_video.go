@@ -5,9 +5,9 @@ package handler
 import (
 	"context"
 
-	client "PinkTok/VideoService/biz/model/client"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
+	client "video_service/biz/model/client"
 )
 
 // PublishVideo .

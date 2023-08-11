@@ -16,6 +16,11 @@ func _internalMw() []app.HandlerFunc {
 	return nil
 }
 
+func _feedMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
 func _videoMw() []app.HandlerFunc {
 	// your code...
 	return nil

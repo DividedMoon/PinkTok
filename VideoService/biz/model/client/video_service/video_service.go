@@ -6,9 +6,9 @@ import (
 	"context"
 	"fmt"
 
-	client "PinkTok/VideoService/biz/model/client"
 	"github.com/cloudwego/hertz/pkg/common/config"
 	"github.com/cloudwego/hertz/pkg/protocol"
+	client "video_service/biz/model/client"
 )
 
 // unused protection
@@ -17,6 +17,8 @@ var (
 )
 
 type Client interface {
+	Feed(context context.Context, req *client.FeedReq, reqOpt ...config.RequestOption) (resp *client.FeedResp, rawResponse *protocol.Response, err error)
+
 	PublishVideo(context context.Context, req *client.PublishReq, reqOpt ...config.RequestOption) (resp *client.PublishResp, rawResponse *protocol.Response, err error)
 
 	GetPublishList(context context.Context, req *client.GetPublishListReq, reqOpt ...config.RequestOption) (resp *client.GetPublishListResp, rawResponse *protocol.Response, err error)
@@ -35,6 +37,28 @@ func NewVideoServiceClient(hostUrl string, ops ...Option) (Client, error) {
 	return &VideoServiceClient{
 		client: cli,
 	}, nil
+}
+
+func (s *VideoServiceClient) Feed(context context.Context, req *client.FeedReq, reqOpt ...config.RequestOption) (resp *client.FeedResp, rawResponse *protocol.Response, err error) {
+	httpResp := &client.FeedResp{}
+	ret, err := s.client.r().
+		setContext(context).
+		setQueryParams(map[string]interface{}{}).
+		setPathParams(map[string]string{}).
+		setHeaders(map[string]string{}).
+		setFormParams(map[string]string{}).
+		setFormFileParams(map[string]string{}).
+		setBodyParam(req).
+		setRequestOption(reqOpt...).
+		setResult(httpResp).
+		execute("GET", "/internal/feed")
+	if err != nil {
+		return nil, nil, err
+	}
+
+	resp = httpResp
+	rawResponse = ret.rawResponse
+	return resp, rawResponse, nil
 }
 
 func (s *VideoServiceClient) PublishVideo(context context.Context, req *client.PublishReq, reqOpt ...config.RequestOption) (resp *client.PublishResp, rawResponse *protocol.Response, err error) {
@@ -86,6 +110,10 @@ var defaultClient, _ = NewVideoServiceClient("")
 func ConfigDefaultClient(ops ...Option) (err error) {
 	defaultClient, err = NewVideoServiceClient("", ops...)
 	return
+}
+
+func Feed(context context.Context, req *client.FeedReq, reqOpt ...config.RequestOption) (resp *client.FeedResp, rawResponse *protocol.Response, err error) {
+	return defaultClient.Feed(context, req, reqOpt...)
 }
 
 func PublishVideo(context context.Context, req *client.PublishReq, reqOpt ...config.RequestOption) (resp *client.PublishResp, rawResponse *protocol.Response, err error) {
