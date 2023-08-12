@@ -4,8 +4,9 @@ go 1.17
 
 require (
 	github.com/cloudwego/hertz v0.6.7
+	github.com/go-redis/redis/v7 v7.4.1
 	golang.org/x/crypto v0.6.0
-	google.golang.org/protobuf v1.31.0
+	google.golang.org/protobuf v1.27.1
 	gorm.io/driver/mysql v1.5.1
 	gorm.io/gorm v1.25.2
 	gorm.io/sharding v0.5.3
@@ -37,4 +38,6 @@ require (
 	golang.org/x/sys v0.5.0 // indirect
 )
 
-replace user_service v0.0.0 => ../UserService
+replace (
+	user_service v0.0.0 => ../UserService
+)

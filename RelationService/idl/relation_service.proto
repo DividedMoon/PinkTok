@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package client;
+package relation_service;
 
-import "api.proto";
+import "relation_api.proto";
 
 option go_package = "client";
 

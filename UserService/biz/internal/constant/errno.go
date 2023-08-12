@@ -9,6 +9,7 @@ const (
 	SuccessCode    = 0
 	ServiceErrCode = iota + 10000
 	ParamErrCode
+	AffectedRowIsNotEqualOneCode
 	AuthorizationFailedErrCode
 
 	UserAlreadyExistErrCode
@@ -16,11 +17,12 @@ const (
 )
 
 const (
-	SuccessMsg               = "Success"
-	ServerErrMsg             = "Service is unable to start successfully"
-	ParamErrMsg              = "Wrong Parameter has been given"
-	UserIsNotExistErrMsg     = "user is not exist"
-	PasswordIsNotVerifiedMsg = "username or password not verified"
+	SuccessMsg                  = "Success"
+	ServerErrMsg                = "Service is unable to start successfully"
+	ParamErrMsg                 = "Wrong Parameter has been given"
+	UserIsNotExistErrMsg        = "user is not exist"
+	PasswordIsNotVerifiedMsg    = "username or password not verified"
+	AffectedRowIsNotEqualOneMsg = "Affected row is not equal one"
 )
 
 type ErrNo struct {
@@ -42,13 +44,14 @@ func (e ErrNo) WithMessage(msg string) ErrNo {
 }
 
 var (
-	Success                = NewErrNo(SuccessCode, SuccessMsg)
-	ServiceErr             = NewErrNo(ServiceErrCode, ServerErrMsg)
-	ParamErr               = NewErrNo(ParamErrCode, ParamErrMsg)
-	UserAlreadyExistErr    = NewErrNo(UserAlreadyExistErrCode, "User already exists")
-	AuthorizationFailedErr = NewErrNo(AuthorizationFailedErrCode, "Authorization failed")
-	UserIsNotExistErr      = NewErrNo(UserIsNotExistErrCode, UserIsNotExistErrMsg)
-	PasswordIsNotVerified  = NewErrNo(AuthorizationFailedErrCode, PasswordIsNotVerifiedMsg)
+	Success                  = NewErrNo(SuccessCode, SuccessMsg)
+	ServiceErr               = NewErrNo(ServiceErrCode, ServerErrMsg)
+	ParamErr                 = NewErrNo(ParamErrCode, ParamErrMsg)
+	UserAlreadyExistErr      = NewErrNo(UserAlreadyExistErrCode, "User already exists")
+	AuthorizationFailedErr   = NewErrNo(AuthorizationFailedErrCode, "Authorization failed")
+	UserIsNotExistErr        = NewErrNo(UserIsNotExistErrCode, UserIsNotExistErrMsg)
+	PasswordIsNotVerified    = NewErrNo(AuthorizationFailedErrCode, PasswordIsNotVerifiedMsg)
+	AffectedRowIsNotEqualOne = NewErrNo(AffectedRowIsNotEqualOneCode, AffectedRowIsNotEqualOneMsg)
 )
 
 // ConvertErr convert error to Errno

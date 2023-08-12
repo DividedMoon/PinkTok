@@ -9,7 +9,10 @@ import (
 
 func main() {
 	h := server.Default(server.WithHostPorts("127.0.0.1:8889"))
-
+	/*if err := config.InitConfigs(); err != nil {
+		log.Fatal(err.Error())
+		return
+	}*/
 	register(h)
 	model.InitDB()
 

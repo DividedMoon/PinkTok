@@ -5,10 +5,10 @@ package user_service
 import (
 	"context"
 	"fmt"
-	"user_service/biz/model/client"
 
 	"github.com/cloudwego/hertz/pkg/common/config"
 	"github.com/cloudwego/hertz/pkg/protocol"
+	client "user_service/biz/model/client"
 )
 
 // unused protection
@@ -22,6 +22,8 @@ type Client interface {
 	Login(context context.Context, req *client.UserLoginReq, reqOpt ...config.RequestOption) (resp *client.UserLoginResp, rawResponse *protocol.Response, err error)
 
 	UserInfo(context context.Context, req *client.UserInfoReq, reqOpt ...config.RequestOption) (resp *client.UserInfoResp, rawResponse *protocol.Response, err error)
+
+	UserUpdate(context context.Context, req *client.UserUpdateReq, reqOpt ...config.RequestOption) (resp *client.UserUpdateResp, rawResponse *protocol.Response, err error)
 }
 
 type UserServiceClient struct {
@@ -105,6 +107,28 @@ func (s *UserServiceClient) UserInfo(context context.Context, req *client.UserIn
 	return resp, rawResponse, nil
 }
 
+func (s *UserServiceClient) UserUpdate(context context.Context, req *client.UserUpdateReq, reqOpt ...config.RequestOption) (resp *client.UserUpdateResp, rawResponse *protocol.Response, err error) {
+	httpResp := &client.UserUpdateResp{}
+	ret, err := s.client.r().
+		setContext(context).
+		setQueryParams(map[string]interface{}{}).
+		setPathParams(map[string]string{}).
+		setHeaders(map[string]string{}).
+		setFormParams(map[string]string{}).
+		setFormFileParams(map[string]string{}).
+		setBodyParam(req).
+		setRequestOption(reqOpt...).
+		setResult(httpResp).
+		execute("POST", "/internal/user/update")
+	if err != nil {
+		return nil, nil, err
+	}
+
+	resp = httpResp
+	rawResponse = ret.rawResponse
+	return resp, rawResponse, nil
+}
+
 var defaultClient, _ = NewUserServiceClient("")
 
 func ConfigDefaultClient(ops ...Option) (err error) {
@@ -122,4 +146,8 @@ func Login(context context.Context, req *client.UserLoginReq, reqOpt ...config.R
 
 func UserInfo(context context.Context, req *client.UserInfoReq, reqOpt ...config.RequestOption) (resp *client.UserInfoResp, rawResponse *protocol.Response, err error) {
 	return defaultClient.UserInfo(context, req, reqOpt...)
+}
+
+func UserUpdate(context context.Context, req *client.UserUpdateReq, reqOpt ...config.RequestOption) (resp *client.UserUpdateResp, rawResponse *protocol.Response, err error) {
+	return defaultClient.UserUpdate(context, req, reqOpt...)
 }

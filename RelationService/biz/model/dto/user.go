@@ -1,7 +1,6 @@
 package dto
 
 import (
-	"gorm.io/gorm"
 	"user_service/biz/model"
 )
 
@@ -38,8 +37,4 @@ func (u *User) SelectByUsername(username string) error {
 		Where("username = ? AND deleted = 0", username).
 		First(&u).
 		Error
-}
-
-func (u *User) UpdateByUser(tx *gorm.DB) (err error) {
-
 }

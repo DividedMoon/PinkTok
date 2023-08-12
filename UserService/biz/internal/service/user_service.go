@@ -3,7 +3,9 @@ package service
 import (
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"math/rand"
+	"reflect"
 	"time"
+	"user_service/biz/internal/constant"
 	"user_service/biz/model/client"
 	"user_service/biz/model/dto"
 )
@@ -66,6 +68,33 @@ func GetUserInfo(userId int64) (u *client.UserInfo, err error) {
 		FavoriteCount:   user.FavoriteCount,
 	}
 	return u, nil
+}
+
+func UpdateUserInfo(u *client.UserInfo, changes map[string]int) (string, error) {
+	var (
+		user = &dto.User{
+			ID:             u.Id,
+			FollowCount:    u.FollowCount,
+			FollowerCount:  u.FollowerCount,
+			IsFollow:       false,
+			TotalFavorited: u.TotalFavorited,
+			WorkCount:      u.WorkCount,
+			FavoriteCount:  u.FavoriteCount,
+		}
+		origin = map[string]int{}
+	)
+	// 设置初始值
+	elem := reflect.ValueOf(user).Elem()
+	for k := range changes {
+		i := elem.FieldByName(k).Interface().(int64)
+		origin[k] = int(i)
+	}
+	// 更新数据库
+	err := user.UpdateByCountMap(origin, changes)
+	if err != nil {
+		return "", err
+	}
+	return user.Base.UpdatedAt.Format(constant.DateFormat), nil
 }
 
 func generateRandomName(n int) string {

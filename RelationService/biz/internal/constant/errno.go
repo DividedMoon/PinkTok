@@ -7,10 +7,11 @@ import (
 
 const (
 	SuccessCode    = 0
-	ServiceErrCode = iota + 10000
+	ServiceErrCode = iota + 30000
 	ParamErrCode
 	AuthorizationFailedErrCode
 	InvalidActionTypeCode
+	UserNotExistErrCode
 )
 
 const (
@@ -18,6 +19,7 @@ const (
 	ServerErrMsg         = "Service is unable to start successfully"
 	ParamErrMsg          = "Wrong Parameter has been given"
 	InvalidActionTypeMsg = "action type is invalid"
+	UserNotExistErrMsg   = "user not exist"
 )
 
 type ErrNo struct {
@@ -44,6 +46,7 @@ var (
 	ParamErr               = NewErrNo(ParamErrCode, ParamErrMsg)
 	AuthorizationFailedErr = NewErrNo(AuthorizationFailedErrCode, "Authorization failed")
 	InvalidActionTypeErr   = NewErrNo(InvalidActionTypeCode, InvalidActionTypeMsg)
+	UserNotExistErr        = NewErrNo(UserNotExistErrCode, UserNotExistErrMsg)
 )
 
 // ConvertErr convert error to Errno

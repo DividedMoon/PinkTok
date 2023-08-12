@@ -7,6 +7,7 @@ import (
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"relation_service/biz/internal/constant"
 	"relation_service/biz/internal/service"
+	utils "relation_service/biz/internal/util"
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
@@ -23,15 +24,16 @@ func SendRelationAction(ctx context.Context, c *app.RequestContext) {
 
 	err = c.BindAndValidate(&req)
 	if err != nil {
+		resp := utils.BuildBaseResp(err)
 		c.JSON(consts.StatusOK, &client.RelationActionResp{
-			StatusCode: constant.ServiceErrCode,
-			StatusMsg:  err.Error(),
+			StatusCode: resp.StatusCode,
+			StatusMsg:  resp.StatusMsg,
 		})
 		return
 	}
-	if constant.Action_Type_Submit_Follow == req.ActionType {
+	if constant.ActionTypeSubmitFollow == req.ActionType {
 		err = service.SubmitFollowRelationAction(ctx, &req)
-	} else if constant.Action_Type_Cancel_Follow == req.ActionType {
+	} else if constant.ActionTypeCancelFollow == req.ActionType {
 		err = service.CancelFollowRelationAction(ctx, &req)
 	} else {
 		hlog.CtxErrorf(ctx, "Send err action type: %v", req.ActionType)
@@ -43,9 +45,10 @@ func SendRelationAction(ctx context.Context, c *app.RequestContext) {
 	}
 	if err != nil {
 		hlog.CtxErrorf(ctx, "SendRelationAction err: %v", err)
+		resp := utils.BuildBaseResp(err)
 		c.JSON(consts.StatusOK, &client.RelationActionResp{
-			StatusCode: constant.ServiceErrCode,
-			StatusMsg:  err.Error(),
+			StatusCode: resp.StatusCode,
+			StatusMsg:  resp.StatusMsg,
 		})
 		return
 	}

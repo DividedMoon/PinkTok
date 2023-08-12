@@ -4,8 +4,11 @@ go 1.17
 
 require (
 	github.com/cloudwego/hertz v0.6.7
-	golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2
+	github.com/hertz-contrib/logger/zap v1.0.0
+	golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550
 	google.golang.org/protobuf v1.27.1
+	gopkg.in/natefinch/lumberjack.v2 v2.2.1
+	gopkg.in/yaml.v3 v3.0.1
 	gorm.io/driver/mysql v1.5.1
 	gorm.io/gorm v1.25.2
 )
@@ -29,6 +32,9 @@ require (
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.0 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
+	go.uber.org/atomic v1.7.0 // indirect
+	go.uber.org/multierr v1.6.0 // indirect
+	go.uber.org/zap v1.23.0 // indirect
 	golang.org/x/arch v0.0.0-20210923205945-b76863e36670 // indirect
 	golang.org/x/sys v0.0.0-20220412211240-33da011f77ad // indirect
 )

@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package client;
 
-import "api.proto";
+import "user_api.proto";
 
 option go_package = "client";
 
@@ -52,6 +52,22 @@ message user_info_resp {
     UserInfo user = 3; // 用户信息
 }
 
+message PairValue {
+    string key = 1; // 键
+    string value = 2; // 值
+}
+
+message user_update_req {
+    int64 user_id = 1[(api.body) = "user_id"]; // 用户信息
+    repeated PairValue ext = 2[(api.body) = "ext"]; // 扩展信息
+}
+
+message user_update_resp {
+    int32 status_code = 1; // 状态码，0-成功，其他值-失败
+    string status_msg = 2; // 返回状态描述
+    string modify_time = 3; // 修改时间
+}
+
 
 
 service UserService {
@@ -63,6 +79,9 @@ service UserService {
     }
     rpc UserInfo(user_info_req) returns (user_info_resp) {
         option (api.post) = "/internal/user/info";
+    }
+    rpc UserUpdate(user_update_req) returns (user_update_resp) {
+        option (api.post) = "/internal/user/update";
     }
 }
 

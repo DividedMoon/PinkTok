@@ -5,6 +5,7 @@ package main
 import (
 	"github.com/cloudwego/hertz/pkg/app/server"
 	"relation_service/biz/model"
+	"relation_service/biz/mw/redis"
 )
 
 func main() {
@@ -12,5 +13,6 @@ func main() {
 
 	register(h)
 	model.InitDB()
+	redis.InitRedis()
 	h.Spin()
 }
