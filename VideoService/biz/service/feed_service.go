@@ -8,8 +8,10 @@ import (
 	"github.com/go-redis/redis/v7"
 	"sync"
 	"time"
+	userModel "user_service/biz/model/client"
 	"video_service/biz/dal/db"
 	rd "video_service/biz/dal/redis"
+	userClient "video_service/biz/internal/client"
 	"video_service/biz/internal/constants"
 	"video_service/biz/internal/utils"
 	client "video_service/biz/model/client"
@@ -56,22 +58,15 @@ func (s *FeedService) GetFeed(req *client.FeedReq) (*client.FeedResp, error) {
 }
 
 func (s *FeedService) CopyVideos(result *[]*client.VideoInfo, data *[]*db.VideoDBInfo, userId int64) error {
-	ch := make(chan error)
+
 	for _, item := range *data {
 		video, err := s.createVideo(item, userId)
-		if err != nil{
-			ch <- err
+		if err != nil {
+			return err
 		}
 		*result = append(*result, video)
 	}
-	close(ch)
-	// TODO 这个写法是错误的 记得修正
-	select {
-	case err:=<-ch:
-		return err
-	default:
-		return nil
-	}
+	return nil
 }
 
 func (s *FeedService) createVideo(data *db.VideoDBInfo, userId int64) (*client.VideoInfo, error) {
@@ -85,17 +80,30 @@ func (s *FeedService) createVideo(data *db.VideoDBInfo, userId int64) (*client.V
 
 	var wg sync.WaitGroup
 	wg.Add(4)
+	//ctx, cancel := context.WithCancel(context.Background())
+
 	errChannel := make(chan error)
 
 	// 调用UserService获取本条视频的作者信息
 	go func() {
-		author, err := //TODO call userService to find UserInfo
+		userInfoReq := &userModel.UserInfoReq{UserId: data.AuthorID}
+		resp, _, err := userClient.UserServiceClient.UserInfo(s.ctx, userInfoReq)
 
-		if err != nil{
+		if err != nil {
 			errChannel <- fmt.Errorf("GetUserInfo func error:" + err.Error())
 		}
-		video.Author := &UserInfo{
-
+		video.Author = &client.UserInfo{
+			Id:              resp.User.Id,
+			Name:            resp.User.Name,
+			FollowCount:     resp.User.FollowCount,
+			FollowerCount:   resp.User.FollowerCount,
+			IsFollow:        resp.User.IsFollow,
+			Avatar:          resp.User.Avatar,
+			BackgroundImage: resp.User.BackgroundImage,
+			Signature:       resp.User.Signature,
+			TotalFavorited:  resp.User.TotalFavorited,
+			WorkCount:       resp.User.WorkCount,
+			FavoriteCount:   resp.User.FavoriteCount,
 		}
 
 		wg.Done()
@@ -134,43 +142,47 @@ func (s *FeedService) createVideo(data *db.VideoDBInfo, userId int64) (*client.V
 	}()
 
 	// TODO 专门开启一个协程来处理错误 一旦出现错误其余协程也要停止 考虑一下close这个是怎么判断的
+	//开启额外的协程来处理各个协程运行过程中出现的错误
 	go func() {
-		select {
-		case err :=  <- errChannel:
-			return nil, err
-		default:
-			return video, nil
-		}
+
 	}()
+
+	//go func() {
+	//	select {
+	//	case err := <-errChannel:
+	//		return nil, err
+	//	default:
+	//		return video, nil
+	//	}
+	//}()
 
 	wg.Wait()
 	close(errChannel)
-
-
+	return nil, nil
 }
 
 func getVideoFavoriteCount(videoId int64) (int64, error) {
 	count, err := rd.GetVideoFavoriteCount(videoId)
-	if err == redis.Nil{
+	if err == redis.Nil {
 		//从数据库里查询然后更新缓存
 		err = buildVideoFavoriteCache(videoId)
-		if err != nil{
+		if err != nil {
 			hlog.Error("buildVideoFavoriteCache func error:" + err.Error())
 			return 0, err
 		}
 
 		return rd.GetVideoFavoriteCount(videoId)
 
-	}else if err != nil {
+	} else if err != nil {
 		hlog.Error("GetVideoFavoriteCount func error:" + err.Error())
 		return 0, err
 	}
 	return count, nil
 }
 
-func getVideoCommentCount(videoId int64)(int64, error){
+func getVideoCommentCount(videoId int64) (int64, error) {
 	count, err := rd.GetVideoCommentCount(videoId)
-	if err == redis.Nil{
+	if err == redis.Nil {
 		//从数据库里查询然后更新缓存
 		count, err = db.GetVideoCommentCount(videoId)
 		if err != nil {
@@ -180,12 +192,12 @@ func getVideoCommentCount(videoId int64)(int64, error){
 
 		//更新缓存
 		err = rd.SetVideoCommentCount(videoId, count)
-		if err!= nil {
+		if err != nil {
 			hlog.Error("SetVideoCommentCount func error:" + err.Error())
 			return 0, err
 		}
 		return count, nil
-	}else if err != nil {
+	} else if err != nil {
 		hlog.Error("GetVideoCommentCount func error:" + err.Error())
 		return 0, err
 	}
@@ -194,15 +206,15 @@ func getVideoCommentCount(videoId int64)(int64, error){
 
 func queryFavoriteExist(userId int64, videoId int64) (bool, error) {
 	e, err := rd.QueryFavoriteExist(userId, videoId)
-	if err == redis.Nil{
+	if err == redis.Nil {
 		//从数据库里查询然后更新缓存
 		err = buildVideoFavoriteCache(videoId)
-		if err != nil{
+		if err != nil {
 			hlog.Error("buildVideoFavoriteCache func error:" + err.Error())
 			return false, err
 		}
 		return rd.QueryFavoriteExist(userId, videoId)
-	}else if err != nil {
+	} else if err != nil {
 		hlog.Error("QueryFavoriteExist func error:" + err.Error())
 		return false, err
 	}
@@ -210,15 +222,15 @@ func queryFavoriteExist(userId int64, videoId int64) (bool, error) {
 	return e, nil
 }
 
-func buildVideoFavoriteCache(videoId int64) error{
+func buildVideoFavoriteCache(videoId int64) error {
 	userIds, err := db.GetVideoFavoriteUserIds(videoId)
-	if err != nil{
+	if err != nil {
 		hlog.Error("GetVideoFavoriteUserIds func error:" + err.Error())
 		return err
 	}
 	//TODO 如果这条数据在数据库里没有 会返回什么错误?
 	err = rd.SetVideoFavoriteSet(videoId, userIds)
-	if err != nil{
+	if err != nil {
 		hlog.Error("SetVideoFavoriteSet func error:" + err.Error())
 		return err
 	}

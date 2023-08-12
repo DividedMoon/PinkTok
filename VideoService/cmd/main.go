@@ -4,11 +4,20 @@ package main
 
 import (
 	"github.com/cloudwego/hertz/pkg/app/server"
+	"video_service/biz/config"
+	"video_service/biz/dal/db"
+	"video_service/biz/dal/redis"
+	"video_service/biz/middleware/minio"
 )
 
 func main() {
-	h := server.Default()
+	h := server.Default(server.WithHostPorts("127.0.0.1:8890"))
 
 	register(h)
+	db.Init()
+	redis.InitRedis()
+	_ = config.InitConfigs()
+	minio.Init()
+
 	h.Spin()
 }
