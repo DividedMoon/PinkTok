@@ -4,24 +4,46 @@ package handler
 
 import (
 	"context"
-
-	"client/dto"
 	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
+	"user_service/biz/internal/constant"
+	"user_service/biz/model/client"
+	"user_service/biz/service"
 )
 
 // Register .
 // @router /internal/user/register [POST]
 func Register(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req dto.UserRegisterReq
+	var (
+		err error
+		req client.UserRegisterReq
+	)
+
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		c.JSON(consts.StatusOK, &client.UserRegisterResp{
+			StatusCode: constant.ServiceErrCode,
+			StatusMsg:  err.Error(),
+			UserId:     -1,
+		})
 		return
 	}
-
-	resp := new(dto.UserRegisterResp)
-
-	c.JSON(consts.StatusOK, resp)
+	hlog.CtxInfof(ctx, "request: %+v", req.Username)
+	// 新建用户
+	u, err := service.RegisterUser(req.Username, req.Password)
+	if err != nil {
+		hlog.CtxErrorf(ctx, "register user error: %+v", err)
+		c.JSON(consts.StatusOK, &client.UserRegisterResp{
+			StatusCode: constant.ServiceErrCode,
+			StatusMsg:  err.Error(),
+			UserId:     -1,
+		})
+		return
+	}
+	c.JSON(consts.StatusOK, &client.UserRegisterResp{
+		StatusCode: constant.SuccessCode,
+		StatusMsg:  constant.SuccessMsg,
+		UserId:     u.Id,
+	})
 }

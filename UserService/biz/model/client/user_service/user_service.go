@@ -5,8 +5,8 @@ package user_service
 import (
 	"context"
 	"fmt"
+	"user_service/biz/model/client"
 
-	"client/dto"
 	"github.com/cloudwego/hertz/pkg/common/config"
 	"github.com/cloudwego/hertz/pkg/protocol"
 )
@@ -17,11 +17,11 @@ var (
 )
 
 type Client interface {
-	Register(context context.Context, req *dto.UserRegisterReq, reqOpt ...config.RequestOption) (resp *dto.UserRegisterResp, rawResponse *protocol.Response, err error)
+	Register(context context.Context, req *client.UserRegisterReq, reqOpt ...config.RequestOption) (resp *client.UserRegisterResp, rawResponse *protocol.Response, err error)
 
-	Login(context context.Context, req *dto.UserLoginReq, reqOpt ...config.RequestOption) (resp *dto.UserLoginResp, rawResponse *protocol.Response, err error)
+	Login(context context.Context, req *client.UserLoginReq, reqOpt ...config.RequestOption) (resp *client.UserLoginResp, rawResponse *protocol.Response, err error)
 
-	UserInfo(context context.Context, req *dto.UserInfoReq, reqOpt ...config.RequestOption) (resp *dto.UserInfoResp, rawResponse *protocol.Response, err error)
+	UserInfo(context context.Context, req *client.UserInfoReq, reqOpt ...config.RequestOption) (resp *client.UserInfoResp, rawResponse *protocol.Response, err error)
 }
 
 type UserServiceClient struct {
@@ -39,8 +39,8 @@ func NewUserServiceClient(hostUrl string, ops ...Option) (Client, error) {
 	}, nil
 }
 
-func (s *UserServiceClient) Register(context context.Context, req *dto.UserRegisterReq, reqOpt ...config.RequestOption) (resp *dto.UserRegisterResp, rawResponse *protocol.Response, err error) {
-	httpResp := &dto.UserRegisterResp{}
+func (s *UserServiceClient) Register(context context.Context, req *client.UserRegisterReq, reqOpt ...config.RequestOption) (resp *client.UserRegisterResp, rawResponse *protocol.Response, err error) {
+	httpResp := &client.UserRegisterResp{}
 	ret, err := s.client.r().
 		setContext(context).
 		setQueryParams(map[string]interface{}{}).
@@ -61,8 +61,8 @@ func (s *UserServiceClient) Register(context context.Context, req *dto.UserRegis
 	return resp, rawResponse, nil
 }
 
-func (s *UserServiceClient) Login(context context.Context, req *dto.UserLoginReq, reqOpt ...config.RequestOption) (resp *dto.UserLoginResp, rawResponse *protocol.Response, err error) {
-	httpResp := &dto.UserLoginResp{}
+func (s *UserServiceClient) Login(context context.Context, req *client.UserLoginReq, reqOpt ...config.RequestOption) (resp *client.UserLoginResp, rawResponse *protocol.Response, err error) {
+	httpResp := &client.UserLoginResp{}
 	ret, err := s.client.r().
 		setContext(context).
 		setQueryParams(map[string]interface{}{}).
@@ -83,8 +83,8 @@ func (s *UserServiceClient) Login(context context.Context, req *dto.UserLoginReq
 	return resp, rawResponse, nil
 }
 
-func (s *UserServiceClient) UserInfo(context context.Context, req *dto.UserInfoReq, reqOpt ...config.RequestOption) (resp *dto.UserInfoResp, rawResponse *protocol.Response, err error) {
-	httpResp := &dto.UserInfoResp{}
+func (s *UserServiceClient) UserInfo(context context.Context, req *client.UserInfoReq, reqOpt ...config.RequestOption) (resp *client.UserInfoResp, rawResponse *protocol.Response, err error) {
+	httpResp := &client.UserInfoResp{}
 	ret, err := s.client.r().
 		setContext(context).
 		setQueryParams(map[string]interface{}{}).
@@ -112,14 +112,14 @@ func ConfigDefaultClient(ops ...Option) (err error) {
 	return
 }
 
-func Register(context context.Context, req *dto.UserRegisterReq, reqOpt ...config.RequestOption) (resp *dto.UserRegisterResp, rawResponse *protocol.Response, err error) {
+func Register(context context.Context, req *client.UserRegisterReq, reqOpt ...config.RequestOption) (resp *client.UserRegisterResp, rawResponse *protocol.Response, err error) {
 	return defaultClient.Register(context, req, reqOpt...)
 }
 
-func Login(context context.Context, req *dto.UserLoginReq, reqOpt ...config.RequestOption) (resp *dto.UserLoginResp, rawResponse *protocol.Response, err error) {
+func Login(context context.Context, req *client.UserLoginReq, reqOpt ...config.RequestOption) (resp *client.UserLoginResp, rawResponse *protocol.Response, err error) {
 	return defaultClient.Login(context, req, reqOpt...)
 }
 
-func UserInfo(context context.Context, req *dto.UserInfoReq, reqOpt ...config.RequestOption) (resp *dto.UserInfoResp, rawResponse *protocol.Response, err error) {
+func UserInfo(context context.Context, req *client.UserInfoReq, reqOpt ...config.RequestOption) (resp *client.UserInfoResp, rawResponse *protocol.Response, err error) {
 	return defaultClient.UserInfo(context, req, reqOpt...)
 }

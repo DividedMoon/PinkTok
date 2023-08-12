@@ -3,8 +3,8 @@
 package main
 
 import (
-	router "PinkTok/UserService/biz/router"
 	"github.com/cloudwego/hertz/pkg/app/server"
+	router "user_service/biz/router"
 )
 
 // register registers all routers.
@@ -12,5 +12,4 @@ func register(r *server.Hertz) {
 
 	router.GeneratedRegister(r)
 
-	customizedRegister(r)
 }

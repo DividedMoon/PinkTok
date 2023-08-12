@@ -3,56 +3,66 @@ syntax = "proto3";
 package client;
 
 import "api.proto";
-import "entity.proto";
 
-option go_package = "dto";
+option go_package = "client";
+
+message UserInfo {
+    int64 id = 1; // 用户id
+    string name = 2; // 用户名称
+    int64 follow_count = 3; // 关注总数
+    int64 follower_count = 4; // 粉丝总数
+    bool is_follow = 5; // true-已关注，false-未关注
+    string avatar = 6; //用户头像
+    string background_image = 7; //用户个人页顶部大图
+    string signature = 8; //个人简介
+    int64 total_favorited = 9; //获赞数量
+    int64 work_count = 10; //作品数量
+    int64 favorite_count = 11; //点赞数量
+}
 
 message user_register_req {
-    string username = 1[(api.body)="body"]; // 注册用户名，最长32个字符
-    string password = 2[(api.body)="body"]; // 密码，最长32个字符
+    string username = 1[(api.body) = "username"]; // 注册用户名，最长32个字符
+    string password = 2[(api.body) = "password"]; // 密码，最长32个字符
 }
 
 message user_register_resp {
     int32 status_code = 1; // 状态码，0-成功，其他值-失败
-    optional string status_msg = 2; // 返回状态描述
+    string status_msg = 2; // 返回状态描述
     int64 user_id = 3; // 用户id
-    string token = 4; // 用户鉴权token
 }
 
 message user_login_req {
-    string username = 1[(api.body)="body"]; // 登录用户名
-    string password = 2[(api.body)="body"]; // 登录密码
+    string username = 1[(api.body) = "username"]; // 登录用户名
+    string password = 2[(api.body) = "password"]; // 登录密码
 }
 
 message user_login_resp {
     int32 status_code = 1; // 状态码，0-成功，其他值-失败
     string status_msg = 2; // 返回状态描述
     int64 user_id = 3; // 用户id
-    string token = 4; // 用户鉴权token
 }
 
 message user_info_req {
-    int64 user_id = 1[(api.body)="body"]; // 用户id
-    string token = 2[(api.body)="body"]; // 用户鉴权token
+    int64 user_id = 1[(api.body) = "user_id"]; // 用户id
 }
 
 message user_info_resp {
     int32 status_code = 1; // 状态码，0-成功，其他值-失败
     string status_msg = 2; // 返回状态描述
-    entity.UserInfo user = 3; // 用户信息
+    UserInfo user = 3; // 用户信息
 }
 
 
 
 service UserService {
     rpc Register(user_register_req) returns (user_register_resp) {
-        option (api.post)="/internal/user/register";
+        option (api.post) = "/internal/user/register";
     }
     rpc Login(user_login_req) returns (user_login_resp) {
-        option (api.post)="/internal/user/login";
+        option (api.post) = "/internal/user/login";
     }
     rpc UserInfo(user_info_req) returns (user_info_resp) {
-        option (api.post)="/internal/user/info";
+        option (api.post) = "/internal/user/info";
     }
 }
 
