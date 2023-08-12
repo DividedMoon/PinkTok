@@ -4,7 +4,9 @@ package handler
 
 import (
 	"context"
+	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"video_service/biz/internal/constants"
+	"video_service/biz/internal/utils"
 	"video_service/biz/service"
 
 	"github.com/cloudwego/hertz/pkg/app"
@@ -21,9 +23,11 @@ func Feed(ctx context.Context, c *app.RequestContext) {
 
 	if err != nil {
 		//c.String(consts.StatusBadRequest, err.Error())
+		hlog.CtxErrorf(ctx, "BindAndValidateErr", err.Error())
+		resp := utils.BuildBaseResp(err)
 		c.JSON(consts.StatusOK, client.FeedResp{
-			StatusCode: constants.ServiceErrCode,
-			StatusMsg:  constants.ServiceErrMsg,
+			StatusCode: resp.StatusCode,
+			StatusMsg:  resp.StatusMsg,
 			VideoList:  nil,
 			NextTime:   req.LatestTime,
 		})

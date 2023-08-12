@@ -12,7 +12,7 @@ message feed_req {
 message feed_resp {
    int32 status_code = 1; // 状态码，0-成功，其他值-失败
    string status_msg = 2; // 返回状态描述
-   VideoInfo video_list = 3; // 视频列表
+   repeated VideoInfo video_list = 3; // 视频列表
    int64 next_time = 4; // 本次返回的视频中，发布最早的时间，作为下次请求时的latest_time
 }
 

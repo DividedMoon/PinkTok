@@ -10,3 +10,13 @@ const (
 	MinioVideoBucketName = "videobucket"
 	MinioImgBucketName   = "imagebucket"
 )
+
+const (
+	VideosTableName   = "video"
+	FavoriteTableName = "favorite"
+)
+
+const (
+	RedisAddr     = "8.130.120.154:6379"
+	RedisPassword = "Lhj000922"
+)

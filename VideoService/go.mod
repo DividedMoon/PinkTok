@@ -4,6 +4,7 @@ go 1.17
 
 require (
 	github.com/cloudwego/hertz v0.6.7
+	github.com/go-redis/redis/v7 v7.4.1
 	github.com/hertz-contrib/logger/zap v1.0.0
 	github.com/minio/minio-go/v7 v7.0.61
 	google.golang.org/protobuf v1.31.0
@@ -52,3 +53,5 @@ require (
 	golang.org/x/text v0.11.0 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 )
+
+replace user_service v0.0.0 => ../UserService
