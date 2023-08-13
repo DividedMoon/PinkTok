@@ -739,12 +739,12 @@ var file_video_service_proto_depIdxs = []int32{
 	6, // 0: client.feed_resp.video_list:type_name -> client.VideoInfo
 	6, // 1: client.get_publish_list_resp.video_list:type_name -> client.VideoInfo
 	7, // 2: client.VideoInfo.author:type_name -> client.UserInfo
-	0, // 3: client.VideoService.Feed:input_type -> client.feed_req
-	2, // 4: client.VideoService.PublishVideo:input_type -> client.publish_req
-	4, // 5: client.VideoService.GetPublishList:input_type -> client.get_publish_list_req
-	1, // 6: client.VideoService.Feed:output_type -> client.feed_resp
-	3, // 7: client.VideoService.PublishVideo:output_type -> client.publish_resp
-	5, // 8: client.VideoService.GetPublishList:output_type -> client.get_publish_list_resp
+	0, // 3: client.VideoService1.Feed:input_type -> client.feed_req
+	2, // 4: client.VideoService1.PublishVideo:input_type -> client.publish_req
+	4, // 5: client.VideoService1.GetPublishList:input_type -> client.get_publish_list_req
+	1, // 6: client.VideoService1.Feed:output_type -> client.feed_resp
+	3, // 7: client.VideoService1.PublishVideo:output_type -> client.publish_resp
+	5, // 8: client.VideoService1.GetPublishList:output_type -> client.get_publish_list_resp
 	6, // [6:9] is the sub-list for method output_type
 	3, // [3:6] is the sub-list for method input_type
 	3, // [3:3] is the sub-list for extension type_name
