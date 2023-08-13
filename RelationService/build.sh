@@ -1,7 +1,13 @@
+#!/usr/bin/env bash
+RUN_NAME="relation_service"
 
-#!/bin/bash
-RUN_NAME=
 mkdir -p output/bin
-cp script/* output 2>/dev/null
+cp script/* output/
 chmod +x output/bootstrap.sh
-go build -o output/bin/${RUN_NAME}
+
+if [ "$IS_SYSTEM_TEST_ENV" != "1" ]; then
+    go build -o output/bin/${RUN_NAME}
+else
+    go test -c -covermode=set -o output/bin/${RUN_NAME} -coverpkg=./...
+fi
+
