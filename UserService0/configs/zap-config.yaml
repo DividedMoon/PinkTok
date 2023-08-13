@@ -1,6 +1,0 @@
-outputDir: "./hlog"
-maxSize: 20
-maxBackups: 5
-maxAge: 10
-compress: true
-logLevel: "debug"

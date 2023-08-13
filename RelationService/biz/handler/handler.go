@@ -38,18 +38,57 @@ func (s *RelationServiceImpl) SendRelationAction(ctx context.Context, req *biz.R
 
 // GetFollowList implements the RelationServiceImpl interface.
 func (s *RelationServiceImpl) GetFollowList(ctx context.Context, req *biz.RelationFollowListReq) (resp *biz.RelationFollowListResp, err error) {
-
+	ids, err := service.GetFollowListById(ctx, req.UserId)
+	if err != nil {
+		res := utils.BuildBaseResp(err)
+		hlog.CtxErrorf(ctx, "GetFollowListById err:%v, res:%+v", err, res)
+		return &biz.RelationFollowListResp{
+			StatusCode: res.StatusCode,
+			StatusMsg:  res.StatusMsg,
+		}, err
+	}
+	resp = &biz.RelationFollowListResp{
+		StatusCode: constant.SuccessCode,
+		StatusMsg:  constant.SuccessMsg,
+		UserList:   ids,
+	}
 	return
 }
 
 // GetFollowerList implements the RelationServiceImpl interface.
 func (s *RelationServiceImpl) GetFollowerList(ctx context.Context, req *biz.RelationFollowerListReq) (resp *biz.RelationFollowerListResp, err error) {
-	// TODO: Your code here...
+	users, err := service.GetFollowerListById(ctx, req.UserId)
+	if err != nil {
+		res := utils.BuildBaseResp(err)
+		hlog.CtxErrorf(ctx, "GetFollowerListById err:%v, res:%+v", err, res)
+		return &biz.RelationFollowerListResp{
+			StatusCode: res.StatusCode,
+			StatusMsg:  res.StatusMsg,
+		}, err
+	}
+	resp = &biz.RelationFollowerListResp{
+		StatusCode: constant.SuccessCode,
+		StatusMsg:  constant.SuccessMsg,
+		UserList:   users,
+	}
 	return
 }
 
 // GetFriendList implements the RelationServiceImpl interface.
 func (s *RelationServiceImpl) GetFriendList(ctx context.Context, req *biz.RelationFriendListReq) (resp *biz.RelationFriendListResp, err error) {
-	// TODO: Your code here...
+	friends, err := service.GetFriendListById(ctx, req.UserId)
+	if err != nil {
+		res := utils.BuildBaseResp(err)
+		hlog.CtxErrorf(ctx, "GetFriendListById err:%v, res:%+v", err, res)
+		return &biz.RelationFriendListResp{
+			StatusCode: res.StatusCode,
+			StatusMsg:  res.StatusMsg,
+		}, err
+	}
+	resp = &biz.RelationFriendListResp{
+		StatusCode: constant.SuccessCode,
+		StatusMsg:  constant.SuccessMsg,
+		UserList:   friends,
+	}
 	return
 }

@@ -1,7 +1,35 @@
 package client
 
-import "user_service/biz/model/client/user_service"
+import (
+	"context"
+	"github.com/cloudwego/hertz/pkg/common/hlog"
+	"github.com/cloudwego/kitex/client"
+	"github.com/cloudwego/kitex/pkg/rpcinfo"
+	"github.com/kitex-contrib/obs-opentelemetry/provider"
+	"github.com/kitex-contrib/obs-opentelemetry/tracing"
+	"user_service/biz/userservice"
+)
 
 var (
-	UserServiceClient, _ = user_service.NewUserServiceClient("//127.0.0.1:8889")
+	UserServiceClient userservice.Client
+	err               error
 )
+
+func InitClient() {
+	p := provider.NewOpenTelemetryProvider(
+		provider.WithServiceName("user_service_client"),
+		provider.WithExportEndpoint("106.54.208.133:4317"),
+		provider.WithInsecure(),
+	)
+	defer p.Shutdown(context.Background())
+	UserServiceClient, err =
+		userservice.NewClient("user_service_client",
+			client.WithHostPorts("127.0.0.1:8889"),
+			client.WithSuite(tracing.NewClientSuite()),
+			client.WithClientBasicInfo(&rpcinfo.EndpointBasicInfo{
+				ServiceName: "user_service_client",
+			}))
+	if err != nil {
+		hlog.Errorf("UserServiceClient init failed: %+v", err)
+	}
+}

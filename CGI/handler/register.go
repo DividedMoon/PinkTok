@@ -1,7 +1,7 @@
 package handler
 
 import (
-	cgi "cgi/internal/client"
+	internalClient "cgi/internal/client"
 	"cgi/internal/constant"
 	"cgi/internal/utils"
 	"cgi/middleware"
@@ -9,7 +9,7 @@ import (
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
-	"user_service/biz/model/client"
+	"user_service/biz"
 )
 
 type userRegisterReq struct {
@@ -54,12 +54,12 @@ func RegisterHandler(ctx context.Context, c *app.RequestContext) {
 	}
 
 	// 请求userService
-	registerReq := &client.UserRegisterReq{
+	registerReq := &biz.UserRegisterReq{
 		Username: req.Username,
 		Password: cryPwd,
 	}
 	hlog.CtxInfof(ctx, "request user_service : %+v with %+v", registerReq, c.ClientIP())
-	registerResp, _, err := cgi.UserServiceClient.Register(ctx, registerReq)
+	registerResp, err := internalClient.UserServiceClient.Register(ctx, registerReq)
 	if err != nil {
 		resp = utils.BuildBaseResp(err)
 		c.JSON(consts.StatusOK, userRegisterResp{

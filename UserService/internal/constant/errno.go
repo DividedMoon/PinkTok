@@ -11,7 +11,7 @@ const (
 	ParamErrCode
 	AffectedRowIsNotEqualOneCode
 	AuthorizationFailedErrCode
-
+	PasswordIsNotVerifiedErrCode
 	UserAlreadyExistErrCode
 	UserIsNotExistErrCode
 )
@@ -23,6 +23,7 @@ const (
 	UserIsNotExistErrMsg        = "user is not exist"
 	PasswordIsNotVerifiedMsg    = "username or password not verified"
 	AffectedRowIsNotEqualOneMsg = "Affected row is not equal one"
+	PasswordIsNotVerifiedErrMsg = "Password is not verified"
 )
 
 type ErrNo struct {
@@ -52,6 +53,7 @@ var (
 	UserIsNotExistErr        = NewErrNo(UserIsNotExistErrCode, UserIsNotExistErrMsg)
 	PasswordIsNotVerified    = NewErrNo(AuthorizationFailedErrCode, PasswordIsNotVerifiedMsg)
 	AffectedRowIsNotEqualOne = NewErrNo(AffectedRowIsNotEqualOneCode, AffectedRowIsNotEqualOneMsg)
+	PasswordIsNotVerifiedErr = NewErrNo(PasswordIsNotVerifiedErrCode, PasswordIsNotVerifiedErrMsg)
 )
 
 // ConvertErr convert error to Errno

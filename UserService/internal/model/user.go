@@ -1,11 +1,10 @@
-package dto
+package model
 
 import (
 	"fmt"
 	"strings"
 	"time"
 	"user_service/internal/constant"
-	"user_service/internal/model"
 	"user_service/internal/util"
 )
 
@@ -37,11 +36,11 @@ func (*User) TableName() string {
 }
 
 func (u *User) Create() error {
-	return model.DB.Create(&u).Error
+	return DB.Create(&u).Error
 }
 
 func (u *User) Update() error {
-	affected := model.DB.
+	affected := DB.
 		Model(u).
 		Updates(u).
 		Where("deleted = 0").
@@ -54,14 +53,14 @@ func (u *User) Update() error {
 }
 
 func (u *User) SelectById(id int64) error {
-	return model.DB.
+	return DB.
 		Where("id = ? AND deleted = 0", id).
 		First(&u).
 		Error
 }
 
 func (u *User) SelectByUsername(username string) error {
-	return model.DB.
+	return DB.
 		Where("username = ? AND deleted = 0", username).
 		First(&u).
 		Error
@@ -79,7 +78,7 @@ func (u *User) UpdateByCountMap(origin, changes map[string]int) error {
 		updates[k] = v + changes[k]
 	}
 	wheres = append(wheres, "deleted = 0")
-	result := model.DB.
+	result := DB.
 		Model(u).
 		Updates(updates).
 		Where(strings.Join(wheres, " AND "), equals...).

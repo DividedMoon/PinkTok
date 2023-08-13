@@ -37,7 +37,7 @@ message relation_follow_list_req {
 message relation_follow_list_resp {
     int32 status_code = 1; // 状态码，0-成功，其他值-失败
     string status_msg = 2; // 返回状态描述
-    UserInfo user_list = 3; // 用户信息列表
+    repeated UserInfo user_list = 3; // 用户信息列表
 }
 
 message relation_follower_list_req {
@@ -47,7 +47,7 @@ message relation_follower_list_req {
 message relation_follower_list_resp {
     int32 status_code = 1; // 状态码，0-成功，其他值-失败
     string status_msg = 2; // 返回状态描述
-    UserInfo user_list = 3; // 用户列表
+    repeated UserInfo user_list = 3; // 用户列表
 }
 
 message relation_friend_list_req {
@@ -57,7 +57,7 @@ message relation_friend_list_req {
 message relation_friend_list_resp {
     int32 status_code = 1; // 状态码，0-成功，其他值-失败
     string status_msg = 2; // 返回状态描述
-    FriendUserInfo user_list = 3; // 用户列表
+    repeated FriendUserInfo user_list = 3; // 用户列表
 }
 
 message FriendUserInfo {

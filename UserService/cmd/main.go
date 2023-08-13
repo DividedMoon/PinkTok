@@ -11,6 +11,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"user_service/biz/handler"
 	biz "user_service/biz/userservice"
 	"user_service/internal/model"
 )
@@ -32,7 +33,7 @@ func main() {
 		provider.WithExportEndpoint("106.54.208.133:4317"),
 		provider.WithInsecure())
 	defer p.Shutdown(context.Background())
-	svr := biz.NewServer(new(UserServiceImpl),
+	svr := biz.NewServer(new(handler.UserServiceImpl),
 		server.WithServiceAddr(addr),
 		server.WithSuite(tracing.NewServerSuite()),
 		server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{

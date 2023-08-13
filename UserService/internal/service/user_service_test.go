@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"github.com/cloudwego/hertz/pkg/common/test/assert"
 	"testing"
-	"user_service/biz/model/client"
+	"user_service/biz"
 )
 
 func TestUpdateUserInfo(t *testing.T) {
 	var (
-		user = &client.UserInfo{
+		user = &biz.UserInfo{
 			Id:              1,
 			Name:            "Lhj",
 			FollowCount:     0,
@@ -27,7 +27,7 @@ func TestUpdateUserInfo(t *testing.T) {
 			"WorkCount":   4,
 		}
 	)
-	err := UpdateUserInfo(user, changes)
+	_, err := UpdateUserInfo(user, changes)
 	assert.Assert(t, err == nil)
 	fmt.Println(user)
 }

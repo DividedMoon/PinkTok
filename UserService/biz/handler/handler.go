@@ -1,4 +1,4 @@
-package main
+package handler
 
 import (
 	"context"
@@ -38,7 +38,22 @@ func (s *UserServiceImpl) Register(ctx context.Context, req *biz.UserRegisterReq
 
 // Login implements the UserServiceImpl interface.
 func (s *UserServiceImpl) Login(ctx context.Context, req *biz.UserLoginReq) (resp *biz.UserLoginResp, err error) {
-	// TODO: Your code here...
+	id, err := service.TryLogin(req.Username, req.Password)
+	if err != nil {
+		res := utils.BuildBaseResp(err)
+		hlog.CtxErrorf(ctx, "login error: %+v", err)
+		resp = &biz.UserLoginResp{
+			StatusCode: res.StatusCode,
+			StatusMsg:  res.StatusMsg,
+			UserId:     -1,
+		}
+		return
+	}
+	resp = &biz.UserLoginResp{
+		StatusCode: constant.SuccessCode,
+		StatusMsg:  constant.SuccessMsg,
+		UserId:     id,
+	}
 	return
 }
 

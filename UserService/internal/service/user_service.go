@@ -7,11 +7,12 @@ import (
 	"time"
 	"user_service/biz"
 	"user_service/internal/constant"
-	"user_service/internal/model/dto"
+	"user_service/internal/model"
+	utils "user_service/internal/util"
 )
 
 func RegisterUser(username, password string) (u *biz.UserInfo, err error) {
-	var user = &dto.User{
+	var user = &model.User{
 		UserName:        username,
 		Password:        password,
 		Name:            generateRandomName(5),
@@ -27,7 +28,7 @@ func RegisterUser(username, password string) (u *biz.UserInfo, err error) {
 	}
 	err = user.Create()
 	if err != nil {
-		return nil, err
+		return nil, constant.UserAlreadyExistErr
 	}
 	u = &biz.UserInfo{
 		Id:              user.ID,
@@ -45,8 +46,26 @@ func RegisterUser(username, password string) (u *biz.UserInfo, err error) {
 	return u, nil
 }
 
+func TryLogin(username, password string) (userId int64, err error) {
+	var user = &model.User{
+		UserName: username,
+	}
+	err = user.SelectByUsername(username)
+	if err != nil {
+		hlog.Errorf("SelectByUsername failed, err = %+v", err)
+		return -1, err
+	}
+	if !utils.VerifyPassword(password, user.Password) {
+		hlog.Errorf("Password is not verified")
+		return -1, constant.PasswordIsNotVerifiedErr
+	}
+	hlog.Infof("Login success, user = %+v", user.UserName)
+	return user.ID, nil
+
+}
+
 func GetUserInfo(userId int64) (u *biz.UserInfo, err error) {
-	var user = &dto.User{
+	var user = &model.User{
 		ID: userId,
 	}
 	err = user.SelectById(userId)
@@ -72,7 +91,7 @@ func GetUserInfo(userId int64) (u *biz.UserInfo, err error) {
 
 func UpdateUserInfo(u *biz.UserInfo, changes map[string]int) (string, error) {
 	var (
-		user = &dto.User{
+		user = &model.User{
 			ID:             u.Id,
 			FollowCount:    u.FollowCount,
 			FollowerCount:  u.FollowerCount,
