@@ -1,6 +1,6 @@
 module relation_service
 
-go 1.17
+go 1.20
 
 require (
 	github.com/cloudwego/fastpb v0.0.4

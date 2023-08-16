@@ -1,6 +1,7 @@
 package main
 
 import (
+	"cgi/internal/client"
 	"cgi/internal/config"
 	"cgi/middleware"
 	"cgi/route"
@@ -9,7 +10,9 @@ import (
 )
 
 func main() {
-	h := server.Default(server.WithHostPorts("127.0.0.1:8888"))
+	client.InitClient()
+
+	h := server.Default(server.WithHostPorts("0.0.0.0:9000"))
 	if err := config.InitConfigs(); err != nil {
 		log.Fatal(err.Error())
 		return
