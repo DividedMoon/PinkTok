@@ -18,7 +18,7 @@ import (
 )
 
 func main() {
-	addr, err := net.ResolveTCPAddr("tcp", "127.0.0.1:8891")
+	addr, err := net.ResolveTCPAddr("tcp", "0.0.0.0:11012")
 	if err != nil {
 		hlog.Errorf("resolve tcp addr failed, err:%v", err)
 	}

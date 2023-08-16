@@ -24,7 +24,7 @@ func InitClient() {
 	defer p.Shutdown(context.Background())
 	UserServiceClient, err =
 		userservice.NewClient("user_service_client",
-			client.WithHostPorts("127.0.0.1:8889"),
+			client.WithHostPorts("127.0.0.1:11011"),
 			client.WithSuite(tracing.NewClientSuite()),
 			client.WithClientBasicInfo(&rpcinfo.EndpointBasicInfo{
 				ServiceName: "user_service_client",

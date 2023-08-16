@@ -21,7 +21,7 @@ func main() {
 	interrupt := make(chan os.Signal, 1)
 	signal.Notify(interrupt, syscall.SIGINT, syscall.SIGTERM)
 
-	addr, err := net.ResolveTCPAddr("tcp", "127.0.0.1:8889")
+	addr, err := net.ResolveTCPAddr("tcp", "0.0.0.0:11011")
 	if err != nil {
 		hlog.Errorf("resolve tcp addr failed, err:%v", err)
 	}

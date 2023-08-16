@@ -12,7 +12,7 @@ import (
 func main() {
 	client.InitClient()
 
-	h := server.Default(server.WithHostPorts("0.0.0.0:9000"))
+	h := server.Default(server.WithHostPorts("0.0.0.0:11010"))
 	if err := config.InitConfigs(); err != nil {
 		log.Fatal(err.Error())
 		return
