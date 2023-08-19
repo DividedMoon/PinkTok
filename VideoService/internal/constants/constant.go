@@ -3,12 +3,16 @@ package constants
 const VideoFeedCount = 30
 
 const (
-	MinioEndPoint        = "localhost:18001"
-	MinioAccessKeyID     = "douyin"
-	MinioSecretAccessKey = "douyin123"
-	MiniouseSSL          = false
-	MinioVideoBucketName = "videobucket"
-	MinioImgBucketName   = "imagebucket"
+	MinioEndPoint    = "106.54.208.133:18000"
+	MinioAccessKeyID = "admin"
+	//MinioAccessKeyID     = "zMAQ2yPom14RvvcZagYl"
+	//MinioSecretAccessKey = "eTtObGyyuJ84b80y1d0BIF4ebVcEU81oTLZJwVJ3"
+	MinioSecretAccessKey  = "Lhj000922"
+	MiniouseSSL           = false
+	MinioVideoBucketName  = "videobucket"
+	MinioImgBucketName    = "imagebucket"
+	MinioURLConvertScheme = "http"
+	MinioURLConvertHost   = MinioEndPoint
 )
 
 const (
@@ -17,6 +21,6 @@ const (
 )
 
 const (
-	RedisAddr     = "8.130.120.154:6379"
+	RedisAddr     = "127.0.0.1:6379"
 	RedisPassword = "Lhj000922"
 )

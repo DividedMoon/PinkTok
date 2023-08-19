@@ -9,11 +9,19 @@ const (
 	SuccessCode    = 0
 	ServiceErrCode = iota + 20000
 	InnerServiceErrCode
+	DBErrCode
+	VideoCopyErrCode
+	GetExtensionErrCode
+	UploadImgErrCode
 )
 
 const (
-	SuccessMsg    = "Success"
-	ServiceErrMsg = "Service call failed"
+	SuccessMsg         = "Success"
+	ServiceErrMsg      = "Service call failed"
+	DBErrMsg           = "DB call failed"
+	VideoCopyErrMsg    = "Video copy failed"
+	GetExtensionErrMsg = "Get extension failed"
+	UploadImgErrMsg    = "Upload image failed"
 )
 
 type ErrNo struct {

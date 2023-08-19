@@ -3,54 +3,60 @@ package service
 import (
 	"context"
 	"fmt"
-	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/go-redis/redis/v7"
 	"sync"
 	"time"
-	userModel "user_service/biz/model/client"
+	"video_service/internal/utils"
+
+	//userModel "user_service/biz/model/client"
 	client "video_service/biz"
-	userClient "video_service/biz/internal/client"
+	//userClient "video_service/biz/internal/client"
 	"video_service/internal/constants"
 	"video_service/internal/dal/db"
 	rd "video_service/internal/dal/redis"
-	"video_service/internal/utils"
 )
 
 type FeedService struct {
 	ctx context.Context
-	c   *app.RequestContext
 }
 
 // NewFeedService create feed service
-func NewFeedService(ctx context.Context, c *app.RequestContext) *FeedService {
-	return &FeedService{ctx: ctx, c: c}
+func NewFeedService(ctx context.Context) *FeedService {
+	return &FeedService{ctx: ctx}
 }
 
 func (s *FeedService) GetFeed(req *client.FeedReq) (*client.FeedResp, error) {
 	resp := &client.FeedResp{}
 	var lastTime time.Time
 	if req.LatestTime == 0 {
+		hlog.Infof("LatestTime is 0")
 		lastTime = time.Now()
 	} else {
-		lastTime = time.Unix(req.LatestTime/1000, 0)
+		hlog.Infof("LatestTime is not 0")
+		lastTime = time.Unix(req.LatestTime, 0)
 	}
 	fmt.Printf("LastTime: %v\n", lastTime)
 	currentUserId := req.GetUserId()
 
 	dbVideos, err := db.GetVideosByLastTime(lastTime)
 	if err != nil {
-		return resp, err
+		hlog.Error(s.ctx, "GetVideosByLastTime func error: %v", err)
+		return nil, constants.NewErrNo(constants.DBErrCode, constants.DBErrMsg)
 	}
 	// 拷贝视频
 	videos := make([]*client.VideoInfo, 0, constants.VideoFeedCount)
 	err = s.CopyVideos(&videos, &dbVideos, currentUserId)
 	if err != nil {
-		return resp, nil
+		hlog.Error(s.ctx, "CopyVideos func error: %v", err)
+		return nil, constants.NewErrNo(constants.VideoCopyErrCode, constants.VideoCopyErrMsg)
 	}
 
 	resp.VideoList = videos
 
+	// TODO FeedService里是以最后一个视频的发布时间作为下次请求的LatestTime，这样会导致有些视频会被重复请求，需要优化
+	// TODO 优化方案：将视频的发布时间作为唯一标识，这样就不会出现重复请求的情况????????
+	// TODO 在Response里是以当前时间作为LastTime，这样会导致有些视频会被漏掉，需要优化
 	if len(dbVideos) != 0 {
 		resp.NextTime = dbVideos[len(dbVideos)-1].PublishTime.Unix()
 	}
@@ -70,41 +76,48 @@ func (s *FeedService) CopyVideos(result *[]*client.VideoInfo, data *[]*db.VideoD
 }
 
 func (s *FeedService) createVideo(data *db.VideoDBInfo, userId int64) (*client.VideoInfo, error) {
+	hlog.Infof("createVideo func data: %+v", data)
+
 	video := &client.VideoInfo{
 		Id: data.ID,
 		// 通过前后值将DB中的路径转换为完整的可被访问的路径
-		PlayUrl:  utils.URLconvert(s.ctx, s.c, data.PlayURL),
-		CoverUrl: utils.URLconvert(s.ctx, s.c, data.CoverURL),
+		PlayUrl:  utils.URLconvert(s.ctx, data.PlayURL),
+		CoverUrl: utils.URLconvert(s.ctx, data.CoverURL),
 		Title:    data.Title,
 	}
+	hlog.Infof("createVideo func video: %+v", video)
 
 	var wg sync.WaitGroup
 	wg.Add(4)
 	//ctx, cancel := context.WithCancel(context.Background())
 
-	errChannel := make(chan error)
+	errChan := make(chan error)
 
 	// 调用UserService获取本条视频的作者信息
 	go func() {
-		userInfoReq := &userModel.UserInfoReq{UserId: data.AuthorID}
-		resp, _, err := userClient.UserServiceClient.UserInfo(s.ctx, userInfoReq)
-
+		//TODO 这里传的是假数据 到时候需要调用UserService
+		//userInfoReq := &userModel.UserInfoReq{UserId: data.AuthorID}
+		//resp, _, err := userClient.UserServiceClient.UserInfo(s.ctx, userInfoReq)
+		//TODO 临时的
+		err := *new(error)
 		if err != nil {
-			errChannel <- fmt.Errorf("GetUserInfo func error:" + err.Error())
+			errChan <- fmt.Errorf("GetUserInfo func error:" + err.Error())
 		}
+		hlog.Infof("start to get user info")
 		video.Author = &client.UserInfo{
-			Id:              resp.User.Id,
-			Name:            resp.User.Name,
-			FollowCount:     resp.User.FollowCount,
-			FollowerCount:   resp.User.FollowerCount,
-			IsFollow:        resp.User.IsFollow,
-			Avatar:          resp.User.Avatar,
-			BackgroundImage: resp.User.BackgroundImage,
-			Signature:       resp.User.Signature,
-			TotalFavorited:  resp.User.TotalFavorited,
-			WorkCount:       resp.User.WorkCount,
-			FavoriteCount:   resp.User.FavoriteCount,
+			Id:              1,
+			Name:            "testUser",
+			FollowCount:     2,
+			FollowerCount:   3,
+			IsFollow:        true,
+			Avatar:          "resp.User.Avatar",
+			BackgroundImage: "resp.User.BackgroundImage",
+			Signature:       "resp.User.Signature",
+			TotalFavorited:  5,
+			WorkCount:       6,
+			FavoriteCount:   7,
 		}
+		hlog.Infof("get user info success : %+v", video.Author)
 
 		wg.Done()
 
@@ -113,52 +126,60 @@ func (s *FeedService) createVideo(data *db.VideoDBInfo, userId int64) (*client.V
 	// 调用VideoService获取视频点赞数量
 	go func() {
 		err := *new(error)
+		hlog.Infof("start to get favorite count")
 
 		video.FavoriteCount, err = getVideoFavoriteCount(data.ID) // TODO 获取视频点赞数量
 		if err != nil {
-			errChannel <- fmt.Errorf("GetFavoriteCount func error:" + err.Error())
+			errChan <- fmt.Errorf("GetFavoriteCount func error:" + err.Error())
 		}
+		hlog.Infof("get favorite count success : %+v", video.FavoriteCount)
 		wg.Done()
 	}()
 
 	// 调用VideoService返回评论数量
 	go func() {
 		err := *new(error)
-		video.CommentCount, err = getVideoCommentCount(data.ID) // TODO 调用VideoService返回评论数量
+		hlog.Infof("start to get comment count")
+		video.CommentCount, err = getVideoCommentCount(data.ID)
 		if err != nil {
-			errChannel <- fmt.Errorf("GetCommentCountByVideoID func error:" + err.Error())
+			errChan <- fmt.Errorf("GetCommentCountByVideoID func error:" + err.Error())
 		}
+		hlog.Infof("get comment count success : %+v", video.CommentCount)
 		wg.Done()
 	}()
 
 	// Get favorite exist
 	go func() {
 		err := *new(error)
+		hlog.Infof("start to get favorite exist")
 		video.IsFavorite, err = queryFavoriteExist(userId, data.ID)
 		if err != nil {
-			errChannel <- fmt.Errorf("GetCommentCountByVideoID func error:" + err.Error())
+			errChan <- fmt.Errorf("GetCommentCountByVideoID func error:" + err.Error())
 		}
+		hlog.Infof("get favorite exist success : %+v", video.IsFavorite)
 		wg.Done()
 	}()
 
-	// TODO 专门开启一个协程来处理错误 一旦出现错误其余协程也要停止 考虑一下close这个是怎么判断的
-	//开启额外的协程来处理各个协程运行过程中出现的错误
-	go func() {
-
-	}()
-
-	//go func() {
-	//	select {
-	//	case err := <-errChannel:
-	//		return nil, err
-	//	default:
-	//		return video, nil
-	//	}
-	//}()
-
+	hlog.Infof("start to wait")
 	wg.Wait()
-	close(errChannel)
-	return nil, nil
+	hlog.Infof("wait success")
+	//处理errChan中的错误
+	hasError := false
+	close(errChan)
+
+	for err := range errChan {
+		if err != nil {
+			hasError = true
+			hlog.Error(err.Error())
+		}
+	}
+
+	if hasError {
+		return nil, fmt.Errorf("some Errors occur in feedService goroutines")
+	} else {
+		hlog.Infof("createVideo func finished with no error")
+		return video, nil
+	}
 }
 
 func getVideoFavoriteCount(videoId int64) (int64, error) {

@@ -41,7 +41,7 @@ func (FavoriteDBInfo) TableName() string {
 
 func GetVideosByLastTime(lastTime time.Time) ([]*VideoDBInfo, error) {
 	videos := make([]*VideoDBInfo, constants.VideoFeedCount)
-	err := DB.Where("publish_time < ?", lastTime).Order("publish_time desc").Limit(constants.VideoFeedCount).Find(&videos).Error
+	err := DB.Where("created_time > ?", lastTime).Order("created_time desc").Limit(constants.VideoFeedCount).Find(&videos).Error
 	if err != nil {
 		hlog.Error("GetVideosByLastTime", "err", err)
 		return videos, err
@@ -70,4 +70,22 @@ func GetVideoCommentCount(videoId int64) (int64, error) {
 		return -1, err
 	}
 	return count, nil
+}
+
+func CreateVideo(video *VideoDBInfo) (videoId int64, err error) {
+	err = DB.Create(video).Error
+	if err != nil {
+		return 0, err
+	}
+	return video.ID, err
+}
+
+func GetVideoByUserID(userId int64) ([]*VideoDBInfo, error) {
+	var videos []*VideoDBInfo
+	err := DB.Where("author_id = ?", userId).Find(&videos).Error
+	if err != nil {
+		hlog.Error("GetVideoByUserID", "err", err)
+		return nil, err
+	}
+	return videos, nil
 }
