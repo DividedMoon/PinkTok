@@ -5,6 +5,7 @@ go 1.20
 require (
 	github.com/cloudwego/hertz v0.6.7
 	github.com/hertz-contrib/logger/zap v1.0.0
+	relation_service v0.0.0
 	user_service v0.0.0
 )
 
@@ -12,7 +13,7 @@ require (
 	github.com/cloudwego/kitex v0.6.2
 	github.com/hertz-contrib/jwt v1.0.2
 	github.com/kitex-contrib/obs-opentelemetry v0.2.3
-	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519
+	golang.org/x/crypto v0.6.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 	gopkg.in/yaml.v3 v3.0.1
 )
@@ -81,3 +82,5 @@ require (
 )
 
 replace user_service v0.0.0 => ../UserService
+
+replace relation_service v0.0.0 => ../RelationService

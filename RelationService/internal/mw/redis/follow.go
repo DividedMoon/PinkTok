@@ -9,6 +9,9 @@ const (
 
 // AddFollow 在userIdA的关注列表中添加userIdB
 func AddFollow(userIdA, userIdB int64) {
+	if rdbFollow == nil {
+		return
+	}
 	add(rdbFollow, followSuffix+strconv.FormatInt(userIdA, 10), userIdB)
 }
 
@@ -19,6 +22,9 @@ func DelFollow(userIdA, userIdB int64) {
 
 // ExistFollow 检查userIdA的关注列表中是否存在userIdB
 func ExistFollow(userIdA, userIdB int64) bool {
+	if rdbFollow == nil {
+		return false
+	}
 	return exist(rdbFollow, followSuffix+strconv.FormatInt(userIdA, 10), userIdB)
 }
 
@@ -34,6 +40,9 @@ func GetFollow(userIdA int64) []int64 {
 
 // AddFollower 在userIdA的粉丝列表中添加userIdB
 func AddFollower(userIdA, userIdB int64) {
+	if rdbFollow == nil {
+		return
+	}
 	add(rdbFollow, followerSuffix+strconv.FormatInt(userIdA, 10), userIdB)
 }
 
@@ -44,6 +53,9 @@ func DelFollower(userIdA, userIdB int64) {
 
 // ExistFollower 检查userIdA的粉丝列表中是否存在userIdB
 func ExistFollower(userIdA, userIdB int64) bool {
+	if rdbFollow == nil {
+		return false
+	}
 	return exist(rdbFollow, followerSuffix+strconv.FormatInt(userIdA, 10), userIdB)
 }
 

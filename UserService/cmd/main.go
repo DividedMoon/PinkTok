@@ -31,6 +31,8 @@ func main() {
 	p := provider.NewOpenTelemetryProvider(
 		provider.WithServiceName(servername),
 		provider.WithExportEndpoint("106.54.208.133:4317"),
+		provider.WithEnableMetrics(false),
+		provider.WithEnableTracing(true),
 		provider.WithInsecure())
 	defer p.Shutdown(context.Background())
 	svr := biz.NewServer(new(handler.UserServiceImpl),

@@ -58,9 +58,10 @@ func RegisterHandler(ctx context.Context, c *app.RequestContext) {
 		Username: req.Username,
 		Password: cryPwd,
 	}
-	hlog.CtxInfof(ctx, "request user_service : %+v with %+v", registerReq, c.ClientIP())
+	hlog.CtxInfof(ctx, "request user_service/Register : %+v with %+v", registerReq, c.ClientIP())
 	registerResp, err := internalClient.UserServiceClient.Register(ctx, registerReq)
 	if err != nil {
+		hlog.CtxErrorf(ctx, "request user_service/Register error: %+v", err)
 		resp = utils.BuildBaseResp(err)
 		c.JSON(consts.StatusOK, userRegisterResp{
 			StatusCode: resp.StatusCode,
@@ -68,7 +69,7 @@ func RegisterHandler(ctx context.Context, c *app.RequestContext) {
 		})
 		return
 	}
-	hlog.CtxInfof(ctx, "response user_service: %+v with %+v", registerResp, c.ClientIP())
+	hlog.CtxInfof(ctx, "response user_service/Register: %+v with %+v", registerResp, c.ClientIP())
 
 	token, _, err := middleware.JwtMiddleware.TokenGenerator(registerResp.UserId)
 	if err != nil {

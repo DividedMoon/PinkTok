@@ -48,6 +48,8 @@ func setupTracing(serviceName string) provider.OtelProvider {
 	return provider.NewOpenTelemetryProvider(
 		provider.WithServiceName(serviceName),
 		provider.WithExportEndpoint("106.54.208.133:4317"),
+		provider.WithEnableTracing(true),
+		provider.WithEnableMetrics(false),
 		provider.WithInsecure(),
 	)
 }

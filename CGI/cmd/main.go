@@ -10,13 +10,12 @@ import (
 )
 
 func main() {
-	client.InitClient()
-
 	h := server.Default(server.WithHostPorts("0.0.0.0:11010"))
 	if err := config.InitConfigs(); err != nil {
 		log.Fatal(err.Error())
 		return
 	}
+	client.InitClient()
 	// 初始化jwt
 	middleware.InitJwt()
 	// 注册路由
