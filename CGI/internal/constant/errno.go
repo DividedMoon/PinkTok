@@ -30,14 +30,15 @@ const (
 
 const (
 	SuccessMsg               = "Success"
-	ServerErrMsg             = "Service is unable to start successfully"
-	ParamErrMsg              = "Wrong Parameter has been given"
-	UserIsNotExistErrMsg     = "user is not exist"
-	PasswordIsNotVerifiedMsg = "username or password not verified"
+	ServerErrMsg             = "服务器错误"
+	ParamErrMsg              = "参数错误"
+	UserIsNotExistErrMsg     = "用户不存在"
+	UserAlreadyExistErrMsg   = "用户已存在"
+	PasswordIsNotVerifiedMsg = "用户名或密码不正确"
 	FavoriteActionErrMsg     = "favorite add failed"
 
 	MessageAddFailedErrMsg    = "message add failed"
-	FriendListNoPermissionMsg = "You can't query his friend list"
+	FriendListNoPermissionMsg = "无法查看对方的好友列表"
 	VideoIsNotExistErrMsg     = "video is not exist"
 	CommentIsNotExistErrMsg   = "comment is not exist"
 )
@@ -64,8 +65,8 @@ var (
 	Success                         = NewErrNo(SuccessCode, SuccessMsg)
 	ServiceErr                      = NewErrNo(ServiceErrCode, ServerErrMsg)
 	ParamErr                        = NewErrNo(ParamErrCode, ParamErrMsg)
-	UserAlreadyExistErr             = NewErrNo(UserAlreadyExistErrCode, "User already exists")
-	AuthorizationFailedErr          = NewErrNo(AuthorizationFailedErrCode, "Authorization failed")
+	UserAlreadyExistErr             = NewErrNo(UserAlreadyExistErrCode, UserAlreadyExistErrMsg)
+	AuthorizationFailedErr          = NewErrNo(AuthorizationFailedErrCode, "登录超时，请重新登录")
 	UserIsNotExistErr               = NewErrNo(UserIsNotExistErrCode, UserIsNotExistErrMsg)
 	PasswordIsNotVerified           = NewErrNo(AuthorizationFailedErrCode, PasswordIsNotVerifiedMsg)
 	FollowRelationAlreadyExistErr   = NewErrNo(FollowRelationAlreadyExistErrCode, "Follow Relation already exist")
