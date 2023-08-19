@@ -1,6 +1,7 @@
 package main
 
 import (
+	"cgi/internal/client"
 	"cgi/internal/config"
 	"cgi/middleware"
 	"cgi/route"
@@ -9,11 +10,12 @@ import (
 )
 
 func main() {
-	h := server.Default(server.WithHostPorts("127.0.0.1:8888"))
+	h := server.Default(server.WithHostPorts("0.0.0.0:11010"))
 	if err := config.InitConfigs(); err != nil {
 		log.Fatal(err.Error())
 		return
 	}
+	client.InitClient()
 	// 初始化jwt
 	middleware.InitJwt()
 	// 注册路由
