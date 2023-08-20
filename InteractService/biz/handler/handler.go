@@ -27,7 +27,7 @@ func (s *InteractServiceImpl) CommentAction(ctx context.Context, req *biz.Commen
 }
 
 // CommentList implements the InteractServiceImpl interface.
-func (s *InteractServiceImpl) CommentList(ctx context.Context, req *biz.CommentListReq) (resp *biz.DouyinCommentListResp, err error) {
+func (s *InteractServiceImpl) CommentList(ctx context.Context, req *biz.CommentListReq) (resp *biz.CommentListResp, err error) {
 	// TODO: Your code here...
 	return
 }

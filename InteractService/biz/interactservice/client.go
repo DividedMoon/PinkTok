@@ -14,7 +14,7 @@ type Client interface {
 	FavoriteAction(ctx context.Context, Req *biz.FavoriteActionReq, callOptions ...callopt.Option) (r *biz.FavoriteActionResp, err error)
 	FavoriteList(ctx context.Context, Req *biz.FavoriteListReq, callOptions ...callopt.Option) (r *biz.FavoriteListResp, err error)
 	CommentAction(ctx context.Context, Req *biz.CommentActionReq, callOptions ...callopt.Option) (r *biz.CommentActionResp, err error)
-	CommentList(ctx context.Context, Req *biz.CommentListReq, callOptions ...callopt.Option) (r *biz.DouyinCommentListResp, err error)
+	CommentList(ctx context.Context, Req *biz.CommentListReq, callOptions ...callopt.Option) (r *biz.CommentListResp, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -61,7 +61,7 @@ func (p *kInteractServiceClient) CommentAction(ctx context.Context, Req *biz.Com
 	return p.kClient.CommentAction(ctx, Req)
 }
 
-func (p *kInteractServiceClient) CommentList(ctx context.Context, Req *biz.CommentListReq, callOptions ...callopt.Option) (r *biz.DouyinCommentListResp, err error) {
+func (p *kInteractServiceClient) CommentList(ctx context.Context, Req *biz.CommentListReq, callOptions ...callopt.Option) (r *biz.CommentListResp, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.CommentList(ctx, Req)
 }

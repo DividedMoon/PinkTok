@@ -228,7 +228,7 @@ func (x *Video) fastReadField1(buf []byte, _type int8) (offset int, err error) {
 }
 
 func (x *Video) fastReadField2(buf []byte, _type int8) (offset int, err error) {
-	var v User
+	var v UserInfo
 	offset, err = fastpb.ReadMessage(buf, _type, &v)
 	if err != nil {
 		return offset, err
@@ -267,7 +267,7 @@ func (x *Video) fastReadField8(buf []byte, _type int8) (offset int, err error) {
 	return offset, err
 }
 
-func (x *User) FastRead(buf []byte, _type int8, number int32) (offset int, err error) {
+func (x *UserInfo) FastRead(buf []byte, _type int8, number int32) (offset int, err error) {
 	switch number {
 	case 1:
 		offset, err = x.fastReadField1(buf, _type)
@@ -334,60 +334,60 @@ func (x *User) FastRead(buf []byte, _type int8, number int32) (offset int, err e
 SkipFieldError:
 	return offset, fmt.Errorf("%T cannot parse invalid wire-format data, error: %s", x, err)
 ReadFieldError:
-	return offset, fmt.Errorf("%T read field %d '%s' error: %s", x, number, fieldIDToName_User[number], err)
+	return offset, fmt.Errorf("%T read field %d '%s' error: %s", x, number, fieldIDToName_UserInfo[number], err)
 }
 
-func (x *User) fastReadField1(buf []byte, _type int8) (offset int, err error) {
+func (x *UserInfo) fastReadField1(buf []byte, _type int8) (offset int, err error) {
 	x.Id, offset, err = fastpb.ReadInt64(buf, _type)
 	return offset, err
 }
 
-func (x *User) fastReadField2(buf []byte, _type int8) (offset int, err error) {
+func (x *UserInfo) fastReadField2(buf []byte, _type int8) (offset int, err error) {
 	x.Name, offset, err = fastpb.ReadString(buf, _type)
 	return offset, err
 }
 
-func (x *User) fastReadField3(buf []byte, _type int8) (offset int, err error) {
+func (x *UserInfo) fastReadField3(buf []byte, _type int8) (offset int, err error) {
 	x.FollowCount, offset, err = fastpb.ReadInt64(buf, _type)
 	return offset, err
 }
 
-func (x *User) fastReadField4(buf []byte, _type int8) (offset int, err error) {
+func (x *UserInfo) fastReadField4(buf []byte, _type int8) (offset int, err error) {
 	x.FollowerCount, offset, err = fastpb.ReadInt64(buf, _type)
 	return offset, err
 }
 
-func (x *User) fastReadField5(buf []byte, _type int8) (offset int, err error) {
+func (x *UserInfo) fastReadField5(buf []byte, _type int8) (offset int, err error) {
 	x.IsFollow, offset, err = fastpb.ReadBool(buf, _type)
 	return offset, err
 }
 
-func (x *User) fastReadField6(buf []byte, _type int8) (offset int, err error) {
+func (x *UserInfo) fastReadField6(buf []byte, _type int8) (offset int, err error) {
 	x.Avatar, offset, err = fastpb.ReadString(buf, _type)
 	return offset, err
 }
 
-func (x *User) fastReadField7(buf []byte, _type int8) (offset int, err error) {
+func (x *UserInfo) fastReadField7(buf []byte, _type int8) (offset int, err error) {
 	x.BackgroundImage, offset, err = fastpb.ReadString(buf, _type)
 	return offset, err
 }
 
-func (x *User) fastReadField8(buf []byte, _type int8) (offset int, err error) {
+func (x *UserInfo) fastReadField8(buf []byte, _type int8) (offset int, err error) {
 	x.Signature, offset, err = fastpb.ReadString(buf, _type)
 	return offset, err
 }
 
-func (x *User) fastReadField9(buf []byte, _type int8) (offset int, err error) {
+func (x *UserInfo) fastReadField9(buf []byte, _type int8) (offset int, err error) {
 	x.TotalFavorited, offset, err = fastpb.ReadInt64(buf, _type)
 	return offset, err
 }
 
-func (x *User) fastReadField10(buf []byte, _type int8) (offset int, err error) {
+func (x *UserInfo) fastReadField10(buf []byte, _type int8) (offset int, err error) {
 	x.WorkCount, offset, err = fastpb.ReadInt64(buf, _type)
 	return offset, err
 }
 
-func (x *User) fastReadField11(buf []byte, _type int8) (offset int, err error) {
+func (x *UserInfo) fastReadField11(buf []byte, _type int8) (offset int, err error) {
 	x.FavoriteCount, offset, err = fastpb.ReadInt64(buf, _type)
 	return offset, err
 }
@@ -548,7 +548,7 @@ func (x *Comment) fastReadField1(buf []byte, _type int8) (offset int, err error)
 }
 
 func (x *Comment) fastReadField2(buf []byte, _type int8) (offset int, err error) {
-	var v User
+	var v UserInfo
 	offset, err = fastpb.ReadMessage(buf, _type, &v)
 	if err != nil {
 		return offset, err
@@ -602,7 +602,7 @@ func (x *CommentListReq) fastReadField2(buf []byte, _type int8) (offset int, err
 	return offset, err
 }
 
-func (x *DouyinCommentListResp) FastRead(buf []byte, _type int8, number int32) (offset int, err error) {
+func (x *CommentListResp) FastRead(buf []byte, _type int8, number int32) (offset int, err error) {
 	switch number {
 	case 1:
 		offset, err = x.fastReadField1(buf, _type)
@@ -629,20 +629,20 @@ func (x *DouyinCommentListResp) FastRead(buf []byte, _type int8, number int32) (
 SkipFieldError:
 	return offset, fmt.Errorf("%T cannot parse invalid wire-format data, error: %s", x, err)
 ReadFieldError:
-	return offset, fmt.Errorf("%T read field %d '%s' error: %s", x, number, fieldIDToName_DouyinCommentListResp[number], err)
+	return offset, fmt.Errorf("%T read field %d '%s' error: %s", x, number, fieldIDToName_CommentListResp[number], err)
 }
 
-func (x *DouyinCommentListResp) fastReadField1(buf []byte, _type int8) (offset int, err error) {
+func (x *CommentListResp) fastReadField1(buf []byte, _type int8) (offset int, err error) {
 	x.StatusCode, offset, err = fastpb.ReadInt32(buf, _type)
 	return offset, err
 }
 
-func (x *DouyinCommentListResp) fastReadField2(buf []byte, _type int8) (offset int, err error) {
+func (x *CommentListResp) fastReadField2(buf []byte, _type int8) (offset int, err error) {
 	x.StatusMsg, offset, err = fastpb.ReadString(buf, _type)
 	return offset, err
 }
 
-func (x *DouyinCommentListResp) fastReadField3(buf []byte, _type int8) (offset int, err error) {
+func (x *CommentListResp) fastReadField3(buf []byte, _type int8) (offset int, err error) {
 	var v Comment
 	offset, err = fastpb.ReadMessage(buf, _type, &v)
 	if err != nil {
@@ -842,7 +842,7 @@ func (x *Video) fastWriteField8(buf []byte) (offset int) {
 	return offset
 }
 
-func (x *User) FastWrite(buf []byte) (offset int) {
+func (x *UserInfo) FastWrite(buf []byte) (offset int) {
 	if x == nil {
 		return offset
 	}
@@ -860,7 +860,7 @@ func (x *User) FastWrite(buf []byte) (offset int) {
 	return offset
 }
 
-func (x *User) fastWriteField1(buf []byte) (offset int) {
+func (x *UserInfo) fastWriteField1(buf []byte) (offset int) {
 	if x.Id == 0 {
 		return offset
 	}
@@ -868,7 +868,7 @@ func (x *User) fastWriteField1(buf []byte) (offset int) {
 	return offset
 }
 
-func (x *User) fastWriteField2(buf []byte) (offset int) {
+func (x *UserInfo) fastWriteField2(buf []byte) (offset int) {
 	if x.Name == "" {
 		return offset
 	}
@@ -876,7 +876,7 @@ func (x *User) fastWriteField2(buf []byte) (offset int) {
 	return offset
 }
 
-func (x *User) fastWriteField3(buf []byte) (offset int) {
+func (x *UserInfo) fastWriteField3(buf []byte) (offset int) {
 	if x.FollowCount == 0 {
 		return offset
 	}
@@ -884,7 +884,7 @@ func (x *User) fastWriteField3(buf []byte) (offset int) {
 	return offset
 }
 
-func (x *User) fastWriteField4(buf []byte) (offset int) {
+func (x *UserInfo) fastWriteField4(buf []byte) (offset int) {
 	if x.FollowerCount == 0 {
 		return offset
 	}
@@ -892,7 +892,7 @@ func (x *User) fastWriteField4(buf []byte) (offset int) {
 	return offset
 }
 
-func (x *User) fastWriteField5(buf []byte) (offset int) {
+func (x *UserInfo) fastWriteField5(buf []byte) (offset int) {
 	if !x.IsFollow {
 		return offset
 	}
@@ -900,7 +900,7 @@ func (x *User) fastWriteField5(buf []byte) (offset int) {
 	return offset
 }
 
-func (x *User) fastWriteField6(buf []byte) (offset int) {
+func (x *UserInfo) fastWriteField6(buf []byte) (offset int) {
 	if x.Avatar == "" {
 		return offset
 	}
@@ -908,7 +908,7 @@ func (x *User) fastWriteField6(buf []byte) (offset int) {
 	return offset
 }
 
-func (x *User) fastWriteField7(buf []byte) (offset int) {
+func (x *UserInfo) fastWriteField7(buf []byte) (offset int) {
 	if x.BackgroundImage == "" {
 		return offset
 	}
@@ -916,7 +916,7 @@ func (x *User) fastWriteField7(buf []byte) (offset int) {
 	return offset
 }
 
-func (x *User) fastWriteField8(buf []byte) (offset int) {
+func (x *UserInfo) fastWriteField8(buf []byte) (offset int) {
 	if x.Signature == "" {
 		return offset
 	}
@@ -924,7 +924,7 @@ func (x *User) fastWriteField8(buf []byte) (offset int) {
 	return offset
 }
 
-func (x *User) fastWriteField9(buf []byte) (offset int) {
+func (x *UserInfo) fastWriteField9(buf []byte) (offset int) {
 	if x.TotalFavorited == 0 {
 		return offset
 	}
@@ -932,7 +932,7 @@ func (x *User) fastWriteField9(buf []byte) (offset int) {
 	return offset
 }
 
-func (x *User) fastWriteField10(buf []byte) (offset int) {
+func (x *UserInfo) fastWriteField10(buf []byte) (offset int) {
 	if x.WorkCount == 0 {
 		return offset
 	}
@@ -940,7 +940,7 @@ func (x *User) fastWriteField10(buf []byte) (offset int) {
 	return offset
 }
 
-func (x *User) fastWriteField11(buf []byte) (offset int) {
+func (x *UserInfo) fastWriteField11(buf []byte) (offset int) {
 	if x.FavoriteCount == 0 {
 		return offset
 	}
@@ -1102,7 +1102,7 @@ func (x *CommentListReq) fastWriteField2(buf []byte) (offset int) {
 	return offset
 }
 
-func (x *DouyinCommentListResp) FastWrite(buf []byte) (offset int) {
+func (x *CommentListResp) FastWrite(buf []byte) (offset int) {
 	if x == nil {
 		return offset
 	}
@@ -1112,7 +1112,7 @@ func (x *DouyinCommentListResp) FastWrite(buf []byte) (offset int) {
 	return offset
 }
 
-func (x *DouyinCommentListResp) fastWriteField1(buf []byte) (offset int) {
+func (x *CommentListResp) fastWriteField1(buf []byte) (offset int) {
 	if x.StatusCode == 0 {
 		return offset
 	}
@@ -1120,7 +1120,7 @@ func (x *DouyinCommentListResp) fastWriteField1(buf []byte) (offset int) {
 	return offset
 }
 
-func (x *DouyinCommentListResp) fastWriteField2(buf []byte) (offset int) {
+func (x *CommentListResp) fastWriteField2(buf []byte) (offset int) {
 	if x.StatusMsg == "" {
 		return offset
 	}
@@ -1128,7 +1128,7 @@ func (x *DouyinCommentListResp) fastWriteField2(buf []byte) (offset int) {
 	return offset
 }
 
-func (x *DouyinCommentListResp) fastWriteField3(buf []byte) (offset int) {
+func (x *CommentListResp) fastWriteField3(buf []byte) (offset int) {
 	if x.CommentList == nil {
 		return offset
 	}
@@ -1328,7 +1328,7 @@ func (x *Video) sizeField8() (n int) {
 	return n
 }
 
-func (x *User) Size() (n int) {
+func (x *UserInfo) Size() (n int) {
 	if x == nil {
 		return n
 	}
@@ -1346,7 +1346,7 @@ func (x *User) Size() (n int) {
 	return n
 }
 
-func (x *User) sizeField1() (n int) {
+func (x *UserInfo) sizeField1() (n int) {
 	if x.Id == 0 {
 		return n
 	}
@@ -1354,7 +1354,7 @@ func (x *User) sizeField1() (n int) {
 	return n
 }
 
-func (x *User) sizeField2() (n int) {
+func (x *UserInfo) sizeField2() (n int) {
 	if x.Name == "" {
 		return n
 	}
@@ -1362,7 +1362,7 @@ func (x *User) sizeField2() (n int) {
 	return n
 }
 
-func (x *User) sizeField3() (n int) {
+func (x *UserInfo) sizeField3() (n int) {
 	if x.FollowCount == 0 {
 		return n
 	}
@@ -1370,7 +1370,7 @@ func (x *User) sizeField3() (n int) {
 	return n
 }
 
-func (x *User) sizeField4() (n int) {
+func (x *UserInfo) sizeField4() (n int) {
 	if x.FollowerCount == 0 {
 		return n
 	}
@@ -1378,7 +1378,7 @@ func (x *User) sizeField4() (n int) {
 	return n
 }
 
-func (x *User) sizeField5() (n int) {
+func (x *UserInfo) sizeField5() (n int) {
 	if !x.IsFollow {
 		return n
 	}
@@ -1386,7 +1386,7 @@ func (x *User) sizeField5() (n int) {
 	return n
 }
 
-func (x *User) sizeField6() (n int) {
+func (x *UserInfo) sizeField6() (n int) {
 	if x.Avatar == "" {
 		return n
 	}
@@ -1394,7 +1394,7 @@ func (x *User) sizeField6() (n int) {
 	return n
 }
 
-func (x *User) sizeField7() (n int) {
+func (x *UserInfo) sizeField7() (n int) {
 	if x.BackgroundImage == "" {
 		return n
 	}
@@ -1402,7 +1402,7 @@ func (x *User) sizeField7() (n int) {
 	return n
 }
 
-func (x *User) sizeField8() (n int) {
+func (x *UserInfo) sizeField8() (n int) {
 	if x.Signature == "" {
 		return n
 	}
@@ -1410,7 +1410,7 @@ func (x *User) sizeField8() (n int) {
 	return n
 }
 
-func (x *User) sizeField9() (n int) {
+func (x *UserInfo) sizeField9() (n int) {
 	if x.TotalFavorited == 0 {
 		return n
 	}
@@ -1418,7 +1418,7 @@ func (x *User) sizeField9() (n int) {
 	return n
 }
 
-func (x *User) sizeField10() (n int) {
+func (x *UserInfo) sizeField10() (n int) {
 	if x.WorkCount == 0 {
 		return n
 	}
@@ -1426,7 +1426,7 @@ func (x *User) sizeField10() (n int) {
 	return n
 }
 
-func (x *User) sizeField11() (n int) {
+func (x *UserInfo) sizeField11() (n int) {
 	if x.FavoriteCount == 0 {
 		return n
 	}
@@ -1588,7 +1588,7 @@ func (x *CommentListReq) sizeField2() (n int) {
 	return n
 }
 
-func (x *DouyinCommentListResp) Size() (n int) {
+func (x *CommentListResp) Size() (n int) {
 	if x == nil {
 		return n
 	}
@@ -1598,7 +1598,7 @@ func (x *DouyinCommentListResp) Size() (n int) {
 	return n
 }
 
-func (x *DouyinCommentListResp) sizeField1() (n int) {
+func (x *CommentListResp) sizeField1() (n int) {
 	if x.StatusCode == 0 {
 		return n
 	}
@@ -1606,7 +1606,7 @@ func (x *DouyinCommentListResp) sizeField1() (n int) {
 	return n
 }
 
-func (x *DouyinCommentListResp) sizeField2() (n int) {
+func (x *CommentListResp) sizeField2() (n int) {
 	if x.StatusMsg == "" {
 		return n
 	}
@@ -1614,7 +1614,7 @@ func (x *DouyinCommentListResp) sizeField2() (n int) {
 	return n
 }
 
-func (x *DouyinCommentListResp) sizeField3() (n int) {
+func (x *CommentListResp) sizeField3() (n int) {
 	if x.CommentList == nil {
 		return n
 	}
@@ -1656,7 +1656,7 @@ var fieldIDToName_Video = map[int32]string{
 	8: "Title",
 }
 
-var fieldIDToName_User = map[int32]string{
+var fieldIDToName_UserInfo = map[int32]string{
 	1:  "Id",
 	2:  "Name",
 	3:  "FollowCount",
@@ -1696,7 +1696,7 @@ var fieldIDToName_CommentListReq = map[int32]string{
 	2: "VideoId",
 }
 
-var fieldIDToName_DouyinCommentListResp = map[int32]string{
+var fieldIDToName_CommentListResp = map[int32]string{
 	1: "StatusCode",
 	2: "StatusMsg",
 	3: "CommentList",

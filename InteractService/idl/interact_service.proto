@@ -27,7 +27,7 @@ message favorite_list_resp {
 
 message Video {
     int64 id = 1; // 视频唯一标识
-    User author = 2; // 视频作者信息
+    UserInfo author = 2; // 视频作者信息
     string play_url = 3; // 视频播放地址
     string cover_url = 4; // 视频封面地址
     int64 favorite_count = 5; // 视频的点赞总数
@@ -36,7 +36,7 @@ message Video {
     string title = 8; // 视频标题
 }
 
-message User {
+message UserInfo {
     int64 id = 1; // 用户id
     string name = 2; // 用户名称
     int64 follow_count = 3; // 关注总数
@@ -66,7 +66,7 @@ message comment_action_resp {
 
 message Comment {
     int64 id = 1; // 视频评论id
-    User user = 2; // 评论用户信息
+    UserInfo user = 2; // 评论用户信息
     string content = 3; // 评论内容
     string create_date = 4; // 评论发布日期，格式 mm-dd
 }
@@ -76,7 +76,7 @@ message comment_list_req {
     int64 video_id = 2; // 视频id
 }
 
-message douyin_comment_list_resp {
+message comment_list_resp {
     int32 status_code = 1; // 状态码，0-成功，其他值-失败
     string status_msg = 2; // 返回状态描述
     repeated Comment comment_list = 3; // 评论列表
@@ -86,5 +86,5 @@ service InteractService {
     rpc FavoriteAction(favorite_action_req) returns (favorite_action_resp);
     rpc FavoriteList(favorite_list_req) returns (favorite_list_resp);
     rpc CommentAction(comment_action_req) returns (comment_action_resp);
-    rpc CommentList(comment_list_req) returns (douyin_comment_list_resp);
+    rpc CommentList(comment_list_req) returns (comment_list_resp);
 }

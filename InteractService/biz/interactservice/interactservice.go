@@ -613,14 +613,14 @@ func (p *CommentListArgs) GetFirstArgument() interface{} {
 }
 
 type CommentListResult struct {
-	Success *biz.DouyinCommentListResp
+	Success *biz.CommentListResp
 }
 
-var CommentListResult_Success_DEFAULT *biz.DouyinCommentListResp
+var CommentListResult_Success_DEFAULT *biz.CommentListResp
 
 func (p *CommentListResult) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
 	if !p.IsSetSuccess() {
-		p.Success = new(biz.DouyinCommentListResp)
+		p.Success = new(biz.CommentListResp)
 	}
 	return p.Success.FastRead(buf, _type, number)
 }
@@ -650,7 +650,7 @@ func (p *CommentListResult) Unmarshal(in []byte) error {
 	if len(in) == 0 {
 		return nil
 	}
-	msg := new(biz.DouyinCommentListResp)
+	msg := new(biz.CommentListResp)
 	if err := proto.Unmarshal(in, msg); err != nil {
 		return err
 	}
@@ -658,7 +658,7 @@ func (p *CommentListResult) Unmarshal(in []byte) error {
 	return nil
 }
 
-func (p *CommentListResult) GetSuccess() *biz.DouyinCommentListResp {
+func (p *CommentListResult) GetSuccess() *biz.CommentListResp {
 	if !p.IsSetSuccess() {
 		return CommentListResult_Success_DEFAULT
 	}
@@ -666,7 +666,7 @@ func (p *CommentListResult) GetSuccess() *biz.DouyinCommentListResp {
 }
 
 func (p *CommentListResult) SetSuccess(x interface{}) {
-	p.Success = x.(*biz.DouyinCommentListResp)
+	p.Success = x.(*biz.CommentListResp)
 }
 
 func (p *CommentListResult) IsSetSuccess() bool {
@@ -717,7 +717,7 @@ func (p *kClient) CommentAction(ctx context.Context, Req *biz.CommentActionReq) 
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) CommentList(ctx context.Context, Req *biz.CommentListReq) (r *biz.DouyinCommentListResp, err error) {
+func (p *kClient) CommentList(ctx context.Context, Req *biz.CommentListReq) (r *biz.CommentListResp, err error) {
 	var _args CommentListArgs
 	_args.Req = Req
 	var _result CommentListResult
