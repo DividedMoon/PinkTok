@@ -2,7 +2,6 @@ package service
 
 import (
 	"bytes"
-	"context"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"mime"
 	"net/http"
@@ -17,15 +16,7 @@ import (
 	"video_service/internal/utils"
 )
 
-type PublishService struct {
-	ctx context.Context
-}
-
-func NewPublishService(ctx context.Context) *PublishService {
-	return &PublishService{ctx: ctx}
-}
-
-func (s *PublishService) PublishAction(req *biz.PublishReq) error {
+func (s *VideoService) PublishAction(req *biz.PublishReq) error {
 	userId := req.UserId
 	title := req.Title
 
@@ -70,7 +61,7 @@ func (s *PublishService) PublishAction(req *biz.PublishReq) error {
 	return nil
 }
 
-func (s *PublishService) GetPublishList(req *biz.GetPublishListReq) (resp *biz.GetPublishListResp, err error) {
+func (s *VideoService) GetPublishList(req *biz.GetPublishListReq) (resp *biz.GetPublishListResp, err error) {
 	resp = &biz.GetPublishListResp{}
 	currentUserId := req.UserId
 
@@ -81,7 +72,7 @@ func (s *PublishService) GetPublishList(req *biz.GetPublishListReq) (resp *biz.G
 	}
 	var videos []*biz.VideoInfo
 
-	f := NewFeedService(s.ctx)
+	f := NewVideoService(s.ctx)
 	err = f.CopyVideos(&videos, &dbVideos, currentUserId)
 	hlog.Infof("videos:%+v", videos)
 	if err != nil {

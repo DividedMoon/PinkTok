@@ -89,3 +89,13 @@ func GetVideoByUserID(userId int64) ([]*VideoDBInfo, error) {
 	}
 	return videos, nil
 }
+
+func GetVideoByID(videoId int64) (*VideoDBInfo, error) {
+	var video VideoDBInfo
+	err := DB.Where("id = ?", videoId).First(&video).Error
+	if err != nil {
+		hlog.Error("GetVideoByID", "err", err)
+		return nil, err
+	}
+	return &video, nil
+}

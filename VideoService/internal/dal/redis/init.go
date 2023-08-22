@@ -7,11 +7,12 @@ import (
 	"video_service/internal/constants"
 )
 
-//TODO expireTime从数据库中查到数据然后更新的时候会用到
+// TODO expireTime从数据库中查到数据然后更新的时候会用到
 var (
 	expireTime    = time.Hour
 	rdFavorite    *redis.Client
 	rdComment     *redis.Client
+	rdVideo       *redis.Client
 	redisAddr     = constants.RedisAddr
 	redisPassword = constants.RedisPassword
 )
@@ -24,6 +25,11 @@ func InitRedis() {
 	})
 
 	rdComment = redis.NewClient(&redis.Options{
+		Addr:     redisAddr,
+		Password: redisPassword,
+		DB:       0,
+	})
+	rdVideo = redis.NewClient(&redis.Options{
 		Addr:     redisAddr,
 		Password: redisPassword,
 		DB:       0,
@@ -48,7 +54,7 @@ func checkSetExist(c *redis.Client, k string, v int64) (bool, error) {
 	}
 }
 
-//getStringValue 获取key对应的value
+// getStringValue 获取key对应的value
 func getStringValue(c *redis.Client, k string) (int64, error) {
 	v, err := c.Get(k).Result()
 	if err != nil {
@@ -74,6 +80,38 @@ func initSet(c *redis.Client, k string, v []int64) error {
 func initString(c *redis.Client, k string, v int64) error {
 	tx := c.TxPipeline()
 	tx.Set(k, v, expireTime)
+	_, err := tx.Exec()
+	return err
+}
+
+func initHash(c *redis.Client, k string, v map[string]interface{}) error {
+	tx := c.TxPipeline()
+	tx.HMSet(k, v)
+	tx.Expire(k, expireTime)
+	_, err := tx.Exec()
+	return err
+}
+
+func getHash(c *redis.Client, k string) (map[string]string, error) {
+	v, err := c.HGetAll(k).Result()
+	if err != nil {
+		return nil, err
+	}
+	return v, nil
+}
+
+func getHashField(c *redis.Client, k string, filed string) (string, error) {
+	v, err := c.HGet(k, filed).Result()
+	if err != nil {
+		return "", err
+	}
+	return v, nil
+}
+
+func setHashField(c *redis.Client, k string, filed string, v interface{}) error {
+	tx := c.TxPipeline()
+	tx.HSet(k, filed, v)
+	tx.Expire(k, expireTime)
 	_, err := tx.Exec()
 	return err
 }

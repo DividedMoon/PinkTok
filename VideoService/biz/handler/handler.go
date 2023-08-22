@@ -13,7 +13,7 @@ type VideoServiceImpl struct{}
 
 // Feed implements the VideoServiceImpl interface.
 func (s *VideoServiceImpl) Feed(ctx context.Context, req *biz.FeedReq) (resp *biz.FeedResp, err error) {
-	resp, err = service.NewFeedService(ctx).GetFeed(req)
+	resp, err = service.NewVideoService(ctx).GetFeed(req)
 
 	res := utils.BuildBaseResp(err)
 	hlog.CtxErrorf(ctx, "Feed Error", err.Error())
@@ -28,7 +28,7 @@ func (s *VideoServiceImpl) Feed(ctx context.Context, req *biz.FeedReq) (resp *bi
 
 // PublishVideo implements the VideoServiceImpl interface.
 func (s *VideoServiceImpl) PublishVideo(ctx context.Context, req *biz.PublishReq) (resp *biz.PublishResp, err error) {
-	err = service.NewPublishService(ctx).PublishAction(req)
+	err = service.NewVideoService(ctx).PublishAction(req)
 	res := utils.BuildBaseResp(err)
 	return &biz.PublishResp{
 		StatusCode: res.StatusCode,
@@ -39,7 +39,7 @@ func (s *VideoServiceImpl) PublishVideo(ctx context.Context, req *biz.PublishReq
 
 // GetPublishList implements the VideoServiceImpl interface.
 func (s *VideoServiceImpl) GetPublishList(ctx context.Context, req *biz.GetPublishListReq) (resp *biz.GetPublishListResp, err error) {
-	resp, err = service.NewPublishService(ctx).GetPublishList(req)
+	resp, err = service.NewVideoService(ctx).GetPublishList(req)
 	res := utils.BuildBaseResp(err)
 	hlog.CtxErrorf(ctx, "GetPublishList Error", err.Error())
 	return &biz.GetPublishListResp{
