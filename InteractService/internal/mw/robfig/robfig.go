@@ -22,7 +22,7 @@ func Init() {
 	// 启动定时器
 	c.Start()
 
-	// 监听jobErrChan 一旦有错误发生，打印错误日志
+	// 监听jobErrChan 一旦有错误发生，打印错误日志 并停止定时任务
 	go func() {
 		for {
 			select {

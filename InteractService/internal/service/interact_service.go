@@ -2,6 +2,8 @@ package service
 
 import (
 	"context"
+	"fmt"
+	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"interact_service/biz"
 	internalClient "interact_service/internal/client"
 	"interact_service/internal/model"
@@ -60,4 +62,31 @@ func GetCommentByUserAndVideo(userId, videoId int64) ([]model.Comment, error) {
 		return nil, err
 	}
 	return list, nil
+}
+
+// FavoriteAction 用户点赞或者取消赞
+func FavoriteAction(userId, videoId int64) error {
+	liked, err := model.IsVideoLikedByUser(userId, videoId)
+	if err != nil {
+		hlog.Error("IsVideoLikedByUser error", err)
+		return err
+	}
+	err = model.UpdateVideoLikedStatus(userId, videoId, !liked)
+	if err != nil {
+		hlog.Error("UpdateVideoLikedStatus error", err)
+		return err
+	}
+	return nil
+}
+
+// GetFavoriteList 获取用户喜欢的视频列表
+func GetFavoriteList(userId int64) ([]*biz.Video, error) {
+	favoriteVideoIdList, err := model.SelectFavoriteVideoIdsByUserID(userId)
+	if err != nil {
+		hlog.Error("SelectFavoriteVideoIdsByUserID error", err)
+		return nil, err
+	}
+	// TODO 调用VideoService来Copy视频 以及VideoService只能调用interactionService来查询用户的喜欢状态
+	fmt.Println(favoriteVideoIdList)
+	return nil, nil
 }
