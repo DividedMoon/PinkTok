@@ -22,10 +22,11 @@ func NewServiceInfo() *kitex.ServiceInfo {
 	serviceName := "InteractService"
 	handlerType := (*biz.InteractService)(nil)
 	methods := map[string]kitex.MethodInfo{
-		"FavoriteAction":     kitex.NewMethodInfo(favoriteActionHandler, newFavoriteActionArgs, newFavoriteActionResult, false),
-		"QueryFavoriteExist": kitex.NewMethodInfo(queryFavoriteExistHandler, newQueryFavoriteExistArgs, newQueryFavoriteExistResult, false),
-		"CommentAction":      kitex.NewMethodInfo(commentActionHandler, newCommentActionArgs, newCommentActionResult, false),
-		"CommentList":        kitex.NewMethodInfo(commentListHandler, newCommentListArgs, newCommentListResult, false),
+		"FavoriteAction":            kitex.NewMethodInfo(favoriteActionHandler, newFavoriteActionArgs, newFavoriteActionResult, false),
+		"QueryFavoriteExist":        kitex.NewMethodInfo(queryFavoriteExistHandler, newQueryFavoriteExistArgs, newQueryFavoriteExistResult, false),
+		"QueryUserFavoriteVideoIds": kitex.NewMethodInfo(queryUserFavoriteVideoIdsHandler, newQueryUserFavoriteVideoIdsArgs, newQueryUserFavoriteVideoIdsResult, false),
+		"CommentAction":             kitex.NewMethodInfo(commentActionHandler, newCommentActionArgs, newCommentActionResult, false),
+		"CommentList":               kitex.NewMethodInfo(commentListHandler, newCommentListArgs, newCommentListResult, false),
 	}
 	extra := map[string]interface{}{
 		"PackageName": "interact_service",
@@ -344,6 +345,159 @@ func (p *QueryFavoriteExistResult) IsSetSuccess() bool {
 }
 
 func (p *QueryFavoriteExistResult) GetResult() interface{} {
+	return p.Success
+}
+
+func queryUserFavoriteVideoIdsHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(biz.FavoriteVideoReq)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(biz.InteractService).QueryUserFavoriteVideoIds(ctx, req)
+		if err != nil {
+			return err
+		}
+		if err := st.SendMsg(resp); err != nil {
+			return err
+		}
+	case *QueryUserFavoriteVideoIdsArgs:
+		success, err := handler.(biz.InteractService).QueryUserFavoriteVideoIds(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*QueryUserFavoriteVideoIdsResult)
+		realResult.Success = success
+	}
+	return nil
+}
+func newQueryUserFavoriteVideoIdsArgs() interface{} {
+	return &QueryUserFavoriteVideoIdsArgs{}
+}
+
+func newQueryUserFavoriteVideoIdsResult() interface{} {
+	return &QueryUserFavoriteVideoIdsResult{}
+}
+
+type QueryUserFavoriteVideoIdsArgs struct {
+	Req *biz.FavoriteVideoReq
+}
+
+func (p *QueryUserFavoriteVideoIdsArgs) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetReq() {
+		p.Req = new(biz.FavoriteVideoReq)
+	}
+	return p.Req.FastRead(buf, _type, number)
+}
+
+func (p *QueryUserFavoriteVideoIdsArgs) FastWrite(buf []byte) (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.FastWrite(buf)
+}
+
+func (p *QueryUserFavoriteVideoIdsArgs) Size() (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.Size()
+}
+
+func (p *QueryUserFavoriteVideoIdsArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("No req in QueryUserFavoriteVideoIdsArgs")
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *QueryUserFavoriteVideoIdsArgs) Unmarshal(in []byte) error {
+	msg := new(biz.FavoriteVideoReq)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var QueryUserFavoriteVideoIdsArgs_Req_DEFAULT *biz.FavoriteVideoReq
+
+func (p *QueryUserFavoriteVideoIdsArgs) GetReq() *biz.FavoriteVideoReq {
+	if !p.IsSetReq() {
+		return QueryUserFavoriteVideoIdsArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *QueryUserFavoriteVideoIdsArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *QueryUserFavoriteVideoIdsArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type QueryUserFavoriteVideoIdsResult struct {
+	Success *biz.FavoriteVideoResp
+}
+
+var QueryUserFavoriteVideoIdsResult_Success_DEFAULT *biz.FavoriteVideoResp
+
+func (p *QueryUserFavoriteVideoIdsResult) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetSuccess() {
+		p.Success = new(biz.FavoriteVideoResp)
+	}
+	return p.Success.FastRead(buf, _type, number)
+}
+
+func (p *QueryUserFavoriteVideoIdsResult) FastWrite(buf []byte) (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.FastWrite(buf)
+}
+
+func (p *QueryUserFavoriteVideoIdsResult) Size() (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.Size()
+}
+
+func (p *QueryUserFavoriteVideoIdsResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("No req in QueryUserFavoriteVideoIdsResult")
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *QueryUserFavoriteVideoIdsResult) Unmarshal(in []byte) error {
+	msg := new(biz.FavoriteVideoResp)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *QueryUserFavoriteVideoIdsResult) GetSuccess() *biz.FavoriteVideoResp {
+	if !p.IsSetSuccess() {
+		return QueryUserFavoriteVideoIdsResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *QueryUserFavoriteVideoIdsResult) SetSuccess(x interface{}) {
+	p.Success = x.(*biz.FavoriteVideoResp)
+}
+
+func (p *QueryUserFavoriteVideoIdsResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *QueryUserFavoriteVideoIdsResult) GetResult() interface{} {
 	return p.Success
 }
 
@@ -678,6 +832,16 @@ func (p *kClient) QueryFavoriteExist(ctx context.Context, Req *biz.QueryFavorite
 	_args.Req = Req
 	var _result QueryFavoriteExistResult
 	if err = p.c.Call(ctx, "QueryFavoriteExist", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) QueryUserFavoriteVideoIds(ctx context.Context, Req *biz.FavoriteVideoReq) (r *biz.FavoriteVideoResp, err error) {
+	var _args QueryUserFavoriteVideoIdsArgs
+	_args.Req = Req
+	var _result QueryUserFavoriteVideoIdsResult
+	if err = p.c.Call(ctx, "QueryUserFavoriteVideoIds", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
