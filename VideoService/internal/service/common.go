@@ -34,6 +34,7 @@ func (s *VideoService) CopyVideos(result *[]*client.VideoInfo, data *[]*db.Video
 	return nil
 }
 
+// TODO userID没有用到 考虑一下为什么要有这个东西
 func (s *VideoService) createVideo(data *db.VideoDBInfo, userId int64) (*client.VideoInfo, error) {
 	hlog.Infof("createVideo func data: %+v", data)
 
@@ -133,7 +134,11 @@ func (s *VideoService) createVideo(data *db.VideoDBInfo, userId int64) (*client.
 	go func() {
 		err := *new(error)
 		hlog.Infof("start to get favorite exist")
-		video.IsFavorite, err = queryFavoriteExist(userId, data.ID)
+		//TODO 调用FavoriteService判断当前用户是否已经点赞该视频
+		//video.IsFavorite, err = queryFavoriteExist(userId, data.ID)
+		//TODO 假数据 到时候要删除
+		video.IsFavorite = true
+
 		if err != nil {
 			errChan <- fmt.Errorf("GetCommentCountByVideoID func error:" + err.Error())
 			wg.Done()
@@ -180,24 +185,24 @@ func getVideoInfo(videoId int64) (*db.VideoDBInfo, error) {
 	return video, nil
 }
 
-func getVideoFavoriteCount(videoId int64) (int64, error) {
-	count, err := rd.GetVideoFavoriteCount(videoId)
-	if err == redis.Nil {
-		//从数据库里查询然后更新缓存
-		err = buildVideoFavoriteCache(videoId)
-		if err != nil {
-			hlog.Error("buildVideoFavoriteCache func error:" + err.Error())
-			return 0, err
-		}
-
-		return rd.GetVideoFavoriteCount(videoId)
-
-	} else if err != nil {
-		hlog.Error("GetVideoFavoriteCount func error:" + err.Error())
-		return 0, err
-	}
-	return count, nil
-}
+//func getVideoFavoriteCount(videoId int64) (int64, error) {
+//	count, err := rd.GetVideoFavoriteCount(videoId)
+//	if err == redis.Nil {
+//		//从数据库里查询然后更新缓存
+//		err = buildVideoFavoriteCache(videoId)
+//		if err != nil {
+//			hlog.Error("buildVideoFavoriteCache func error:" + err.Error())
+//			return 0, err
+//		}
+//
+//		return rd.GetVideoFavoriteCount(videoId)
+//
+//	} else if err != nil {
+//		hlog.Error("GetVideoFavoriteCount func error:" + err.Error())
+//		return 0, err
+//	}
+//	return count, nil
+//}
 
 func getVideoCommentCount(videoId int64) (int64, error) {
 	count, err := rd.GetVideoCommentCount(videoId)
@@ -223,38 +228,38 @@ func getVideoCommentCount(videoId int64) (int64, error) {
 	return count, nil
 }
 
-func queryFavoriteExist(userId int64, videoId int64) (bool, error) {
-	e, err := rd.QueryFavoriteExist(userId, videoId)
-	if err == redis.Nil {
-		//从数据库里查询然后更新缓存
-		err = buildVideoFavoriteCache(videoId)
-		if err != nil {
-			hlog.Error("buildVideoFavoriteCache func error:" + err.Error())
-			return false, err
-		}
-		return rd.QueryFavoriteExist(userId, videoId)
-	} else if err != nil {
-		hlog.Error("QueryFavoriteExist func error:" + err.Error())
-		return false, err
-	}
+//func queryFavoriteExist(userId int64, videoId int64) (bool, error) {
+//	e, err := rd.QueryFavoriteExist(userId, videoId)
+//	if err == redis.Nil {
+//		//从数据库里查询然后更新缓存
+//		err = buildVideoFavoriteCache(videoId)
+//		if err != nil {
+//			hlog.Error("buildVideoFavoriteCache func error:" + err.Error())
+//			return false, err
+//		}
+//		return rd.QueryFavoriteExist(userId, videoId)
+//	} else if err != nil {
+//		hlog.Error("QueryFavoriteExist func error:" + err.Error())
+//		return false, err
+//	}
+//
+//	return e, nil
+//}
 
-	return e, nil
-}
-
-func buildVideoFavoriteCache(videoId int64) error {
-	userIds, err := db.GetVideoFavoriteUserIds(videoId)
-	if err != nil {
-		hlog.Error("GetVideoFavoriteUserIds func error:" + err.Error())
-		return err
-	}
-	//TODO 如果这条数据在数据库里没有 会返回什么错误?
-	err = rd.SetVideoFavoriteSet(videoId, userIds)
-	if err != nil {
-		hlog.Error("SetVideoFavoriteSet func error:" + err.Error())
-		return err
-	}
-	return nil
-}
+//func buildVideoFavoriteCache(videoId int64) error {
+//	userIds, err := db.GetVideoFavoriteUserIds(videoId)
+//	if err != nil {
+//		hlog.Error("GetVideoFavoriteUserIds func error:" + err.Error())
+//		return err
+//	}
+//	//TODO 如果这条数据在数据库里没有 会返回什么错误?
+//	err = rd.SetVideoFavoriteSet(videoId, userIds)
+//	if err != nil {
+//		hlog.Error("SetVideoFavoriteSet func error:" + err.Error())
+//		return err
+//	}
+//	return nil
+//}
 
 func buildVideoInfoCache(video *db.VideoDBInfo) error {
 	err := rd.SetVideoHash(video)

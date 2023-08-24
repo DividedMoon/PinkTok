@@ -24,20 +24,21 @@ type VideoDBInfo struct {
 	FavoriteCount int64 `gorm:"column:favorite_count"`
 	CommentCount  int64 `gorm:"column:comment_count"`
 }
-type FavoriteDBInfo struct {
-	Base
-	ID      int64 `gorm:"column:id"`
-	VideoId int64 `gorm:"column:video_id"`
-	UserId  int64 `gorm:"column:user_id"`
-}
+
+//type FavoriteDBInfo struct {
+//	Base
+//	ID      int64 `gorm:"column:id"`
+//	VideoId int64 `gorm:"column:video_id"`
+//	UserId  int64 `gorm:"column:user_id"`
+//}
 
 func (VideoDBInfo) TableName() string {
 	return constants.VideosTableName
 }
 
-func (FavoriteDBInfo) TableName() string {
-	return constants.FavoriteTableName
-}
+//func (FavoriteDBInfo) TableName() string {
+//	return constants.FavoriteTableName
+//}
 
 func GetVideosByLastTime(lastTime time.Time) ([]*VideoDBInfo, error) {
 	videos := make([]*VideoDBInfo, constants.VideoFeedCount)
@@ -49,18 +50,18 @@ func GetVideosByLastTime(lastTime time.Time) ([]*VideoDBInfo, error) {
 	return videos, nil
 }
 
-func GetVideoFavoriteUserIds(videoId int64) ([]int64, error) {
-	var favorites []FavoriteDBInfo
-	if err := DB.Where("video_id = ?", videoId).Find(&favorites).Error; err != nil {
-		hlog.Error("GetVideoFavoriteUserIds", "err", err)
-		return nil, err
-	}
-	var userIds []int64
-	for _, item := range favorites {
-		userIds = append(userIds, item.UserId)
-	}
-	return userIds, nil
-}
+//func GetVideoFavoriteUserIds(videoId int64) ([]int64, error) {
+//	var favorites []FavoriteDBInfo
+//	if err := DB.Where("video_id = ?", videoId).Find(&favorites).Error; err != nil {
+//		hlog.Error("GetVideoFavoriteUserIds", "err", err)
+//		return nil, err
+//	}
+//	var userIds []int64
+//	for _, item := range favorites {
+//		userIds = append(userIds, item.UserId)
+//	}
+//	return userIds, nil
+//}
 
 func GetVideoCommentCount(videoId int64) (int64, error) {
 	var count int64
