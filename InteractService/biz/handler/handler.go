@@ -14,8 +14,8 @@ func (s *InteractServiceImpl) FavoriteAction(ctx context.Context, req *biz.Favor
 	return
 }
 
-// FavoriteList implements the InteractServiceImpl interface.
-func (s *InteractServiceImpl) FavoriteList(ctx context.Context, req *biz.FavoriteListReq) (resp *biz.FavoriteListResp, err error) {
+// QueryFavoriteExist implements the InteractServiceImpl interface.
+func (s *InteractServiceImpl) QueryFavoriteExist(ctx context.Context, req *biz.QueryFavoriteExistReq) (resp *biz.QueryFavoriteExistResp, err error) {
 	// TODO: Your code here...
 	return
 }

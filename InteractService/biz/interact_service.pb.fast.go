@@ -92,81 +92,6 @@ func (x *FavoriteActionResp) fastReadField2(buf []byte, _type int8) (offset int,
 	return offset, err
 }
 
-func (x *FavoriteListReq) FastRead(buf []byte, _type int8, number int32) (offset int, err error) {
-	switch number {
-	case 1:
-		offset, err = x.fastReadField1(buf, _type)
-		if err != nil {
-			goto ReadFieldError
-		}
-	default:
-		offset, err = fastpb.Skip(buf, _type, number)
-		if err != nil {
-			goto SkipFieldError
-		}
-	}
-	return offset, nil
-SkipFieldError:
-	return offset, fmt.Errorf("%T cannot parse invalid wire-format data, error: %s", x, err)
-ReadFieldError:
-	return offset, fmt.Errorf("%T read field %d '%s' error: %s", x, number, fieldIDToName_FavoriteListReq[number], err)
-}
-
-func (x *FavoriteListReq) fastReadField1(buf []byte, _type int8) (offset int, err error) {
-	x.UserId, offset, err = fastpb.ReadInt64(buf, _type)
-	return offset, err
-}
-
-func (x *FavoriteListResp) FastRead(buf []byte, _type int8, number int32) (offset int, err error) {
-	switch number {
-	case 1:
-		offset, err = x.fastReadField1(buf, _type)
-		if err != nil {
-			goto ReadFieldError
-		}
-	case 2:
-		offset, err = x.fastReadField2(buf, _type)
-		if err != nil {
-			goto ReadFieldError
-		}
-	case 3:
-		offset, err = x.fastReadField3(buf, _type)
-		if err != nil {
-			goto ReadFieldError
-		}
-	default:
-		offset, err = fastpb.Skip(buf, _type, number)
-		if err != nil {
-			goto SkipFieldError
-		}
-	}
-	return offset, nil
-SkipFieldError:
-	return offset, fmt.Errorf("%T cannot parse invalid wire-format data, error: %s", x, err)
-ReadFieldError:
-	return offset, fmt.Errorf("%T read field %d '%s' error: %s", x, number, fieldIDToName_FavoriteListResp[number], err)
-}
-
-func (x *FavoriteListResp) fastReadField1(buf []byte, _type int8) (offset int, err error) {
-	x.StatusCode, offset, err = fastpb.ReadInt32(buf, _type)
-	return offset, err
-}
-
-func (x *FavoriteListResp) fastReadField2(buf []byte, _type int8) (offset int, err error) {
-	x.StatusMsg, offset, err = fastpb.ReadString(buf, _type)
-	return offset, err
-}
-
-func (x *FavoriteListResp) fastReadField3(buf []byte, _type int8) (offset int, err error) {
-	var v Video
-	offset, err = fastpb.ReadMessage(buf, _type, &v)
-	if err != nil {
-		return offset, err
-	}
-	x.VideoList = append(x.VideoList, &v)
-	return offset, nil
-}
-
 func (x *Video) FastRead(buf []byte, _type int8, number int32) (offset int, err error) {
 	switch number {
 	case 1:
@@ -652,6 +577,86 @@ func (x *CommentListResp) fastReadField3(buf []byte, _type int8) (offset int, er
 	return offset, nil
 }
 
+func (x *QueryFavoriteExistReq) FastRead(buf []byte, _type int8, number int32) (offset int, err error) {
+	switch number {
+	case 1:
+		offset, err = x.fastReadField1(buf, _type)
+		if err != nil {
+			goto ReadFieldError
+		}
+	case 2:
+		offset, err = x.fastReadField2(buf, _type)
+		if err != nil {
+			goto ReadFieldError
+		}
+	default:
+		offset, err = fastpb.Skip(buf, _type, number)
+		if err != nil {
+			goto SkipFieldError
+		}
+	}
+	return offset, nil
+SkipFieldError:
+	return offset, fmt.Errorf("%T cannot parse invalid wire-format data, error: %s", x, err)
+ReadFieldError:
+	return offset, fmt.Errorf("%T read field %d '%s' error: %s", x, number, fieldIDToName_QueryFavoriteExistReq[number], err)
+}
+
+func (x *QueryFavoriteExistReq) fastReadField1(buf []byte, _type int8) (offset int, err error) {
+	x.UserId, offset, err = fastpb.ReadInt64(buf, _type)
+	return offset, err
+}
+
+func (x *QueryFavoriteExistReq) fastReadField2(buf []byte, _type int8) (offset int, err error) {
+	x.VideoId, offset, err = fastpb.ReadInt64(buf, _type)
+	return offset, err
+}
+
+func (x *QueryFavoriteExistResp) FastRead(buf []byte, _type int8, number int32) (offset int, err error) {
+	switch number {
+	case 1:
+		offset, err = x.fastReadField1(buf, _type)
+		if err != nil {
+			goto ReadFieldError
+		}
+	case 2:
+		offset, err = x.fastReadField2(buf, _type)
+		if err != nil {
+			goto ReadFieldError
+		}
+	case 3:
+		offset, err = x.fastReadField3(buf, _type)
+		if err != nil {
+			goto ReadFieldError
+		}
+	default:
+		offset, err = fastpb.Skip(buf, _type, number)
+		if err != nil {
+			goto SkipFieldError
+		}
+	}
+	return offset, nil
+SkipFieldError:
+	return offset, fmt.Errorf("%T cannot parse invalid wire-format data, error: %s", x, err)
+ReadFieldError:
+	return offset, fmt.Errorf("%T read field %d '%s' error: %s", x, number, fieldIDToName_QueryFavoriteExistResp[number], err)
+}
+
+func (x *QueryFavoriteExistResp) fastReadField1(buf []byte, _type int8) (offset int, err error) {
+	x.StatusCode, offset, err = fastpb.ReadInt32(buf, _type)
+	return offset, err
+}
+
+func (x *QueryFavoriteExistResp) fastReadField2(buf []byte, _type int8) (offset int, err error) {
+	x.StatusMsg, offset, err = fastpb.ReadString(buf, _type)
+	return offset, err
+}
+
+func (x *QueryFavoriteExistResp) fastReadField3(buf []byte, _type int8) (offset int, err error) {
+	x.IsFavorite, offset, err = fastpb.ReadBool(buf, _type)
+	return offset, err
+}
+
 func (x *FavoriteActionReq) FastWrite(buf []byte) (offset int) {
 	if x == nil {
 		return offset
@@ -708,58 +713,6 @@ func (x *FavoriteActionResp) fastWriteField2(buf []byte) (offset int) {
 		return offset
 	}
 	offset += fastpb.WriteString(buf[offset:], 2, x.GetStatusMsg())
-	return offset
-}
-
-func (x *FavoriteListReq) FastWrite(buf []byte) (offset int) {
-	if x == nil {
-		return offset
-	}
-	offset += x.fastWriteField1(buf[offset:])
-	return offset
-}
-
-func (x *FavoriteListReq) fastWriteField1(buf []byte) (offset int) {
-	if x.UserId == 0 {
-		return offset
-	}
-	offset += fastpb.WriteInt64(buf[offset:], 1, x.GetUserId())
-	return offset
-}
-
-func (x *FavoriteListResp) FastWrite(buf []byte) (offset int) {
-	if x == nil {
-		return offset
-	}
-	offset += x.fastWriteField1(buf[offset:])
-	offset += x.fastWriteField2(buf[offset:])
-	offset += x.fastWriteField3(buf[offset:])
-	return offset
-}
-
-func (x *FavoriteListResp) fastWriteField1(buf []byte) (offset int) {
-	if x.StatusCode == 0 {
-		return offset
-	}
-	offset += fastpb.WriteInt32(buf[offset:], 1, x.GetStatusCode())
-	return offset
-}
-
-func (x *FavoriteListResp) fastWriteField2(buf []byte) (offset int) {
-	if x.StatusMsg == "" {
-		return offset
-	}
-	offset += fastpb.WriteString(buf[offset:], 2, x.GetStatusMsg())
-	return offset
-}
-
-func (x *FavoriteListResp) fastWriteField3(buf []byte) (offset int) {
-	if x.VideoList == nil {
-		return offset
-	}
-	for i := range x.GetVideoList() {
-		offset += fastpb.WriteMessage(buf[offset:], 3, x.GetVideoList()[i])
-	}
 	return offset
 }
 
@@ -1138,6 +1091,65 @@ func (x *CommentListResp) fastWriteField3(buf []byte) (offset int) {
 	return offset
 }
 
+func (x *QueryFavoriteExistReq) FastWrite(buf []byte) (offset int) {
+	if x == nil {
+		return offset
+	}
+	offset += x.fastWriteField1(buf[offset:])
+	offset += x.fastWriteField2(buf[offset:])
+	return offset
+}
+
+func (x *QueryFavoriteExistReq) fastWriteField1(buf []byte) (offset int) {
+	if x.UserId == 0 {
+		return offset
+	}
+	offset += fastpb.WriteInt64(buf[offset:], 1, x.GetUserId())
+	return offset
+}
+
+func (x *QueryFavoriteExistReq) fastWriteField2(buf []byte) (offset int) {
+	if x.VideoId == 0 {
+		return offset
+	}
+	offset += fastpb.WriteInt64(buf[offset:], 2, x.GetVideoId())
+	return offset
+}
+
+func (x *QueryFavoriteExistResp) FastWrite(buf []byte) (offset int) {
+	if x == nil {
+		return offset
+	}
+	offset += x.fastWriteField1(buf[offset:])
+	offset += x.fastWriteField2(buf[offset:])
+	offset += x.fastWriteField3(buf[offset:])
+	return offset
+}
+
+func (x *QueryFavoriteExistResp) fastWriteField1(buf []byte) (offset int) {
+	if x.StatusCode == 0 {
+		return offset
+	}
+	offset += fastpb.WriteInt32(buf[offset:], 1, x.GetStatusCode())
+	return offset
+}
+
+func (x *QueryFavoriteExistResp) fastWriteField2(buf []byte) (offset int) {
+	if x.StatusMsg == "" {
+		return offset
+	}
+	offset += fastpb.WriteString(buf[offset:], 2, x.GetStatusMsg())
+	return offset
+}
+
+func (x *QueryFavoriteExistResp) fastWriteField3(buf []byte) (offset int) {
+	if !x.IsFavorite {
+		return offset
+	}
+	offset += fastpb.WriteBool(buf[offset:], 3, x.GetIsFavorite())
+	return offset
+}
+
 func (x *FavoriteActionReq) Size() (n int) {
 	if x == nil {
 		return n
@@ -1194,58 +1206,6 @@ func (x *FavoriteActionResp) sizeField2() (n int) {
 		return n
 	}
 	n += fastpb.SizeString(2, x.GetStatusMsg())
-	return n
-}
-
-func (x *FavoriteListReq) Size() (n int) {
-	if x == nil {
-		return n
-	}
-	n += x.sizeField1()
-	return n
-}
-
-func (x *FavoriteListReq) sizeField1() (n int) {
-	if x.UserId == 0 {
-		return n
-	}
-	n += fastpb.SizeInt64(1, x.GetUserId())
-	return n
-}
-
-func (x *FavoriteListResp) Size() (n int) {
-	if x == nil {
-		return n
-	}
-	n += x.sizeField1()
-	n += x.sizeField2()
-	n += x.sizeField3()
-	return n
-}
-
-func (x *FavoriteListResp) sizeField1() (n int) {
-	if x.StatusCode == 0 {
-		return n
-	}
-	n += fastpb.SizeInt32(1, x.GetStatusCode())
-	return n
-}
-
-func (x *FavoriteListResp) sizeField2() (n int) {
-	if x.StatusMsg == "" {
-		return n
-	}
-	n += fastpb.SizeString(2, x.GetStatusMsg())
-	return n
-}
-
-func (x *FavoriteListResp) sizeField3() (n int) {
-	if x.VideoList == nil {
-		return n
-	}
-	for i := range x.GetVideoList() {
-		n += fastpb.SizeMessage(3, x.GetVideoList()[i])
-	}
 	return n
 }
 
@@ -1624,6 +1584,65 @@ func (x *CommentListResp) sizeField3() (n int) {
 	return n
 }
 
+func (x *QueryFavoriteExistReq) Size() (n int) {
+	if x == nil {
+		return n
+	}
+	n += x.sizeField1()
+	n += x.sizeField2()
+	return n
+}
+
+func (x *QueryFavoriteExistReq) sizeField1() (n int) {
+	if x.UserId == 0 {
+		return n
+	}
+	n += fastpb.SizeInt64(1, x.GetUserId())
+	return n
+}
+
+func (x *QueryFavoriteExistReq) sizeField2() (n int) {
+	if x.VideoId == 0 {
+		return n
+	}
+	n += fastpb.SizeInt64(2, x.GetVideoId())
+	return n
+}
+
+func (x *QueryFavoriteExistResp) Size() (n int) {
+	if x == nil {
+		return n
+	}
+	n += x.sizeField1()
+	n += x.sizeField2()
+	n += x.sizeField3()
+	return n
+}
+
+func (x *QueryFavoriteExistResp) sizeField1() (n int) {
+	if x.StatusCode == 0 {
+		return n
+	}
+	n += fastpb.SizeInt32(1, x.GetStatusCode())
+	return n
+}
+
+func (x *QueryFavoriteExistResp) sizeField2() (n int) {
+	if x.StatusMsg == "" {
+		return n
+	}
+	n += fastpb.SizeString(2, x.GetStatusMsg())
+	return n
+}
+
+func (x *QueryFavoriteExistResp) sizeField3() (n int) {
+	if !x.IsFavorite {
+		return n
+	}
+	n += fastpb.SizeBool(3, x.GetIsFavorite())
+	return n
+}
+
 var fieldIDToName_FavoriteActionReq = map[int32]string{
 	1: "UserId",
 	2: "VideoId",
@@ -1633,16 +1652,6 @@ var fieldIDToName_FavoriteActionReq = map[int32]string{
 var fieldIDToName_FavoriteActionResp = map[int32]string{
 	1: "StatusCode",
 	2: "StatusMsg",
-}
-
-var fieldIDToName_FavoriteListReq = map[int32]string{
-	1: "UserId",
-}
-
-var fieldIDToName_FavoriteListResp = map[int32]string{
-	1: "StatusCode",
-	2: "StatusMsg",
-	3: "VideoList",
 }
 
 var fieldIDToName_Video = map[int32]string{
@@ -1700,4 +1709,15 @@ var fieldIDToName_CommentListResp = map[int32]string{
 	1: "StatusCode",
 	2: "StatusMsg",
 	3: "CommentList",
+}
+
+var fieldIDToName_QueryFavoriteExistReq = map[int32]string{
+	1: "UserId",
+	2: "VideoId",
+}
+
+var fieldIDToName_QueryFavoriteExistResp = map[int32]string{
+	1: "StatusCode",
+	2: "StatusMsg",
+	3: "IsFavorite",
 }

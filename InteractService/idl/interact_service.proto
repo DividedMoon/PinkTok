@@ -15,15 +15,15 @@ message favorite_action_resp {
     string status_msg = 2; // 返回状态描述
 }
 
-message favorite_list_req {
-    int64 user_id = 1; // 用户id
-}
-
-message favorite_list_resp {
-    int32 status_code = 1; // 状态码，0-成功，其他值-失败
-    string status_msg = 2; // 返回状态描述
-    repeated Video video_list = 3; // 用户点赞视频列表
-}
+//message favorite_list_req {
+//    int64 user_id = 1; // 用户id
+//}
+//
+//message favorite_list_resp {
+//    int32 status_code = 1; // 状态码，0-成功，其他值-失败
+//    string status_msg = 2; // 返回状态描述
+//    repeated Video video_list = 3; // 用户点赞视频列表
+//}
 
 message Video {
     int64 id = 1; // 视频唯一标识
@@ -82,9 +82,21 @@ message comment_list_resp {
     repeated Comment comment_list = 3; // 评论列表
 }
 
+message query_favorite_exist_req {
+    int64 user_id = 1; // 用户鉴权token
+    int64 video_id = 2; // 视频id
+}
+
+message query_favorite_exist_resp {
+    int32 status_code = 1; // 状态码，0-成功，其他值-失败
+    string status_msg = 2; // 返回状态描述
+    bool is_favorite = 3; // true-已点赞，false-未点赞
+}
+
 service InteractService {
     rpc FavoriteAction(favorite_action_req) returns (favorite_action_resp);
-    rpc FavoriteList(favorite_list_req) returns (favorite_list_resp);
+//    rpc FavoriteList(favorite_list_req) returns (favorite_list_resp);
+    rpc QueryFavoriteExist(query_favorite_exist_req) returns (query_favorite_exist_resp);
     rpc CommentAction(comment_action_req) returns (comment_action_resp);
     rpc CommentList(comment_list_req) returns (comment_list_resp);
 }
