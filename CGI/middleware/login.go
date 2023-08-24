@@ -1,18 +1,18 @@
 package middleware
 
 import (
-	cgi "cgi/internal/client"
+	internalClient "cgi/internal/client"
 	"context"
-	"user_service/biz/model/client"
+	"user_service/biz"
 )
 
 func LoginHandler(ctx context.Context, req userLoginReq) (resp *UserLoginResp, err error) {
 	// 请求userService
-	loginReq := &client.UserLoginReq{
+	loginReq := &biz.UserLoginReq{
 		Username: req.Username,
 		Password: req.Password,
 	}
-	loginResp, _, err := cgi.UserServiceClient.Login(ctx, loginReq)
+	loginResp, err := internalClient.UserServiceClient.Login(ctx, loginReq)
 	if err != nil {
 		return nil, err
 	}

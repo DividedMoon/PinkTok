@@ -40,7 +40,7 @@ func InitJwt() {
 	JwtMiddleware, err = jwt.New(&jwt.HertzJWTMiddleware{
 		Realm:       "PinkTok",
 		Key:         []byte("secret key"),
-		Timeout:     2 * time.Hour,
+		Timeout:     24 * time.Hour,
 		TokenLookup: "query:token",
 		LoginResponse: func(ctx context.Context, c *app.RequestContext, code int, token string, time time.Time) {
 			hlog.CtxInfof(ctx, "Get login response = %+v, token is issued by: %+v", token, c.ClientIP())

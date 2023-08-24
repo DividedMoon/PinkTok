@@ -1,7 +1,7 @@
 package handler
 
 import (
-	cgi "cgi/internal/client"
+	internalClient "cgi/internal/client"
 	"cgi/internal/constant"
 	"cgi/internal/utils"
 	"cgi/middleware"
@@ -9,13 +9,13 @@ import (
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
-	"user_service/biz/model/client"
+	"user_service/biz"
 )
 
 type checkUserInfoResp struct {
-	StatusCode int32           `json:"status_code"`
-	StatusMsg  string          `json:"status_msg"`
-	User       client.UserInfo `json:"user"`
+	StatusCode int32        `json:"status_code"`
+	StatusMsg  string       `json:"status_msg"`
+	User       biz.UserInfo `json:"user"`
 }
 
 // CheckUserInfoHandler get the login user info
@@ -38,12 +38,12 @@ func CheckUserInfoHandler(ctx context.Context, c *app.RequestContext) {
 	userId = v.(int64)
 	// 获取用户信息
 	var (
-		userInfoReq = client.UserInfoReq{
+		userInfoReq = biz.UserInfoReq{
 			UserId: userId,
 		}
 	)
 
-	info, _, err := cgi.UserServiceClient.UserInfo(ctx, &userInfoReq)
+	info, err := internalClient.UserServiceClient.UserInfo(ctx, &userInfoReq)
 	if err != nil {
 		hlog.CtxErrorf(ctx, "get user info failed, err: %v", err)
 		resp = utils.BuildBaseResp(err)
@@ -53,7 +53,7 @@ func CheckUserInfoHandler(ctx context.Context, c *app.RequestContext) {
 		})
 		return
 	}
-	userInfo := &client.UserInfo{
+	userInfo := &biz.UserInfo{
 		Id:              info.User.Id,
 		Name:            info.User.Name,
 		FollowCount:     info.User.FollowCount,
