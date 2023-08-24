@@ -34,7 +34,7 @@ func (s *VideoService) CopyVideos(result *[]*client.VideoInfo, data *[]*db.Video
 	return nil
 }
 
-// TODO userID没有用到 考虑一下为什么要有这个东西
+// TODO userID没有用到 考虑一下为什么要有这个东西：： 用户给这个视频点赞
 func (s *VideoService) createVideo(data *db.VideoDBInfo, userId int64) (*client.VideoInfo, error) {
 	hlog.Infof("createVideo func data: %+v", data)
 
