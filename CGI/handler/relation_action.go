@@ -41,14 +41,20 @@ func RelationActionHandler(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 	// 参数转换
-	userId, ok := v.(int64)
-	if !ok {
-		hlog.CtxErrorf(ctx, "userId cannot be parsed to int64")
-		c.JSON(consts.StatusInternalServerError, relationActionResp{
-			StatusCode: constant.ParamErrCode,
-			StatusMsg:  constant.ParamErrMsg,
-		})
-		return
+	var userId int64
+	userIdFloat, ok := v.(float64)
+	if ok {
+		userId = int64(userIdFloat)
+	} else {
+		userId, ok = v.(int64)
+		if !ok {
+			hlog.CtxErrorf(ctx, "userId cannot be parsed to int64")
+			c.JSON(consts.StatusInternalServerError, relationActionResp{
+				StatusCode: constant.ParamErrCode,
+				StatusMsg:  constant.ParamErrMsg,
+			})
+			return
+		}
 	}
 
 	// 解析请求参数
@@ -87,6 +93,7 @@ func RelationActionHandler(ctx context.Context, c *app.RequestContext) {
 		ToUserId:   toUserId,
 		ActionType: int32(actionType),
 	}
+	hlog.CtxInfof(ctx, "sendRelationAction with req: %+v", actionReq)
 	actionResp, err := internalClient.RelationServiceClient.SendRelationAction(ctx, actionReq)
 	if err != nil {
 		hlog.CtxErrorf(ctx, "relation/action failed with err: %+v", err)

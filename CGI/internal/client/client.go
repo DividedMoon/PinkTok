@@ -8,6 +8,7 @@ import (
 	"github.com/kitex-contrib/obs-opentelemetry/provider"
 	"github.com/kitex-contrib/obs-opentelemetry/tracing"
 	"relation_service/biz/relationservice"
+	"time"
 	"user_service/biz/userservice"
 )
 
@@ -24,8 +25,9 @@ func InitClient() {
 	defer p2.Shutdown(context.Background())
 	UserServiceClient, err =
 		userservice.NewClient("user_service_client",
-			client.WithHostPorts("127.0.0.1:11011"),
+			client.WithHostPorts("8.130.120.154:11011"),
 			client.WithSuite(tracing.NewClientSuite()),
+			client.WithConnectTimeout(time.Second*2),
 			client.WithClientBasicInfo(&rpcinfo.EndpointBasicInfo{
 				ServiceName: "user_service_client",
 			}))
@@ -34,8 +36,9 @@ func InitClient() {
 	}
 	RelationServiceClient, err =
 		relationservice.NewClient("relation_service_client",
-			client.WithHostPorts("127.0.0.1:11012"),
+			client.WithHostPorts("8.130.120.154:11012"),
 			client.WithSuite(tracing.NewClientSuite()),
+			client.WithConnectTimeout(time.Second*2),
 			client.WithClientBasicInfo(&rpcinfo.EndpointBasicInfo{
 				ServiceName: "relation_service_client",
 			}))
