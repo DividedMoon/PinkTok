@@ -87,3 +87,13 @@ func QueryFavoriteExist(userId, videoId int64) (bool, error) {
 	}
 	return liked, nil
 }
+
+// QueryUserFavoriteVideoIds 查询用户的喜欢列表，返回喜欢的视频ID
+func QueryUserFavoriteVideoIds(userId int64) ([]int64, error) {
+	videoIds, err := model.SelectFavoriteVideoIdsByUserID(userId)
+	if err != nil {
+		hlog.Error("SelectFavoriteVideoIdsByUserID error", err)
+		return nil, err
+	}
+	return videoIds, nil
+}

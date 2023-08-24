@@ -20,6 +20,12 @@ func (s *InteractServiceImpl) QueryFavoriteExist(ctx context.Context, req *biz.Q
 	return
 }
 
+// QueryUserFavoriteVideoIds implements the InteractServiceImpl interface.
+func (s *InteractServiceImpl) QueryUserFavoriteVideoIds(ctx context.Context, req *biz.FavoriteVideoReq) (resp *biz.FavoriteVideoResp, err error) {
+	// TODO: Your code here...
+	return
+}
+
 // CommentAction implements the InteractServiceImpl interface.
 func (s *InteractServiceImpl) CommentAction(ctx context.Context, req *biz.CommentActionReq) (resp *biz.CommentActionResp, err error) {
 	// TODO: Your code here...
