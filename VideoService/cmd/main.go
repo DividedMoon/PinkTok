@@ -7,6 +7,7 @@ import (
 	"os"
 	"video_service/biz/handler"
 	biz "video_service/biz/videoservice"
+	"video_service/internal/client"
 	"video_service/internal/config"
 	"video_service/internal/dal/db"
 	"video_service/internal/dal/redis"
@@ -24,6 +25,7 @@ func main() {
 	redis.InitRedis()
 	_ = config.InitConfigs()
 	minio.Init()
+	client.InitClient()
 
 	svr := biz.NewServer(new(handler.VideoServiceImpl), server.WithServiceAddr(addr))
 	err = svr.Run()

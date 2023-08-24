@@ -6,7 +6,9 @@ import (
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/go-redis/redis/v7"
 	"sync"
+	userBiz "user_service/biz"
 	client "video_service/biz"
+	internalClient "video_service/internal/client"
 	"video_service/internal/dal/db"
 	rd "video_service/internal/dal/redis"
 	"video_service/internal/utils"
@@ -53,27 +55,48 @@ func (s *VideoService) createVideo(data *db.VideoDBInfo, userId int64) (*client.
 
 	// 调用UserService获取本条视频的作者信息
 	go func() {
-		//TODO 这里传的是假数据 到时候需要调用UserService
 		//userInfoReq := &userModel.UserInfoReq{UserId: data.AuthorID}
 		//resp, _, err := userClient.UserServiceClient.UserInfo(s.ctx, userInfoReq)
-		//TODO 临时的
 		err := *new(error)
 		if err != nil {
 			errChan <- fmt.Errorf("GetUserInfo func error:" + err.Error())
 		}
 		hlog.Infof("start to get user info")
+		//video.Author = &client.UserInfo{
+		//	Id:              1,
+		//	Name:            "testUser",
+		//	FollowCount:     2,
+		//	FollowerCount:   3,
+		//	IsFollow:        true,
+		//	Avatar:          "resp.User.Avatar",
+		//	BackgroundImage: "resp.User.BackgroundImage",
+		//	Signature:       "resp.User.Signature",
+		//	TotalFavorited:  5,
+		//	WorkCount:       6,
+		//	FavoriteCount:   7,
+		//}
+		userInfoReq := &userBiz.UserInfoReq{
+			UserId: data.AuthorID,
+		}
+		userInfoResp, err := internalClient.UserServiceClient.UserInfo(s.ctx, userInfoReq)
+		if err != nil {
+			hlog.Error("rpc call user service error: ", err)
+			errChan <- fmt.Errorf("GetUserInfo func error:" + err.Error())
+			wg.Done()
+			return
+		}
 		video.Author = &client.UserInfo{
-			Id:              1,
-			Name:            "testUser",
-			FollowCount:     2,
-			FollowerCount:   3,
-			IsFollow:        true,
-			Avatar:          "resp.User.Avatar",
-			BackgroundImage: "resp.User.BackgroundImage",
-			Signature:       "resp.User.Signature",
-			TotalFavorited:  5,
-			WorkCount:       6,
-			FavoriteCount:   7,
+			Id:              userInfoResp.User.Id,
+			Name:            userInfoResp.User.Name,
+			FollowCount:     userInfoResp.User.FollowCount,
+			FollowerCount:   userInfoResp.User.FollowerCount,
+			IsFollow:        userInfoResp.User.IsFollow,
+			Avatar:          userInfoResp.User.Avatar,
+			BackgroundImage: userInfoResp.User.BackgroundImage,
+			Signature:       userInfoResp.User.Signature,
+			TotalFavorited:  userInfoResp.User.TotalFavorited,
+			WorkCount:       userInfoResp.User.WorkCount,
+			FavoriteCount:   userInfoResp.User.FavoriteCount,
 		}
 		hlog.Infof("get user info success : %+v", video.Author)
 
@@ -113,6 +136,8 @@ func (s *VideoService) createVideo(data *db.VideoDBInfo, userId int64) (*client.
 		video.IsFavorite, err = queryFavoriteExist(userId, data.ID)
 		if err != nil {
 			errChan <- fmt.Errorf("GetCommentCountByVideoID func error:" + err.Error())
+			wg.Done()
+			return
 		}
 		hlog.Infof("get favorite exist success : %+v", video.IsFavorite)
 		wg.Done()

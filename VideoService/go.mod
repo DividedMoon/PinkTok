@@ -15,6 +15,7 @@ require (
 	gopkg.in/yaml.v3 v3.0.1
 	gorm.io/driver/mysql v1.5.1
 	gorm.io/gorm v1.25.3
+	user_service v0.0.0
 )
 
 require (
@@ -70,3 +71,5 @@ require (
 	google.golang.org/genproto v0.0.0-20210513213006-bf773b8c8384 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 )
+replace user_service => ../UserService
+
