@@ -7,7 +7,6 @@ import (
 	"github.com/cloudwego/kitex/server"
 	"github.com/kitex-contrib/obs-opentelemetry/provider"
 	"github.com/kitex-contrib/obs-opentelemetry/tracing"
-	"log"
 	"net"
 	"relation_service/biz/handler"
 	biz "relation_service/biz/relationservice"
@@ -41,6 +40,8 @@ func main() {
 	p := provider.NewOpenTelemetryProvider(
 		provider.WithServiceName(servername),
 		provider.WithExportEndpoint("106.54.208.133:4317"),
+		provider.WithEnableTracing(true),
+		provider.WithEnableMetrics(false),
 		provider.WithInsecure())
 	defer p.Shutdown(context.Background())
 	svr := biz.NewServer(new(handler.RelationServiceImpl),
@@ -54,6 +55,6 @@ func main() {
 	err = svr.Run()
 
 	if err != nil {
-		log.Println(err.Error())
+		hlog.Error(err.Error())
 	}
 }
