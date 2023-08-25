@@ -132,13 +132,16 @@ func decryptResp(resp interface{}, key string) (interface{}, error) {
 }
 
 func getEtcdClient(once *sync.Once) (err error) {
-	once.Do(func() {
-		cli, err = clientv3.New(clientv3.Config{
-			Endpoints: []string{"http://106.54.208.133:2379"}, // etcd服务地址
+	if cli == nil {
+		once.Do(func() {
+			cli, err = clientv3.New(clientv3.Config{
+				Endpoints: []string{"http://106.54.208.133:2379"}, // etcd服务地址
+			})
+			if err != nil {
+				hlog.Fatalf("AuthMiddleware etcd client init failed: %+v", err)
+			}
 		})
-		if err != nil {
-			hlog.Errorf("AuthMiddleware etcd client init failed: %+v", err)
-		}
-	})
-	return err
+		return nil
+	}
+	return nil
 }
