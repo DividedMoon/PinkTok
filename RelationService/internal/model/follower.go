@@ -1,6 +1,7 @@
 package model
 
 import (
+	"database/sql"
 	"gorm.io/gorm"
 )
 
@@ -47,4 +48,22 @@ func SelectFriendByUserIdA(userIdA int64) (fs []Follower, err error) {
 		Find(&fs).
 		Error
 	return
+}
+
+func SubmitFollow(follow *Follow, follower *Follower) error {
+	err = DB.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Save(follow).Error; err != nil {
+			return err
+		}
+		if err := tx.Save(follower).Error; err != nil {
+			return err
+		}
+		return nil
+	}, &sql.TxOptions{
+		Isolation: sql.LevelRepeatableRead,
+	})
+	if err != nil {
+		return err
+	}
+	return nil
 }

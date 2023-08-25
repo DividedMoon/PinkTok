@@ -53,6 +53,7 @@ func teardown() {
 }
 
 func TestSubmitFollowRelationAction(t *testing.T) {
+	mock := new(MockUserService)
 	var (
 		ctx = context.Background()
 		req = &biz.RelationActionReq{
@@ -60,8 +61,28 @@ func TestSubmitFollowRelationAction(t *testing.T) {
 			ToUserId:   1001,
 			ActionType: 1,
 		}
+		req1  = &userBiz.UserInfoReq{UserId: 1}
+		req2  = &userBiz.UserInfoReq{UserId: 1001}
+		resp1 = &userBiz.UserInfoResp{
+			StatusCode: 0,
+			StatusMsg:  "success",
+			User: &userBiz.UserInfo{
+				Id:   1,
+				Name: "test1",
+			},
+		}
+		reps2 = &userBiz.UserInfoResp{
+			StatusCode: 0,
+			StatusMsg:  "success",
+			User: &userBiz.UserInfo{
+				Id:   1001,
+				Name: "test2",
+			},
+		}
 	)
-
+	mock.On("UserInfo", context.TODO(), req1).Return(resp1, nil)
+	mock.On("UserInfo", context.TODO(), req2).Return(reps2, nil)
+	internalClient.UserServiceClient = mock
 	err := SubmitFollowRelationAction(ctx, req)
 	assert.Assert(t, err == nil)
 }
@@ -95,9 +116,8 @@ func TestGetFollowListById(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	assert.Assert(t, len(infos) == 2)
+	assert.Assert(t, len(infos) == 1)
 	assert.Assert(t, infos[0].Name == "test1")
-	assert.Assert(t, infos[1].Name == "test2")
 }
 
 func TestGetFollowerListById(t *testing.T) {

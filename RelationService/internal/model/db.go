@@ -4,7 +4,6 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
-	"gorm.io/sharding"
 )
 
 var (
@@ -21,7 +20,8 @@ func InitDB() {
 	if err != nil {
 		panic(err)
 	}
-	err = DB.Use(sharding.Register(sharding.Config{
+	// 暂不分表
+	/*err = DB.Use(sharding.Register(sharding.Config{
 		ShardingKey:         "user_id_a",
 		NumberOfShards:      4,
 		PrimaryKeyGenerator: sharding.PKSnowflake,
@@ -29,8 +29,16 @@ func InitDB() {
 	if err != nil {
 		panic(err)
 	}
-	err = DB.AutoMigrate(&Follow{}, &Follower{})
-	if err != nil {
-		panic(err)
+	if has := DB.Migrator().HasTable(&Follow{}); !has {
+		err = DB.AutoMigrate(&Follow{})
+		if err != nil {
+			panic(err)
+		}
 	}
+	if has := DB.Migrator().HasTable(&Follower{}); !has {
+		err = DB.AutoMigrate(&Follower{})
+		if err != nil {
+			panic(err)
+		}
+	}*/
 }
