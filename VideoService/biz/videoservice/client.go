@@ -14,6 +14,7 @@ type Client interface {
 	Feed(ctx context.Context, Req *biz.FeedReq, callOptions ...callopt.Option) (r *biz.FeedResp, err error)
 	PublishVideo(ctx context.Context, Req *biz.PublishReq, callOptions ...callopt.Option) (r *biz.PublishResp, err error)
 	GetPublishList(ctx context.Context, Req *biz.GetPublishListReq, callOptions ...callopt.Option) (r *biz.GetPublishListResp, err error)
+	GetFavoriteVideoList(ctx context.Context, Req *biz.GetFavoriteVideoListReq, callOptions ...callopt.Option) (r *biz.GetFavoriteVideoListResp, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -58,4 +59,9 @@ func (p *kVideoServiceClient) PublishVideo(ctx context.Context, Req *biz.Publish
 func (p *kVideoServiceClient) GetPublishList(ctx context.Context, Req *biz.GetPublishListReq, callOptions ...callopt.Option) (r *biz.GetPublishListResp, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.GetPublishList(ctx, Req)
+}
+
+func (p *kVideoServiceClient) GetFavoriteVideoList(ctx context.Context, Req *biz.GetFavoriteVideoListReq, callOptions ...callopt.Option) (r *biz.GetFavoriteVideoListResp, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.GetFavoriteVideoList(ctx, Req)
 }

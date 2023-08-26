@@ -48,3 +48,9 @@ func (s *VideoServiceImpl) GetPublishList(ctx context.Context, req *biz.GetPubli
 	}, err
 
 }
+
+// GetFavoriteVideoList implements the VideoServiceImpl interface.
+func (s *VideoServiceImpl) GetFavoriteVideoList(ctx context.Context, req *biz.GetFavoriteVideoListReq) (resp *biz.GetFavoriteVideoListResp, err error) {
+	// TODO: Your code here...
+	return
+}

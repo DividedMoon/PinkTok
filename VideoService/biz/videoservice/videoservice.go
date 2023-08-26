@@ -22,9 +22,10 @@ func NewServiceInfo() *kitex.ServiceInfo {
 	serviceName := "VideoService"
 	handlerType := (*biz.VideoService)(nil)
 	methods := map[string]kitex.MethodInfo{
-		"Feed":           kitex.NewMethodInfo(feedHandler, newFeedArgs, newFeedResult, false),
-		"PublishVideo":   kitex.NewMethodInfo(publishVideoHandler, newPublishVideoArgs, newPublishVideoResult, false),
-		"GetPublishList": kitex.NewMethodInfo(getPublishListHandler, newGetPublishListArgs, newGetPublishListResult, false),
+		"Feed":                 kitex.NewMethodInfo(feedHandler, newFeedArgs, newFeedResult, false),
+		"PublishVideo":         kitex.NewMethodInfo(publishVideoHandler, newPublishVideoArgs, newPublishVideoResult, false),
+		"GetPublishList":       kitex.NewMethodInfo(getPublishListHandler, newGetPublishListArgs, newGetPublishListResult, false),
+		"GetFavoriteVideoList": kitex.NewMethodInfo(getFavoriteVideoListHandler, newGetFavoriteVideoListArgs, newGetFavoriteVideoListResult, false),
 	}
 	extra := map[string]interface{}{
 		"PackageName": "video_service",
@@ -499,6 +500,159 @@ func (p *GetPublishListResult) GetResult() interface{} {
 	return p.Success
 }
 
+func getFavoriteVideoListHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(biz.GetFavoriteVideoListReq)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(biz.VideoService).GetFavoriteVideoList(ctx, req)
+		if err != nil {
+			return err
+		}
+		if err := st.SendMsg(resp); err != nil {
+			return err
+		}
+	case *GetFavoriteVideoListArgs:
+		success, err := handler.(biz.VideoService).GetFavoriteVideoList(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*GetFavoriteVideoListResult)
+		realResult.Success = success
+	}
+	return nil
+}
+func newGetFavoriteVideoListArgs() interface{} {
+	return &GetFavoriteVideoListArgs{}
+}
+
+func newGetFavoriteVideoListResult() interface{} {
+	return &GetFavoriteVideoListResult{}
+}
+
+type GetFavoriteVideoListArgs struct {
+	Req *biz.GetFavoriteVideoListReq
+}
+
+func (p *GetFavoriteVideoListArgs) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetReq() {
+		p.Req = new(biz.GetFavoriteVideoListReq)
+	}
+	return p.Req.FastRead(buf, _type, number)
+}
+
+func (p *GetFavoriteVideoListArgs) FastWrite(buf []byte) (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.FastWrite(buf)
+}
+
+func (p *GetFavoriteVideoListArgs) Size() (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.Size()
+}
+
+func (p *GetFavoriteVideoListArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("No req in GetFavoriteVideoListArgs")
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *GetFavoriteVideoListArgs) Unmarshal(in []byte) error {
+	msg := new(biz.GetFavoriteVideoListReq)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var GetFavoriteVideoListArgs_Req_DEFAULT *biz.GetFavoriteVideoListReq
+
+func (p *GetFavoriteVideoListArgs) GetReq() *biz.GetFavoriteVideoListReq {
+	if !p.IsSetReq() {
+		return GetFavoriteVideoListArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *GetFavoriteVideoListArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *GetFavoriteVideoListArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type GetFavoriteVideoListResult struct {
+	Success *biz.GetFavoriteVideoListResp
+}
+
+var GetFavoriteVideoListResult_Success_DEFAULT *biz.GetFavoriteVideoListResp
+
+func (p *GetFavoriteVideoListResult) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetSuccess() {
+		p.Success = new(biz.GetFavoriteVideoListResp)
+	}
+	return p.Success.FastRead(buf, _type, number)
+}
+
+func (p *GetFavoriteVideoListResult) FastWrite(buf []byte) (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.FastWrite(buf)
+}
+
+func (p *GetFavoriteVideoListResult) Size() (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.Size()
+}
+
+func (p *GetFavoriteVideoListResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("No req in GetFavoriteVideoListResult")
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *GetFavoriteVideoListResult) Unmarshal(in []byte) error {
+	msg := new(biz.GetFavoriteVideoListResp)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetFavoriteVideoListResult) GetSuccess() *biz.GetFavoriteVideoListResp {
+	if !p.IsSetSuccess() {
+		return GetFavoriteVideoListResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *GetFavoriteVideoListResult) SetSuccess(x interface{}) {
+	p.Success = x.(*biz.GetFavoriteVideoListResp)
+}
+
+func (p *GetFavoriteVideoListResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *GetFavoriteVideoListResult) GetResult() interface{} {
+	return p.Success
+}
+
 type kClient struct {
 	c client.Client
 }
@@ -534,6 +688,16 @@ func (p *kClient) GetPublishList(ctx context.Context, Req *biz.GetPublishListReq
 	_args.Req = Req
 	var _result GetPublishListResult
 	if err = p.c.Call(ctx, "GetPublishList", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) GetFavoriteVideoList(ctx context.Context, Req *biz.GetFavoriteVideoListReq) (r *biz.GetFavoriteVideoListResp, err error) {
+	var _args GetFavoriteVideoListArgs
+	_args.Req = Req
+	var _result GetFavoriteVideoListResult
+	if err = p.c.Call(ctx, "GetFavoriteVideoList", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
