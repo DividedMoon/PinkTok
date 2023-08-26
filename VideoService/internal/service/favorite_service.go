@@ -1,10 +1,10 @@
 package service
 
 import (
-	"fmt"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/go-redis/redis/v7"
 	client "video_service/biz"
+	"video_service/internal/constants"
 	"video_service/internal/dal/db"
 	rd "video_service/internal/dal/redis"
 )
@@ -21,12 +21,12 @@ func (s *VideoService) FavoriteAction(videoId, userId int64, actionType int32) e
 		err = AddVideoFavoriteCount(videoId, -1)
 	} else { // 如果不是这两种类型 则返回错误
 		hlog.Error("FavoriteAction error", "actionType is not 1 or -1")
-		return fmt.Errorf("actionType is not 1 or -1")
+		return constants.NewErrNo(constants.ParameterErrCode, constants.ParameterErrMsg)
 	}
 
 	if err != nil {
 		hlog.Error("AddVideoFavoriteCount error", err.Error())
-		return err
+		return constants.NewErrNo(constants.RedisErrCode, constants.RedisErrMsg)
 	}
 	// 3. 返回结果
 	return nil
@@ -41,13 +41,13 @@ func (s *VideoService) GetFavoriteVideoList(userId int64) ([]*client.VideoInfo, 
 	videoDBInfos, err := db.GetVideoDBInfoByIDs(favoriteVideoIds)
 	if err != nil {
 		hlog.Error("GetVideoDBInfoByIDs error", err.Error())
-		return nil, err
+		return nil, constants.NewErrNo(constants.DBErrCode, constants.DBErrMsg)
 	}
 	videos := make([]*client.VideoInfo, 0, len(favoriteVideoIds))
 	err = s.CopyVideos(&videos, &videoDBInfos, userId)
 	if err != nil {
 		hlog.Error("CopyVideos error", err.Error())
-		return nil, err
+		return nil, constants.NewErrNo(constants.FunctionErrCode, constants.FunctionErrMsg)
 	}
 	return videos, nil
 }

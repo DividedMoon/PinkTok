@@ -13,6 +13,9 @@ const (
 	VideoCopyErrCode
 	GetExtensionErrCode
 	UploadImgErrCode
+	FunctionErrCode
+	ParameterErrCode
+	RedisErrCode
 )
 
 const (
@@ -22,6 +25,9 @@ const (
 	VideoCopyErrMsg    = "Video copy failed"
 	GetExtensionErrMsg = "Get extension failed"
 	UploadImgErrMsg    = "Upload image failed"
+	FunctionErrMsg     = "Inner function call failed"
+	ParameterErrMsg    = "Wrong parameter"
+	RedisErrMsg        = "Redis call failed"
 )
 
 type ErrNo struct {

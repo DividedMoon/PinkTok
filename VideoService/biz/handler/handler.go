@@ -51,12 +51,31 @@ func (s *VideoServiceImpl) GetPublishList(ctx context.Context, req *biz.GetPubli
 
 // GetFavoriteVideoList implements the VideoServiceImpl interface.
 func (s *VideoServiceImpl) GetFavoriteVideoList(ctx context.Context, req *biz.GetFavoriteVideoListReq) (resp *biz.GetFavoriteVideoListResp, err error) {
-	// TODO: Your code here...
-	return
+	userId := req.GetUserId()
+	videoList, err := service.NewVideoService(ctx).GetFavoriteVideoList(userId)
+
+	res := utils.BuildBaseResp(err)
+	hlog.CtxErrorf(ctx, "GetFavoriteVideoList Error", err.Error())
+
+	return &biz.GetFavoriteVideoListResp{
+		StatusCode: res.StatusCode,
+		StatusMsg:  res.StatusMsg,
+		VideoList:  videoList,
+	}, err
 }
 
 // FavoriteAction implements the VideoServiceImpl interface.
 func (s *VideoServiceImpl) FavoriteAction(ctx context.Context, req *biz.FavoriteActionReq) (resp *biz.FavoriteActionResp, err error) {
-	// TODO: Your code here...
-	return
+	userId := req.GetUserId()
+	videoId := req.GetVideoId()
+	actionType := req.GetActionType()
+	err = service.NewVideoService(ctx).FavoriteAction(userId, videoId, actionType)
+
+	res := utils.BuildBaseResp(err)
+	hlog.CtxErrorf(ctx, "FavoriteAction Error", err.Error())
+
+	return &biz.FavoriteActionResp{
+		StatusCode: res.StatusCode,
+		StatusMsg:  res.StatusMsg,
+	}, err
 }
