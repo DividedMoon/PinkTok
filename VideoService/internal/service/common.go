@@ -134,7 +134,7 @@ func (s *VideoService) createVideo(data *db.VideoDBInfo, userId int64) (*client.
 	go func() {
 		err := *new(error)
 		hlog.Infof("start to get favorite exist")
-		//TODO 调用FavoriteService判断当前用户是否已经点赞该视频
+		//TODO 调用FavoriteService查询当前用户是否已经点赞该视频
 		//video.IsFavorite, err = queryFavoriteExist(userId, data.ID)
 		//TODO 假数据 到时候要删除
 		video.IsFavorite = true

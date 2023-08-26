@@ -48,6 +48,17 @@ message get_favorite_video_list_resp {
    repeated VideoInfo video_list = 3; // 用户点赞的视频列表
 }
 
+message favorite_action_req {
+    int64 user_id = 1; // 用户鉴权token
+    int64 video_id = 2; // 视频id
+    int32 action_type = 3; // 1-点赞，2-取消点赞
+}
+
+message favorite_action_resp {
+    int32 status_code = 1; // 状态码，0-成功，其他值-失败
+    string status_msg = 2; // 返回状态描述
+}
+
 message VideoInfo {
    int64 id = 1; // 视频唯一标识
    UserInfo author = 2; // 视频作者信息
@@ -78,4 +89,5 @@ service VideoService {
    rpc PublishVideo(publish_req) returns (publish_resp) ;
    rpc GetPublishList(get_publish_list_req) returns (get_publish_list_resp) ;
    rpc GetFavoriteVideoList(get_favorite_video_list_req) returns (get_favorite_video_list_resp) ;
+   rpc FavoriteAction(favorite_action_req) returns (favorite_action_resp) ;
 }

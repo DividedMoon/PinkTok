@@ -26,6 +26,7 @@ func NewServiceInfo() *kitex.ServiceInfo {
 		"PublishVideo":         kitex.NewMethodInfo(publishVideoHandler, newPublishVideoArgs, newPublishVideoResult, false),
 		"GetPublishList":       kitex.NewMethodInfo(getPublishListHandler, newGetPublishListArgs, newGetPublishListResult, false),
 		"GetFavoriteVideoList": kitex.NewMethodInfo(getFavoriteVideoListHandler, newGetFavoriteVideoListArgs, newGetFavoriteVideoListResult, false),
+		"FavoriteAction":       kitex.NewMethodInfo(favoriteActionHandler, newFavoriteActionArgs, newFavoriteActionResult, false),
 	}
 	extra := map[string]interface{}{
 		"PackageName": "video_service",
@@ -653,6 +654,159 @@ func (p *GetFavoriteVideoListResult) GetResult() interface{} {
 	return p.Success
 }
 
+func favoriteActionHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(biz.FavoriteActionReq)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(biz.VideoService).FavoriteAction(ctx, req)
+		if err != nil {
+			return err
+		}
+		if err := st.SendMsg(resp); err != nil {
+			return err
+		}
+	case *FavoriteActionArgs:
+		success, err := handler.(biz.VideoService).FavoriteAction(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*FavoriteActionResult)
+		realResult.Success = success
+	}
+	return nil
+}
+func newFavoriteActionArgs() interface{} {
+	return &FavoriteActionArgs{}
+}
+
+func newFavoriteActionResult() interface{} {
+	return &FavoriteActionResult{}
+}
+
+type FavoriteActionArgs struct {
+	Req *biz.FavoriteActionReq
+}
+
+func (p *FavoriteActionArgs) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetReq() {
+		p.Req = new(biz.FavoriteActionReq)
+	}
+	return p.Req.FastRead(buf, _type, number)
+}
+
+func (p *FavoriteActionArgs) FastWrite(buf []byte) (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.FastWrite(buf)
+}
+
+func (p *FavoriteActionArgs) Size() (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.Size()
+}
+
+func (p *FavoriteActionArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("No req in FavoriteActionArgs")
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *FavoriteActionArgs) Unmarshal(in []byte) error {
+	msg := new(biz.FavoriteActionReq)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var FavoriteActionArgs_Req_DEFAULT *biz.FavoriteActionReq
+
+func (p *FavoriteActionArgs) GetReq() *biz.FavoriteActionReq {
+	if !p.IsSetReq() {
+		return FavoriteActionArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *FavoriteActionArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *FavoriteActionArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type FavoriteActionResult struct {
+	Success *biz.FavoriteActionResp
+}
+
+var FavoriteActionResult_Success_DEFAULT *biz.FavoriteActionResp
+
+func (p *FavoriteActionResult) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetSuccess() {
+		p.Success = new(biz.FavoriteActionResp)
+	}
+	return p.Success.FastRead(buf, _type, number)
+}
+
+func (p *FavoriteActionResult) FastWrite(buf []byte) (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.FastWrite(buf)
+}
+
+func (p *FavoriteActionResult) Size() (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.Size()
+}
+
+func (p *FavoriteActionResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("No req in FavoriteActionResult")
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *FavoriteActionResult) Unmarshal(in []byte) error {
+	msg := new(biz.FavoriteActionResp)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *FavoriteActionResult) GetSuccess() *biz.FavoriteActionResp {
+	if !p.IsSetSuccess() {
+		return FavoriteActionResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *FavoriteActionResult) SetSuccess(x interface{}) {
+	p.Success = x.(*biz.FavoriteActionResp)
+}
+
+func (p *FavoriteActionResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *FavoriteActionResult) GetResult() interface{} {
+	return p.Success
+}
+
 type kClient struct {
 	c client.Client
 }
@@ -698,6 +852,16 @@ func (p *kClient) GetFavoriteVideoList(ctx context.Context, Req *biz.GetFavorite
 	_args.Req = Req
 	var _result GetFavoriteVideoListResult
 	if err = p.c.Call(ctx, "GetFavoriteVideoList", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) FavoriteAction(ctx context.Context, Req *biz.FavoriteActionReq) (r *biz.FavoriteActionResp, err error) {
+	var _args FavoriteActionArgs
+	_args.Req = Req
+	var _result FavoriteActionResult
+	if err = p.c.Call(ctx, "FavoriteAction", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil

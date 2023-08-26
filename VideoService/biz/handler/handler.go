@@ -54,3 +54,9 @@ func (s *VideoServiceImpl) GetFavoriteVideoList(ctx context.Context, req *biz.Ge
 	// TODO: Your code here...
 	return
 }
+
+// FavoriteAction implements the VideoServiceImpl interface.
+func (s *VideoServiceImpl) FavoriteAction(ctx context.Context, req *biz.FavoriteActionReq) (resp *biz.FavoriteActionResp, err error) {
+	// TODO: Your code here...
+	return
+}
