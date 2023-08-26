@@ -3,20 +3,25 @@ package auth
 import (
 	"context"
 	"github.com/cloudwego/hertz/pkg/common/test/assert"
+	"middleware/internal"
 	"testing"
 	"time"
 )
 
-func TestAuthenticateMiddleware(t *testing.T) {
-	t.Log("TestAuthenticateMiddleware")
+func TestAuthenticateClient(t *testing.T) {
 	testEndpoint := func(ctx context.Context, req interface{}, resp interface{}) (err error) {
+		t.Log("req: ", req)
+		t.Log("testEndpoint")
+		t.Log("resp: ", resp)
 		return nil
 	}
 
-	mw := AuthenticateMiddleware(testEndpoint)
+	mw := AuthenticateClient(testEndpoint)
 	ctx := context.Background()
-	req := "test"
-	resp := "OK"
+	req := &internal.UserInfoReq{
+		UserId: 342,
+	}
+	resp := &internal.UserInfoResp{}
 	err := mw(ctx, req, resp)
 	if err != nil {
 		t.Errorf("AuthenticateMiddleware failed: %+v", err)
@@ -24,15 +29,16 @@ func TestAuthenticateMiddleware(t *testing.T) {
 }
 
 func TestEncryptReqAndDecryptResp(t *testing.T) {
-	req := "hello"
+	req := "Hello World!"
 	key := "W0zBXMY7VL7Xo6s0"
-	i, err := encryptReq(req, key)
+
+	i, err := encrypt([]byte(req), key)
 	assert.Nil(t, err)
-	t.Logf("encrypted req: %+v", i)
-	resp, err := decryptResp(i, key)
+	t.Logf("encrypted req: %s", i)
+	resp, err := decrypt(i, key)
 	assert.Nil(t, err)
-	t.Logf("decrypted resp: %+v", resp)
-	assert.Assert(t, req == resp)
+	t.Logf("decrypted resp: %s", resp)
+	assert.Assert(t, req == string(resp))
 }
 
 func TestGetEtcdClient(t *testing.T) {
