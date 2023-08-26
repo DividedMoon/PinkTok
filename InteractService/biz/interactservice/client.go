@@ -11,7 +11,6 @@ import (
 
 // Client is designed to provide IDL-compatible methods with call-option parameter for kitex framework.
 type Client interface {
-	FavoriteAction(ctx context.Context, Req *biz.FavoriteActionReq, callOptions ...callopt.Option) (r *biz.FavoriteActionResp, err error)
 	QueryFavoriteExist(ctx context.Context, Req *biz.QueryFavoriteExistReq, callOptions ...callopt.Option) (r *biz.QueryFavoriteExistResp, err error)
 	QueryUserFavoriteVideoIds(ctx context.Context, Req *biz.FavoriteVideoReq, callOptions ...callopt.Option) (r *biz.FavoriteVideoResp, err error)
 	CommentAction(ctx context.Context, Req *biz.CommentActionReq, callOptions ...callopt.Option) (r *biz.CommentActionResp, err error)
@@ -45,11 +44,6 @@ func MustNewClient(destService string, opts ...client.Option) Client {
 
 type kInteractServiceClient struct {
 	*kClient
-}
-
-func (p *kInteractServiceClient) FavoriteAction(ctx context.Context, Req *biz.FavoriteActionReq, callOptions ...callopt.Option) (r *biz.FavoriteActionResp, err error) {
-	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.FavoriteAction(ctx, Req)
 }
 
 func (p *kInteractServiceClient) QueryFavoriteExist(ctx context.Context, Req *biz.QueryFavoriteExistReq, callOptions ...callopt.Option) (r *biz.QueryFavoriteExistResp, err error) {

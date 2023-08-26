@@ -70,7 +70,10 @@ func FavoriteAction(userId, videoId int64) error {
 		hlog.Error("IsVideoLikedByUser error", err)
 		return err
 	}
+	// TODO 调用videoService查询点赞数量
 	err = model.UpdateVideoLikedStatus(userId, videoId, !liked)
+	// TODO 调用videoService更新video表里的点赞数量
+
 	if err != nil {
 		hlog.Error("UpdateVideoLikedStatus error", err)
 		return err

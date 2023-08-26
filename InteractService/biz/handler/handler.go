@@ -8,12 +8,6 @@ import (
 // InteractServiceImpl implements the last service interface defined in the IDL.
 type InteractServiceImpl struct{}
 
-// FavoriteAction implements the InteractServiceImpl interface.
-func (s *InteractServiceImpl) FavoriteAction(ctx context.Context, req *biz.FavoriteActionReq) (resp *biz.FavoriteActionResp, err error) {
-	// TODO: Your code here...
-	return
-}
-
 // QueryFavoriteExist implements the InteractServiceImpl interface.
 func (s *InteractServiceImpl) QueryFavoriteExist(ctx context.Context, req *biz.QueryFavoriteExistReq) (resp *biz.QueryFavoriteExistResp, err error) {
 	// TODO: Your code here...

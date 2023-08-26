@@ -3,10 +3,8 @@ package model
 import (
 	"errors"
 	"fmt"
-	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"gorm.io/gorm"
 	"interact_service/internal/constant"
-	"strconv"
 )
 
 type Favorite struct {
@@ -22,8 +20,7 @@ func (f *Favorite) TableName() string {
 
 func IsVideoLikedByUser(videoId, userId int64) (bool, error) {
 	var count int64
-	DBTable := getTable(userId)
-	err := DBTable.Where("video_id = ? and user_id = ? and deleted = 0", videoId, userId).
+	err := DB.Model(&Favorite{}).Where("video_id = ? and user_id = ? and deleted = 0", videoId, userId).
 		Count(&count).Error
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return false, err
@@ -32,22 +29,19 @@ func IsVideoLikedByUser(videoId, userId int64) (bool, error) {
 }
 
 func UpdateVideoLikedStatus(userID, videoID int64, liked bool) error {
-	DBTable := getTable(userID)
 	// 查询是否已存在记录
 	var favorite Favorite
-	err := DBTable.Model(&Favorite{}).
+	err := DB.Model(&Favorite{}).
 		Where("user_id = ? AND video_id = ?", userID, videoID).
 		First(&favorite).Error
-	hlog.Info("Is Record Not Found Err:", errors.Is(err, gorm.ErrRecordNotFound))
 
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return err
 	}
-	hlog.Info("Start Update Favorite")
+
 	// 更新或插入记录
 	if !liked {
 		if err == gorm.ErrRecordNotFound { //如果原始状态为不喜欢，且没有记录，则插入一条喜欢记录
-			hlog.Info("Start Insert Favorite")
 			favorite = Favorite{
 				VideoID: videoID,
 				UserID:  userID,
@@ -65,17 +59,16 @@ func UpdateVideoLikedStatus(userID, videoID int64, liked bool) error {
 			favorite.Deleted = 1
 		}
 	}
-	hlog.Info("Favorite:", favorite)
-	dbSaveErr := DBTable.Model(&Favorite{}).Save(&favorite).Error
-	hlog.Info("dbSaveErr:", dbSaveErr)
+
+	DB.Error = nil
+	dbSaveErr := DB.Model(&Favorite{}).Save(&favorite).Error
 
 	return dbSaveErr
 }
 
 func SelectFavoriteVideoIdsByUserID(userId int64) (videoIds []int64, err error) {
-	DBTable := getTable(userId)
 	var favorites []Favorite
-	err = DBTable.Where("user_id = ? and deleted = 0", userId).
+	err = DB.Model(&Favorite{}).Where("user_id = ? and deleted = 0", userId).
 		Find(&favorites).Error
 	if err != nil {
 		return nil, err
@@ -86,9 +79,9 @@ func SelectFavoriteVideoIdsByUserID(userId int64) (videoIds []int64, err error) 
 	return videoIds, nil
 }
 
-func getTable(userId int64) *gorm.DB {
-	shardingIndex := userId % constant.FavoriteSharding
-	tableName := constant.FavoriteTableName + "_" + strconv.FormatInt(shardingIndex, 10)
-
-	return DB.Table(tableName)
-}
+//func getTable(userId int64) *gorm.DB {
+//	shardingIndex := userId % constant.FavoriteSharding
+//	tableName := constant.FavoriteTableName + "_" + strconv.FormatInt(shardingIndex, 10)
+//
+//	return DB.Table(tableName)
+//}
