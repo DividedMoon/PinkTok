@@ -1,6 +1,7 @@
 package redis
 
 import (
+	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/go-redis/redis/v7"
 	"strconv"
 	"time"
@@ -13,6 +14,7 @@ var (
 	rdFavorite    *redis.Client
 	rdComment     *redis.Client
 	rdVideo       *redis.Client
+	rdRobfig      *redis.Client
 	redisAddr     = constants.RedisAddr
 	redisPassword = constants.RedisPassword
 )
@@ -23,7 +25,6 @@ func InitRedis() {
 		Password: redisPassword,
 		DB:       0,
 	})
-
 	rdComment = redis.NewClient(&redis.Options{
 		Addr:     redisAddr,
 		Password: redisPassword,
@@ -34,6 +35,17 @@ func InitRedis() {
 		Password: redisPassword,
 		DB:       0,
 	})
+	rdRobfig = redis.NewClient(&redis.Options{
+		Addr:     redisAddr,
+		Password: redisPassword,
+		DB:       0,
+	})
+
+	err := InitChangedVideoSet4Robfig()
+	if err != nil {
+		hlog.Error("InitChangedVideoSet4Robfig error", err.Error())
+		panic(err)
+	}
 }
 
 func countSetSize(c *redis.Client, k string) (sum int64, err error) {
@@ -111,6 +123,36 @@ func getHashField(c *redis.Client, k string, filed string) (string, error) {
 func setHashField(c *redis.Client, k string, filed string, v interface{}) error {
 	tx := c.TxPipeline()
 	tx.HSet(k, filed, v)
+	tx.Expire(k, expireTime)
+	_, err := tx.Exec()
+	return err
+}
+
+func querySetExist(c *redis.Client, k string) (bool, error) {
+	if e, err := c.Exists(k).Result(); err != nil {
+		return false, err
+	} else {
+		return e > 0, nil
+	}
+}
+
+func popAllFromSet(c *redis.Client, k string) ([]int64, error) {
+	elements := make([]int64, 0)
+	for setSize, err := c.SCard(k).Result(); setSize != 0 && err == nil; {
+		// 去除setSize个元素
+		for i := 0; i < int(setSize); i++ {
+			if element, err := c.SPop(k).Result(); err == nil {
+				elementInt, _ := strconv.ParseInt(element, 10, 64)
+				elements = append(elements, elementInt)
+			}
+		}
+	}
+	return elements, nil
+}
+
+func addIntoSet(c *redis.Client, k string, v int64) error {
+	tx := c.TxPipeline()
+	tx.SAdd(k, v)
 	tx.Expire(k, expireTime)
 	_, err := tx.Exec()
 	return err

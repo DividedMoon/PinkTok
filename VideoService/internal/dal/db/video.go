@@ -109,6 +109,7 @@ func UpdateVideoFavoriteCount(videoId int64, num int64) error {
 	}
 	return nil
 }
+
 func GetVideoDBInfoByIDs(ids []int64) ([]*VideoDBInfo, error) {
 	var videos []*VideoDBInfo
 	err := DB.Where("id in (?)", ids).Find(&videos).Error
@@ -117,4 +118,13 @@ func GetVideoDBInfoByIDs(ids []int64) ([]*VideoDBInfo, error) {
 		return nil, err
 	}
 	return videos, nil
+}
+
+func UpdateVideo(video *VideoDBInfo) error {
+	err := DB.Model(&VideoDBInfo{}).Where("id = ?", video.ID).Updates(video).Error
+	if err != nil {
+		hlog.Error("UpdateVideo", "err", err)
+		return err
+	}
+	return nil
 }

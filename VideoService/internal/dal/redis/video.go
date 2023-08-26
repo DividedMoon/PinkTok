@@ -77,6 +77,7 @@ func GetVideoHash(videoId int64) (*db.VideoDBInfo, error) {
 func SetVideoField(videoId int64, field string, value interface{}) error {
 	return setHashField(rdVideo, utils.GetVideoKey(videoId), field, value)
 }
+
 func GetVideoField(videoId int64, field string) (string, error) {
 	return getHashField(rdVideo, utils.GetVideoKey(videoId), field)
 }

@@ -43,7 +43,7 @@ func TestPublishAction(t *testing.T) {
 		Data:   videoBytes,
 	}
 
-	err = NewPublishService(context.TODO()).PublishAction(testReq)
+	err = NewVideoService(context.TODO()).PublishAction(testReq)
 
 }
 
@@ -81,7 +81,7 @@ func TestGetPublishList(t *testing.T) {
 	req := &biz.GetPublishListReq{
 		UserId: 1,
 	}
-	resp, err := NewPublishService(context.Background()).GetPublishList(req)
+	resp, err := NewVideoService(context.Background()).GetPublishList(req)
 	if err != nil {
 		hlog.Error(err.Error())
 	}

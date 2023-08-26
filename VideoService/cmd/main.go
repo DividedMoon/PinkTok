@@ -12,6 +12,7 @@ import (
 	"video_service/internal/dal/db"
 	"video_service/internal/dal/redis"
 	"video_service/internal/middleware/minio"
+	"video_service/internal/middleware/robfig"
 )
 
 func main() {
@@ -26,6 +27,7 @@ func main() {
 	_ = config.InitConfigs()
 	minio.Init()
 	client.InitClient()
+	robfig.Init()
 
 	svr := biz.NewServer(new(handler.VideoServiceImpl), server.WithServiceAddr(addr))
 	err = svr.Run()
