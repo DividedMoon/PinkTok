@@ -3,6 +3,7 @@ package middleware
 import (
 	internalClient "cgi/internal/client"
 	"context"
+	"github.com/bytedance/gopkg/cloud/metainfo"
 	"user_service/biz"
 )
 
@@ -12,6 +13,7 @@ func LoginHandler(ctx context.Context, req userLoginReq) (resp *UserLoginResp, e
 		Username: req.Username,
 		Password: req.Password,
 	}
+	ctx = metainfo.WithBackwardValues(ctx)
 	loginResp, err := internalClient.UserServiceClient.Login(ctx, loginReq)
 	if err != nil {
 		return nil, err

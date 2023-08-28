@@ -6,6 +6,7 @@ import (
 	"cgi/internal/utils"
 	"cgi/middleware"
 	"context"
+	"github.com/bytedance/gopkg/cloud/metainfo"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
@@ -66,6 +67,7 @@ func FriendListHandler(ctx context.Context, c *app.RequestContext) {
 	friendReq := &biz.RelationFriendListReq{
 		UserId: userId,
 	}
+	ctx = metainfo.WithBackwardValues(ctx)
 	friendResp, err := internalClient.RelationServiceClient.GetFriendList(ctx, friendReq)
 	if err != nil {
 		hlog.CtxErrorf(ctx, "get friend list failed, err: %+v", err)

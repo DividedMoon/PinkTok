@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
-	"gorm.io/gorm"
 	"relation_service/biz"
 	internalClient "relation_service/internal/client"
 	"relation_service/internal/constant"
@@ -61,17 +60,7 @@ func SubmitFollowRelationAction(ctx context.Context, req *biz.RelationActionReq)
 
 	// 3. 接着进行事务更新
 	hlog.CtxInfof(ctx, "CheckFromDB follow:%+v, follower:%+v", follow, follower)
-	err = model.DB.Transaction(func(tx *gorm.DB) error {
-		// 创建关注关系
-		if err = follow.Create(tx); err != nil {
-			return err
-		}
-		// 创建粉丝关系
-		if err = follower.Create(tx); err != nil {
-			return err
-		}
-		return nil
-	})
+	err = model.SubmitFollow(follow, follower)
 	if err != nil {
 		hlog.CtxErrorf(ctx, "InsertDB err:%v", err)
 		return err

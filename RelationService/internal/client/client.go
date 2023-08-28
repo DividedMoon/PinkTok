@@ -17,7 +17,7 @@ var (
 
 func InitClient() {
 	p := provider.NewOpenTelemetryProvider(
-		provider.WithServiceName("user_service"),
+		provider.WithServiceName("user_service_client"),
 		provider.WithExportEndpoint("106.54.208.133:4317"),
 		provider.WithEnableTracing(true),
 		provider.WithEnableMetrics(false),
@@ -25,7 +25,7 @@ func InitClient() {
 	)
 	defer p.Shutdown(context.Background())
 	UserServiceClient, err =
-		userservice.NewClient("user_service",
+		userservice.NewClient("user_service_client",
 			client.WithHostPorts("127.0.0.1:11011"),
 			client.WithSuite(tracing.NewClientSuite()),
 			client.WithClientBasicInfo(&rpcinfo.EndpointBasicInfo{
