@@ -2,6 +2,7 @@ package msgno
 
 import (
 	"context"
+	"github.com/bytedance/gopkg/cloud/metainfo"
 	"github.com/cloudwego/kitex/pkg/endpoint"
 	"math/rand"
 	"strings"
@@ -10,10 +11,10 @@ import (
 
 func MsgNoMiddleware(next endpoint.Endpoint) endpoint.Endpoint {
 	return func(ctx context.Context, request, response interface{}) error {
-		msgno, ok := ctx.Value("msgno").(string)
+		msgno, ok := metainfo.GetValue(ctx, "msgno")
 		if !ok {
 			msgno = generateMsgNo()
-			ctx = context.WithValue(ctx, "msgno", msgno)
+			ctx = metainfo.WithValue(ctx, "msgno", msgno)
 		}
 		return next(ctx, request, response)
 	}

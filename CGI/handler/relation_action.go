@@ -6,6 +6,7 @@ import (
 	"cgi/internal/utils"
 	"cgi/middleware"
 	"context"
+	"github.com/bytedance/gopkg/cloud/metainfo"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
@@ -94,6 +95,7 @@ func RelationActionHandler(ctx context.Context, c *app.RequestContext) {
 		ActionType: int32(actionType),
 	}
 	hlog.CtxInfof(ctx, "sendRelationAction with req: %+v", actionReq)
+	ctx = metainfo.WithBackwardValues(ctx)
 	actionResp, err := internalClient.RelationServiceClient.SendRelationAction(ctx, actionReq)
 	if err != nil {
 		hlog.CtxErrorf(ctx, "relation/action failed with err: %+v", err)

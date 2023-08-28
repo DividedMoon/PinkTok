@@ -55,7 +55,6 @@ func main() {
 		server.WithServiceAddr(addr),
 		server.WithMiddleware(msgno.MsgNoMiddleware),
 		server.WithMiddleware(auth.AuthenticateServer),
-		server.WithMuxTransport(),
 		server.WithSuite(tracing.NewServerSuite()),
 		server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{
 			ServiceName: servername,

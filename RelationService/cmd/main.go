@@ -7,6 +7,8 @@ import (
 	"github.com/cloudwego/kitex/server"
 	"github.com/kitex-contrib/obs-opentelemetry/provider"
 	"github.com/kitex-contrib/obs-opentelemetry/tracing"
+	"middleware/auth"
+	"middleware/msgno"
 	"net"
 	"relation_service/biz/handler"
 	biz "relation_service/biz/relationservice"
@@ -47,6 +49,8 @@ func main() {
 	svr := biz.NewServer(new(handler.RelationServiceImpl),
 		server.WithServiceAddr(addr),
 		server.WithSuite(tracing.NewServerSuite()),
+		server.WithMiddleware(msgno.MsgNoMiddleware),
+		server.WithMiddleware(auth.AuthenticateServer),
 		server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{
 			ServiceName: servername,
 		}),

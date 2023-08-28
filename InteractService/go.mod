@@ -86,3 +86,5 @@ require (
 )
 
 replace user_service v0.0.0 => ../UserService
+
+replace middleware v0.0.0 => ../Middleware

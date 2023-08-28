@@ -6,8 +6,6 @@ import (
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
-	"github.com/cloudwego/kitex/pkg/transmeta"
-	"github.com/cloudwego/kitex/transport"
 	"github.com/kitex-contrib/obs-opentelemetry/provider"
 	"github.com/kitex-contrib/obs-opentelemetry/tracing"
 	"middleware/auth"
@@ -32,14 +30,12 @@ func InitClient() {
 	defer p1.Shutdown(context.Background())
 	p2 := setupTracing("relation_service_client")
 	defer p2.Shutdown(context.Background())
-	UserServiceClient, err =
-		userservice.NewClient("user_service_client",
+	UserServiceClient =
+		userservice.MustNewClient("user_service_client",
 			client.WithHostPorts(fmt.Sprintf("%s%s", Remote, ":11011")),
 			client.WithSuite(tracing.NewClientSuite()),
 			client.WithMiddleware(msgno.MsgNoMiddleware),
 			client.WithMiddleware(auth.AuthenticateClient),
-			client.WithTransportProtocol(transport.GRPC),
-			client.WithMetaHandler(transmeta.ClientHTTP2Handler),
 			client.WithConnectTimeout(time.Second*2),
 			client.WithClientBasicInfo(&rpcinfo.EndpointBasicInfo{
 				ServiceName: "user_service_client",
@@ -47,10 +43,12 @@ func InitClient() {
 	if err != nil {
 		hlog.Errorf("UserServiceClient init failed: %+v", err)
 	}
-	RelationServiceClient, err =
-		relationservice.NewClient("relation_service_client",
+	RelationServiceClient =
+		relationservice.MustNewClient("relation_service_client",
 			client.WithHostPorts(fmt.Sprintf("%s%s", Remote, ":11012")),
 			client.WithSuite(tracing.NewClientSuite()),
+			client.WithMiddleware(msgno.MsgNoMiddleware),
+			client.WithMiddleware(auth.AuthenticateClient),
 			client.WithConnectTimeout(time.Second*2),
 			client.WithClientBasicInfo(&rpcinfo.EndpointBasicInfo{
 				ServiceName: "relation_service_client",

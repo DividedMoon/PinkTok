@@ -2,16 +2,29 @@ package auth
 
 import (
 	"context"
+	"crypto"
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
+	"crypto/rsa"
+	"crypto/sha256"
+	"crypto/x509"
+	"encoding/pem"
 	"errors"
 	"fmt"
+	"github.com/bytedance/gopkg/cloud/metainfo"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/cloudwego/kitex/pkg/endpoint"
 	"go.etcd.io/etcd/client/v3"
-	"google.golang.org/protobuf/proto"
+	"strings"
 	"sync"
+)
+
+const (
+	PrivateKeyKey  = "PrivateKey"
+	PublicKeyKey   = "PublicKey"
+	SignReqHeader  = "signature-req"
+	SignRespHeader = "signature-resp"
 )
 
 var (
@@ -21,42 +34,44 @@ var (
 
 func AuthenticateClient(next endpoint.Endpoint) endpoint.Endpoint {
 	return func(ctx context.Context, request, response interface{}) error {
+		err := getEtcdClient(once)
 		hlog.Infof("AuthMiddleware get req: %+v", request)
-		key, err := getAESKey()
+		key, err := getRsaPrivateKey(cli)
 		if err != nil {
-			hlog.Errorf("AuthMiddleware get aes failed: %+v", err)
+			hlog.Errorf("AuthMiddleware get privateKey failed: %+v", err)
 			return err
 		}
-
-		// 序列化
-		marshal, err := proto.Marshal(request.(proto.Message))
+		requestStr := fmt.Sprintf("%s", request)
+		requestStr = strings.ReplaceAll(requestStr, "\\", "")
+		signature, err := sign(key, requestStr)
 		if err != nil {
-			hlog.Errorf("AuthMiddleware marshal failed: %+v", err)
+			hlog.Errorf("AuthMiddleware sign failed: %+v", err)
 			return err
 		}
-
-		// 加密请求
-		encryptedReq, err := encrypt(marshal, key)
-		if err != nil {
-			hlog.Errorf("AuthMiddleware encrypt failed: %+v", err)
-			return err
-		}
-
-		hlog.Infof("AuthMiddleware encrypted req: %+v", encryptedReq)
+		ctx = metainfo.WithValue(ctx, SignReqHeader, string(signature))
 		// 调用下一个中间件
-		err = next(ctx, encryptedReq, response)
+		err = next(ctx, request, response)
 		if err != nil {
 			return err
 		}
-		hlog.Infof("AuthMiddleware get encrypted resp: %+v", response)
-		message := response.(proto.Message)
-		// 序列化
-		marshal, err = proto.Marshal(message)
+
+		hlog.Infof("AuthMiddleware get resp: %+v", response)
+		// 响应验签
+		value, ok := metainfo.RecvBackwardValue(ctx, SignRespHeader)
+		if !ok {
+			return errors.New("signature-resp not found")
+		}
+		publicKey, err := getRsaPublicKey(cli)
 		if err != nil {
-			hlog.Errorf("AuthMiddleware marshal failed: %+v", err)
+			hlog.Errorf("AuthMiddleware get publicKey failed: %+v", err)
 			return err
 		}
-		return err
+		err = verify(publicKey, []byte(value), response)
+		if err != nil {
+			hlog.Errorf("AuthMiddleware verify failed: %+v", err)
+			return err
+		}
+		return nil
 	}
 }
 
@@ -64,17 +79,50 @@ func AuthenticateServer(next endpoint.Endpoint) endpoint.Endpoint {
 	return func(ctx context.Context, request, response interface{}) error {
 		hlog.Infof("AuthMiddleware get req: %+v", request)
 		// 创建etcd客户端连接
-		key, err := getAESKey()
+		err := getEtcdClient(once)
 		if err != nil {
-			hlog.Errorf("AuthMiddleware get aes failed: %+v", err)
+			hlog.Errorf("AuthMiddleware get etcd client failed: %+v", err)
+			return err
+		}
+		key, err := getRsaPublicKey(cli)
+		if err != nil {
+			hlog.Errorf("AuthMiddleware get public failed: %+v", err)
 			return err
 		}
 
-		// 解密请求
-		decryptedReq, err := decrypt(nil, key)
-		hlog.Infof("AuthMiddleware decrypted req: %+v", decryptedReq)
+		// 验签
+		value, ok := metainfo.GetValue(ctx, SignReqHeader)
+		if !ok {
+			return errors.New("signature-req not found")
+		}
+		requestStr := fmt.Sprintf("%s", request)
+		err = verify(key, []byte(value), requestStr)
+		if err != nil {
+			hlog.Errorf("AuthMiddleware verify failed: %+v", err)
+			return err
+		}
 		// 调用下一个中间件
-		err = next(ctx, decryptedReq, response)
+		err = next(ctx, request, response)
+		if err != nil {
+			return err
+		}
+		// 响应签名
+		privateKey, err := getRsaPrivateKey(cli)
+		if err != nil {
+			hlog.Errorf("AuthMiddleware get privateKey failed: %+v", err)
+			return err
+		}
+
+		signature, err := sign(privateKey, response)
+		if err != nil {
+			hlog.Errorf("AuthMiddleware sign failed: %+v", err)
+			return err
+		}
+
+		of := metainfo.SendBackwardValue(ctx, SignRespHeader, string(signature))
+		if !of {
+			return errors.New("sendBackwardValue failed")
+		}
 		return err
 	}
 }
@@ -151,13 +199,27 @@ func getEtcdClient(once *sync.Once) (err error) {
 	return nil
 }
 
-func getAESKey() (string, error) {
-	err := getEtcdClient(once)
+// 对数据进行签名
+func sign(privateKey *rsa.PrivateKey, data interface{}) ([]byte, error) {
+	hashedData := sha256.Sum256([]byte(fmt.Sprintf("%v", data)))
+	signature, err := rsa.SignPKCS1v15(rand.Reader, privateKey, crypto.SHA256, hashedData[:])
 	if err != nil {
-		hlog.Errorf("AuthMiddleware get etcd client failed: %+v", err)
-		return "", err
+		return nil, fmt.Errorf("failed to sign data: %v", err)
 	}
+	return signature, nil
+}
 
+// 验证数据的签名
+func verify(publicKey *rsa.PublicKey, signature []byte, data interface{}) error {
+	hashedData := sha256.Sum256([]byte(fmt.Sprintf("%v", data)))
+	err := rsa.VerifyPKCS1v15(publicKey, crypto.SHA256, hashedData[:], signature)
+	if err != nil {
+		return fmt.Errorf("failed to verify signature: %v", err)
+	}
+	return nil
+}
+
+func getAESKey(cli *clientv3.Client) (string, error) {
 	// 使用客户端从etcd中获取密钥
 	resp, err := cli.Get(context.Background(), "AESKEY")
 	if err != nil {
@@ -175,4 +237,57 @@ func getAESKey() (string, error) {
 	key := string(resp.Kvs[0].Value)
 	hlog.Infof("AuthMiddleware get key: %s", key)
 	return key, nil
+}
+
+func getRsaPrivateKey(cli *clientv3.Client) (*rsa.PrivateKey, error) {
+	// 使用客户端从etcd中获取密钥
+	resp, err := cli.Get(context.Background(), PrivateKeyKey)
+	if err != nil {
+		hlog.Errorf("AuthMiddleware get key failed: %+v", err)
+		return nil, err
+	}
+
+	// 检查是否找到了密钥
+	if len(resp.Kvs) == 0 {
+		hlog.Errorf("AuthMiddleware get key failed: %+v", err)
+		return nil, errors.New("AuthMiddleware get key failed")
+	}
+
+	// 获取密钥
+	keyValue := resp.Kvs[0].Value
+	// 解码密钥
+	block, _ := pem.Decode(keyValue)
+	privateKey, err := x509.ParsePKCS1PrivateKey(block.Bytes)
+	if err != nil {
+		hlog.Errorf("AuthMiddleware get key failed: %+v", err)
+		return nil, err
+	}
+	return privateKey, nil
+}
+
+func getRsaPublicKey(cli *clientv3.Client) (*rsa.PublicKey, error) {
+	// 使用客户端从etcd中获取密钥
+	resp, err := cli.Get(context.Background(), PublicKeyKey)
+	if err != nil {
+		hlog.Errorf("AuthMiddleware get key failed: %+v", err)
+		return nil, err
+	}
+
+	// 检查是否找到了密钥
+	if len(resp.Kvs) == 0 {
+		hlog.Errorf("AuthMiddleware get key failed: %+v", err)
+		return nil, errors.New("AuthMiddleware get key failed")
+	}
+
+	// 获取密钥
+	keyValue := resp.Kvs[0].Value
+
+	// 解码密钥
+	block, _ := pem.Decode(keyValue)
+	publicKey, err := x509.ParsePKCS1PublicKey(block.Bytes)
+	if err != nil {
+		hlog.Errorf("AuthMiddleware get key failed: %+v", err)
+		return nil, err
+	}
+	return publicKey, nil
 }
