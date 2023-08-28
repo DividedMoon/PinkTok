@@ -60,7 +60,7 @@ func SubmitFollowRelationAction(ctx context.Context, req *biz.RelationActionReq)
 
 	// 3. 接着进行事务更新
 	hlog.CtxInfof(ctx, "CheckFromDB follow:%+v, follower:%+v", follow, follower)
-	err = model.SubmitFollow(follow, follower)
+	err = model.SubmitFollowAndFollower(follow, follower)
 	if err != nil {
 		hlog.CtxErrorf(ctx, "InsertDB err:%v", err)
 		return err
@@ -133,7 +133,26 @@ func SubmitFollowRelationAction(ctx context.Context, req *biz.RelationActionReq)
 
 // CancelFollowRelationAction 取消关注关系
 func CancelFollowRelationAction(ctx context.Context, req *biz.RelationActionReq) (err error) {
-	return constant.ServiceErr
+	hlog.CtxInfof(ctx, "CancelFollowRelationAction req: %+v", req)
+	var (
+		follow = &model.Follow{
+			UserIdA: req.UserId,
+			UserIdB: req.ToUserId,
+		}
+		follower = &model.Follower{
+			UserIdA: req.ToUserId,
+			UserIdB: req.UserId,
+		}
+	)
+	// 事务删除
+	err = model.CancelFollowAndFollower(follow, follower)
+	if err != nil {
+		hlog.CtxErrorf(ctx, "CancelFollowRelationAction err:%v", err)
+		return err
+	}
+	redis.DelFollow(req.UserId, req.ToUserId)
+	redis.DelFollower(req.ToUserId, req.UserId)
+	return nil
 }
 
 func GetFollowListById(ctx context.Context, userId int64) ([]*biz.UserInfo, error) {

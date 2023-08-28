@@ -8,9 +8,11 @@ require (
 	middleware v0.0.0
 	relation_service v0.0.0
 	user_service v0.0.0
+	interact_service v0.0.0
 )
 
 require (
+	github.com/bytedance/gopkg v0.0.0-20230728082804-614d0af6619b
 	github.com/cloudwego/kitex v0.7.0
 	github.com/hertz-contrib/jwt v1.0.2
 	github.com/kitex-contrib/obs-opentelemetry v0.2.3
@@ -22,7 +24,6 @@ require (
 require (
 	github.com/apache/thrift v0.13.0 // indirect
 	github.com/bytedance/go-tagexpr/v2 v2.9.2 // indirect
-	github.com/bytedance/gopkg v0.0.0-20230728082804-614d0af6619b // indirect
 	github.com/bytedance/sonic v1.9.1 // indirect
 	github.com/cenkalti/backoff/v4 v4.2.1 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20221115062448-fe3a3abad311 // indirect
@@ -95,8 +96,10 @@ require (
 	google.golang.org/protobuf v1.31.0 // indirect
 )
 
-replace user_service v0.0.0 => ../UserService
+replace user_service => ../UserService
 
-replace relation_service v0.0.0 => ../RelationService
+replace relation_service => ../RelationService
 
-replace middleware v0.0.0 => ../Middleware
+replace middleware => ../Middleware
+
+replace interact_service => ../InteractService

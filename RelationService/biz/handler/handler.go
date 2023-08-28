@@ -25,10 +25,15 @@ func (s *RelationServiceImpl) SendRelationAction(ctx context.Context, req *biz.R
 			}, err
 		}
 	} else if constant.ActionTypeCancelFollow == req.ActionType {
-		return &biz.RelationActionResp{
-			StatusCode: constant.InvalidActionTypeCode,
-			StatusMsg:  constant.InvalidActionTypeMsg,
-		}, nil
+		err = service.CancelFollowRelationAction(ctx, req)
+		if err != nil {
+			res := utils.BuildBaseResp(err)
+			hlog.CtxErrorf(ctx, "CancelFollowRelationAction err:%v, res:%+v", err, res)
+			return &biz.RelationActionResp{
+				StatusCode: res.StatusCode,
+				StatusMsg:  res.StatusMsg,
+			}, err
+		}
 	}
 	return &biz.RelationActionResp{
 		StatusCode: constant.SuccessCode,

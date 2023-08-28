@@ -12,6 +12,7 @@ const (
 	AuthorizationFailedErrCode
 	InvalidActionTypeCode
 	UserNotExistErrCode
+	UpdateNotEqualOneErrCode
 )
 
 const (
@@ -47,6 +48,7 @@ var (
 	AuthorizationFailedErr = NewErrNo(AuthorizationFailedErrCode, "Authorization failed")
 	InvalidActionTypeErr   = NewErrNo(InvalidActionTypeCode, InvalidActionTypeMsg)
 	UserNotExistErr        = NewErrNo(UserNotExistErrCode, UserNotExistErrMsg)
+	UpdateNotEqualOneErr   = NewErrNo(UpdateNotEqualOneErrCode, "update not equal one")
 )
 
 // ConvertErr convert error to Errno

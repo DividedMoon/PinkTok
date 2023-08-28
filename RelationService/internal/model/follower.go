@@ -2,7 +2,9 @@ package model
 
 import (
 	"database/sql"
+	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"gorm.io/gorm"
+	"relation_service/internal/constant"
 )
 
 type Follower struct {
@@ -50,20 +52,60 @@ func SelectFriendByUserIdA(userIdA int64) (fs []Follower, err error) {
 	return
 }
 
-func SubmitFollow(follow *Follow, follower *Follower) error {
-	err = DB.Transaction(func(tx *gorm.DB) error {
-		if err := tx.Save(follow).Error; err != nil {
-			return err
-		}
-		if err := tx.Save(follower).Error; err != nil {
-			return err
-		}
-		return nil
-	}, &sql.TxOptions{
+func SubmitFollowAndFollower(follow *Follow, follower *Follower) error {
+	tx := DB.Begin(&sql.TxOptions{
 		Isolation: sql.LevelRepeatableRead,
 	})
+	affected := tx.Model(follow).
+		Update("deleted", 0).
+		Where("user_id_a = ? AND user_id_b = ?", follow.UserIdA, follow.UserIdB).RowsAffected
+	if affected == 0 {
+		err = tx.Create(follow).Error
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
+	} else if affected != 1 {
+		tx.Rollback()
+		hlog.Errorf("affected rows is not 1, affected: %d, dto: %+v", affected, follow)
+		return constant.UpdateNotEqualOneErr
+	}
+	affected = tx.Model(follower).
+		Update("deleted", 0).
+		Where("user_id_a = ? AND user_id_b = ?", follower.UserIdA, follower.UserIdB).RowsAffected
+	if affected == 0 {
+		err = tx.Create(follower).Error
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
+	} else if affected != 1 {
+		tx.Rollback()
+		hlog.Errorf("affected rows is not 1, affected: %d, dto: %+v", affected, follower)
+		return constant.UpdateNotEqualOneErr
+	}
+	return nil
+}
+
+func CancelFollowAndFollower(follow *Follow, follower *Follower) error {
+	tx := DB.Begin(&sql.TxOptions{
+		Isolation: sql.LevelRepeatableRead,
+	})
+	err = tx.Model(follow).
+		Update("deleted", 1).
+		Where("user_id_a = ? AND user_id_b = ?", follow.UserIdA, follow.UserIdB).Error
 	if err != nil {
+		tx.Rollback()
 		return err
 	}
+	err = tx.Model(follower).
+		Update("deleted", 1).
+		Where("user_id_a = ? AND user_id_b = ?", follower.UserIdA, follower.UserIdB).Error
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	tx.Commit()
+	hlog.Info("cancel follow and follower success")
 	return nil
 }
