@@ -1,6 +1,7 @@
 package redis
 
 import (
+	"fmt"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/go-redis/redis/v7"
 	"strconv"
@@ -41,11 +42,30 @@ func InitRedis() {
 		DB:       0,
 	})
 
-	err := InitChangedVideoSet4Robfig()
+	//err := InitChangedVideoSet4Robfig()
+	//if err != nil {
+	//	hlog.Error("InitChangedVideoSet4Robfig error", err.Error())
+	//	panic(err)
+	//}
+}
+func CloseRedis() {
+	err := rdVideo.Close()
 	if err != nil {
-		hlog.Error("InitChangedVideoSet4Robfig error", err.Error())
-		panic(err)
+		hlog.Error("rdVideo.Close() error", err.Error())
 	}
+	err = rdComment.Close()
+	if err != nil {
+		hlog.Error("rdComment.Close() error", err.Error())
+	}
+	err = rdFavorite.Close()
+	if err != nil {
+		hlog.Error("rdFavorite.Close() error", err.Error())
+	}
+	err = rdRobfig.Close()
+	if err != nil {
+		hlog.Error("rdRobfig.Close() error", err.Error())
+	}
+
 }
 
 func countSetSize(c *redis.Client, k string) (sum int64, err error) {
@@ -77,6 +97,9 @@ func getStringValue(c *redis.Client, k string) (int64, error) {
 }
 
 func initSet(c *redis.Client, k string, v []int64) error {
+	if len(v) == 0 {
+		return fmt.Errorf("initSet v is empty")
+	}
 	redisValues := make([]interface{}, len(v))
 	for _, val := range v {
 		redisValues = append(redisValues, val)
@@ -136,16 +159,19 @@ func querySetExist(c *redis.Client, k string) (bool, error) {
 	}
 }
 
-func popAllFromSet(c *redis.Client, k string) ([]int64, error) {
+func getAllFromSetAndClear(c *redis.Client, k string) ([]int64, error) {
 	elements := make([]int64, 0)
-	for setSize, err := c.SCard(k).Result(); setSize != 0 && err == nil; {
-		// 去除setSize个元素
-		for i := 0; i < int(setSize); i++ {
-			if element, err := c.SPop(k).Result(); err == nil {
-				elementInt, _ := strconv.ParseInt(element, 10, 64)
-				elements = append(elements, elementInt)
-			}
-		}
+	tx := c.TxPipeline()
+	members := tx.SMembers(k)
+	tx.Del(k)
+	_, err := tx.Exec()
+	if err != nil {
+		hlog.Error("getAllFromSetAndClear error", err.Error())
+		return nil, err
+	}
+	for _, v := range members.Val() {
+		vt, _ := strconv.ParseInt(v, 10, 64)
+		elements = append(elements, vt)
 	}
 	return elements, nil
 }

@@ -75,7 +75,7 @@ func TestGetFeed(t *testing.T) {
 		LatestTime: time.Now().Add(-24 * time.Hour).Unix(),
 	}
 	hlog.Infof("GetFeed req: %+v", req)
-	resp, err := NewFeedService(context.Background()).GetFeed(req)
+	resp, err := NewVideoService(context.Background()).GetFeed(req)
 	if err != nil {
 		t.Errorf("GetFeed error: %v", err)
 	}

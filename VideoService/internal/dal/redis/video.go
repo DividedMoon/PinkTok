@@ -1,6 +1,7 @@
 package redis
 
 import (
+	"strconv"
 	"time"
 	"video_service/internal/dal/db"
 	"video_service/internal/utils"
@@ -48,27 +49,34 @@ func SetVideoHash(video *db.VideoDBInfo) error {
 
 func GetVideoHash(videoId int64) (*db.VideoDBInfo, error) {
 	videoHash, err := getHash(rdVideo, utils.GetVideoKey(videoId))
+	//hlog.Info("videoHash", videoHash)
+	//hlog.Infof("err:%v", err)
 	if err != nil {
 		return nil, err
 	}
-	videoMap := make(map[string]interface{})
-	for k, v := range videoHash {
-		videoMap[k] = v
+	// 如果视频不存在Redis中，返回nil
+	if len(videoHash) == 0 {
+		return nil, nil
 	}
-	layout := "2006-01-02 15:04:05"
-	publishTime, err := time.Parse(layout, videoMap["PublishTime"].(string))
+	id, _ := strconv.ParseInt(videoHash["ID"], 10, 64)
+	authorId, _ := strconv.ParseInt(videoHash["AuthorID"], 10, 64)
+	favoriteCount, _ := strconv.ParseInt(videoHash["FavoriteCount"], 10, 64)
+	commentCount, _ := strconv.ParseInt(videoHash["CommentCount"], 10, 64)
+	layout := "2006-01-02T15:04:05-07:00"
+	publishTime, err := time.Parse(layout, videoHash["PublishTime"])
 	if err != nil {
 		return nil, err
 	}
+
 	video := db.VideoDBInfo{
-		ID:            videoMap["ID"].(int64),
-		AuthorID:      videoMap["AuthorID"].(int64),
-		PlayURL:       videoMap["PlayURL"].(string),
-		CoverURL:      videoMap["CoverURL"].(string),
+		ID:            id,
+		AuthorID:      authorId,
+		PlayURL:       videoHash["PlayURL"],
+		CoverURL:      videoHash["CoverURL"],
 		PublishTime:   publishTime,
-		Title:         videoMap["Title"].(string),
-		FavoriteCount: videoMap["FavoriteCount"].(int64),
-		CommentCount:  videoMap["CommentCount"].(int64),
+		Title:         videoHash["Title"],
+		FavoriteCount: favoriteCount,
+		CommentCount:  commentCount,
 	}
 	return &video, nil
 

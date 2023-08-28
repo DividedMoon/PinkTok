@@ -20,7 +20,7 @@ func (s *VideoService) FavoriteAction(videoId, userId int64, actionType int32) e
 	} else if actionType == 0 { // 如果操作类型为0 则为取消赞操作
 		err = AddVideoFavoriteCount(videoId, -1)
 	} else { // 如果不是这两种类型 则返回错误
-		hlog.Error("FavoriteAction error", "actionType is not 1 or -1")
+		hlog.Error("FavoriteAction error", "actionType is not 1 or 0")
 		return constants.NewErrNo(constants.ParameterErrCode, constants.ParameterErrMsg)
 	}
 
@@ -36,7 +36,7 @@ func (s *VideoService) GetFavoriteVideoList(userId int64) ([]*client.VideoInfo, 
 
 	// TODO 1. 调用 interactService 获取用户点赞的视频列表 返回值是videoIds 视频ID列表
 	err := error(nil)
-	favoriteVideoIds := []int64{1, 2, 3, 4, 5}
+	favoriteVideoIds := []int64{10}
 	// 2. 调用copyVideo方法获取视频信息并返回
 	videoDBInfos, err := db.GetVideoDBInfoByIDs(favoriteVideoIds)
 	if err != nil {
@@ -65,6 +65,12 @@ func AddVideoFavoriteCount(videoId, increment int64) error {
 			hlog.Error("SetVideoField error", err.Error())
 			return err
 		}
+		// redis里的video被修改，加入修改集合
+		err = rd.AddChangedVideo(videoId)
+		if err != nil {
+			hlog.Error("AddChangedVideo error", err.Error())
+			return err
+		}
 		return nil
 	}
 	// 2.如果没有的话，查数据库
@@ -81,6 +87,7 @@ func AddVideoFavoriteCount(videoId, increment int64) error {
 			hlog.Error("buildVideoInfoCache error", err.Error())
 			return err
 		}
+		return nil
 	}
 	// 2.2更新数据库
 	err = db.UpdateVideoFavoriteCount(videoId, video.FavoriteCount+increment)
