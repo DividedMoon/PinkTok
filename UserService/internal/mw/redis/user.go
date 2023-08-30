@@ -25,7 +25,6 @@ func AddUser(info *biz.UserInfo) {
 	userInfoType := userInfoValue.Type()
 	tx := rdb.TxPipeline()
 	for i := 0; i < userInfoValue.NumField(); i++ {
-		hlog.Infof("fieldName = %+v", userInfoType.Field(i).Name)
 		fieldName := userInfoType.Field(i).Name
 		if fieldName == "state" || fieldName == "sizeCache" || fieldName == "unknownFields" {
 			continue
@@ -38,6 +37,20 @@ func AddUser(info *biz.UserInfo) {
 			_ = tx.Discard()
 			return
 		}
+	}
+	tx.Expire(key, expireTime)
+	_, _ = tx.Exec()
+}
+
+func UpdateUserByMap(userId int64, changes map[string]int) {
+	if rdb == nil {
+		return
+	}
+	key := getUserKey(userId)
+	tx := rdb.TxPipeline()
+	for field, c := range changes {
+		tx.HIncrBy(key, field, int64(c))
+		tx.Expire(key, expireTime)
 	}
 	_, _ = tx.Exec()
 }
@@ -53,7 +66,9 @@ func GetUser(userId int64) (info *biz.UserInfo) {
 
 	for i := 0; i < userInfoValue.NumField(); i++ {
 		fieldName := userInfoType.Field(i).Name
-
+		if fieldName == "state" || fieldName == "sizeCache" || fieldName == "unknownFields" {
+			continue
+		}
 		fieldValue, err := rdb.HGet(key, fieldName).Result()
 		if err != nil {
 			hlog.Errorf("HGet failed, err = %+v", err)
@@ -66,6 +81,7 @@ func GetUser(userId int64) (info *biz.UserInfo) {
 		case reflect.String:
 			userInfoValue.Field(i).SetString(fieldValue)
 		case reflect.Int:
+		case reflect.Int64:
 			fieldValueInt, err := strconv.Atoi(fieldValue)
 			if err != nil {
 				hlog.Errorf("Atoi failed, err = %+v", err)
@@ -77,13 +93,18 @@ func GetUser(userId int64) (info *biz.UserInfo) {
 		}
 	}
 
-	userInfo := userInfoValue.Interface().(*biz.UserInfo)
-	return userInfo
+	userInfo := userInfoValue.Interface().(biz.UserInfo)
+	rdb.Expire(key, expireTime)
+	return &userInfo
 }
 
 // DelUser 删除用户
 func DelUser(userId int64) {
-	del(rdb, getUserKey(userId), userId)
+	if rdb == nil {
+		return
+	}
+	key := getUserKey(userId)
+	rdb.Del(key)
 }
 
 // ExistUser 检查用户是否存在
