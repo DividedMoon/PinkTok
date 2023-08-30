@@ -6,6 +6,7 @@ require (
 	github.com/cloudwego/fastpb v0.0.4
 	github.com/cloudwego/hertz v0.6.7
 	github.com/cloudwego/kitex v0.7.0
+	github.com/go-redis/redis/v7 v7.4.1
 	github.com/hertz-contrib/logger/zap v1.0.0
 	github.com/kitex-contrib/obs-opentelemetry v0.2.3
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519

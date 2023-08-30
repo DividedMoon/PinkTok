@@ -17,62 +17,62 @@ func getFollowerKey(userId int64) string {
 
 // AddFollow 在userIdA的关注列表中添加userIdB
 func AddFollow(userIdA, userIdB int64) {
-	if rdbFollow == nil {
+	if rdb == nil {
 		return
 	}
-	add(rdbFollow, getFollowKey(userIdA), userIdB)
+	add(rdb, getFollowKey(userIdA), userIdB)
 }
 
 // DelFollow 在userIdA的关注列表中删除userIdB
 func DelFollow(userIdA, userIdB int64) {
-	del(rdbFollow, getFollowKey(userIdA), userIdB)
+	del(rdb, getFollowKey(userIdA), userIdB)
 }
 
 // ExistFollow 检查userIdA的关注列表中是否存在userIdB
 func ExistFollow(userIdA, userIdB int64) bool {
-	if rdbFollow == nil {
+	if rdb == nil {
 		return false
 	}
-	return exist(rdbFollow, getFollowKey(userIdA), userIdB)
+	return exist(rdb, getFollowKey(userIdA), userIdB)
 }
 
 // CountFollow 获取userIdA的关注列表的长度
 func CountFollow(userIdA int64) (int64, error) {
-	return count(rdbFollow, getFollowKey(userIdA))
+	return count(rdb, getFollowKey(userIdA))
 }
 
 // GetFollow 获取userIdA的关注列表
 func GetFollow(userIdA int64) []int64 {
-	return get(rdbFollow, getFollowKey(userIdA))
+	return get(rdb, getFollowKey(userIdA))
 }
 
 // AddFollower 在userIdA的粉丝列表中添加userIdB
 func AddFollower(userIdA, userIdB int64) {
-	if rdbFollow == nil {
+	if rdb == nil {
 		return
 	}
-	add(rdbFollow, getFollowerKey(userIdA), userIdB)
+	add(rdb, getFollowerKey(userIdA), userIdB)
 }
 
 // DelFollower 在userIdA的粉丝列表中删除userIdB
 func DelFollower(userIdA, userIdB int64) {
-	del(rdbFollow, getFollowerKey(userIdA), userIdB)
+	del(rdb, getFollowerKey(userIdA), userIdB)
 }
 
 // ExistFollower 检查userIdA的粉丝列表中是否存在userIdB
 func ExistFollower(userIdA, userIdB int64) bool {
-	if rdbFollow == nil {
+	if rdb == nil {
 		return false
 	}
-	return exist(rdbFollow, getFollowerKey(userIdA), userIdB)
+	return exist(rdb, getFollowerKey(userIdA), userIdB)
 }
 
 // CountFollower 获取userIdA的粉丝列表的长度
 func CountFollower(userIdA int64) (int64, error) {
-	return count(rdbFollow, getFollowerKey(userIdA))
+	return count(rdb, getFollowerKey(userIdA))
 }
 
 // GetFollower 获取userIdA的粉丝列表
 func GetFollower(userIdA int64) []int64 {
-	return get(rdbFollow, getFollowerKey(userIdA))
+	return get(rdb, getFollowerKey(userIdA))
 }

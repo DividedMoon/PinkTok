@@ -68,6 +68,7 @@ func GetUserInfo(userId int64) (u *biz.UserInfo, err error) {
 	var user = &model.User{
 		ID: userId,
 	}
+
 	err = user.SelectById(userId)
 	if err != nil {
 		return nil, err
