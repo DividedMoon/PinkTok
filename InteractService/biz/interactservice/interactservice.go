@@ -24,6 +24,7 @@ func NewServiceInfo() *kitex.ServiceInfo {
 	methods := map[string]kitex.MethodInfo{
 		"QueryFavoriteExist":        kitex.NewMethodInfo(queryFavoriteExistHandler, newQueryFavoriteExistArgs, newQueryFavoriteExistResult, false),
 		"QueryUserFavoriteVideoIds": kitex.NewMethodInfo(queryUserFavoriteVideoIdsHandler, newQueryUserFavoriteVideoIdsArgs, newQueryUserFavoriteVideoIdsResult, false),
+		"AddFavoriteRecord":         kitex.NewMethodInfo(addFavoriteRecordHandler, newAddFavoriteRecordArgs, newAddFavoriteRecordResult, false),
 		"CommentAction":             kitex.NewMethodInfo(commentActionHandler, newCommentActionArgs, newCommentActionResult, false),
 		"CommentList":               kitex.NewMethodInfo(commentListHandler, newCommentListArgs, newCommentListResult, false),
 	}
@@ -344,6 +345,159 @@ func (p *QueryUserFavoriteVideoIdsResult) IsSetSuccess() bool {
 }
 
 func (p *QueryUserFavoriteVideoIdsResult) GetResult() interface{} {
+	return p.Success
+}
+
+func addFavoriteRecordHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(biz.AddFavoriteRecordReq)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(biz.InteractService).AddFavoriteRecord(ctx, req)
+		if err != nil {
+			return err
+		}
+		if err := st.SendMsg(resp); err != nil {
+			return err
+		}
+	case *AddFavoriteRecordArgs:
+		success, err := handler.(biz.InteractService).AddFavoriteRecord(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*AddFavoriteRecordResult)
+		realResult.Success = success
+	}
+	return nil
+}
+func newAddFavoriteRecordArgs() interface{} {
+	return &AddFavoriteRecordArgs{}
+}
+
+func newAddFavoriteRecordResult() interface{} {
+	return &AddFavoriteRecordResult{}
+}
+
+type AddFavoriteRecordArgs struct {
+	Req *biz.AddFavoriteRecordReq
+}
+
+func (p *AddFavoriteRecordArgs) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetReq() {
+		p.Req = new(biz.AddFavoriteRecordReq)
+	}
+	return p.Req.FastRead(buf, _type, number)
+}
+
+func (p *AddFavoriteRecordArgs) FastWrite(buf []byte) (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.FastWrite(buf)
+}
+
+func (p *AddFavoriteRecordArgs) Size() (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.Size()
+}
+
+func (p *AddFavoriteRecordArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("No req in AddFavoriteRecordArgs")
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *AddFavoriteRecordArgs) Unmarshal(in []byte) error {
+	msg := new(biz.AddFavoriteRecordReq)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var AddFavoriteRecordArgs_Req_DEFAULT *biz.AddFavoriteRecordReq
+
+func (p *AddFavoriteRecordArgs) GetReq() *biz.AddFavoriteRecordReq {
+	if !p.IsSetReq() {
+		return AddFavoriteRecordArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *AddFavoriteRecordArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *AddFavoriteRecordArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type AddFavoriteRecordResult struct {
+	Success *biz.AddFavoriteRecordResp
+}
+
+var AddFavoriteRecordResult_Success_DEFAULT *biz.AddFavoriteRecordResp
+
+func (p *AddFavoriteRecordResult) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetSuccess() {
+		p.Success = new(biz.AddFavoriteRecordResp)
+	}
+	return p.Success.FastRead(buf, _type, number)
+}
+
+func (p *AddFavoriteRecordResult) FastWrite(buf []byte) (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.FastWrite(buf)
+}
+
+func (p *AddFavoriteRecordResult) Size() (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.Size()
+}
+
+func (p *AddFavoriteRecordResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("No req in AddFavoriteRecordResult")
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *AddFavoriteRecordResult) Unmarshal(in []byte) error {
+	msg := new(biz.AddFavoriteRecordResp)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *AddFavoriteRecordResult) GetSuccess() *biz.AddFavoriteRecordResp {
+	if !p.IsSetSuccess() {
+		return AddFavoriteRecordResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *AddFavoriteRecordResult) SetSuccess(x interface{}) {
+	p.Success = x.(*biz.AddFavoriteRecordResp)
+}
+
+func (p *AddFavoriteRecordResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *AddFavoriteRecordResult) GetResult() interface{} {
 	return p.Success
 }
 
@@ -678,6 +832,16 @@ func (p *kClient) QueryUserFavoriteVideoIds(ctx context.Context, Req *biz.Favori
 	_args.Req = Req
 	var _result QueryUserFavoriteVideoIdsResult
 	if err = p.c.Call(ctx, "QueryUserFavoriteVideoIds", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) AddFavoriteRecord(ctx context.Context, Req *biz.AddFavoriteRecordReq) (r *biz.AddFavoriteRecordResp, err error) {
+	var _args AddFavoriteRecordArgs
+	_args.Req = Req
+	var _result AddFavoriteRecordResult
+	if err = p.c.Call(ctx, "AddFavoriteRecord", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil

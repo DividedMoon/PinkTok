@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"interact_service/biz"
 	internalClient "interact_service/internal/client"
@@ -99,4 +100,21 @@ func QueryUserFavoriteVideoIds(userId int64) ([]int64, error) {
 		return nil, err
 	}
 	return videoIds, nil
+}
+
+// AddFavoriteRecord 添加用户喜欢记录
+func AddFavoriteRecord(userId, videoId, actionType int64) error {
+	var err error
+	if actionType == 1 { //点赞
+		err = model.UpdateVideoLikedStatus(userId, videoId, false)
+	} else if actionType == 2 { //取消赞
+		err = model.UpdateVideoLikedStatus(userId, videoId, true)
+	} else {
+		return fmt.Errorf("actionType error")
+	}
+	if err != nil {
+		hlog.Error("InsertFavoriteVideo error", err)
+		return err
+	}
+	return nil
 }

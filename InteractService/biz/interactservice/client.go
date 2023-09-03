@@ -13,6 +13,7 @@ import (
 type Client interface {
 	QueryFavoriteExist(ctx context.Context, Req *biz.QueryFavoriteExistReq, callOptions ...callopt.Option) (r *biz.QueryFavoriteExistResp, err error)
 	QueryUserFavoriteVideoIds(ctx context.Context, Req *biz.FavoriteVideoReq, callOptions ...callopt.Option) (r *biz.FavoriteVideoResp, err error)
+	AddFavoriteRecord(ctx context.Context, Req *biz.AddFavoriteRecordReq, callOptions ...callopt.Option) (r *biz.AddFavoriteRecordResp, err error)
 	CommentAction(ctx context.Context, Req *biz.CommentActionReq, callOptions ...callopt.Option) (r *biz.CommentActionResp, err error)
 	CommentList(ctx context.Context, Req *biz.CommentListReq, callOptions ...callopt.Option) (r *biz.CommentListResp, err error)
 }
@@ -54,6 +55,11 @@ func (p *kInteractServiceClient) QueryFavoriteExist(ctx context.Context, Req *bi
 func (p *kInteractServiceClient) QueryUserFavoriteVideoIds(ctx context.Context, Req *biz.FavoriteVideoReq, callOptions ...callopt.Option) (r *biz.FavoriteVideoResp, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.QueryUserFavoriteVideoIds(ctx, Req)
+}
+
+func (p *kInteractServiceClient) AddFavoriteRecord(ctx context.Context, Req *biz.AddFavoriteRecordReq, callOptions ...callopt.Option) (r *biz.AddFavoriteRecordResp, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.AddFavoriteRecord(ctx, Req)
 }
 
 func (p *kInteractServiceClient) CommentAction(ctx context.Context, Req *biz.CommentActionReq, callOptions ...callopt.Option) (r *biz.CommentActionResp, err error) {
