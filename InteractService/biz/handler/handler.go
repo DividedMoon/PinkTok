@@ -84,9 +84,9 @@ func (s *InteractServiceImpl) CommentAction(ctx context.Context, req *biz.Commen
 // CommentList implements the InteractServiceImpl interface.
 func (s *InteractServiceImpl) CommentList(ctx context.Context, req *biz.CommentListReq) (resp *biz.CommentListResp, err error) {
 	userId, videoId := req.UserId, req.VideoId
-	comments, err := service.GetCommentByUserAndVideo(userId, videoId)
+	comments, err := service.GetCommentByUserAndVideo(ctx, userId, videoId)
 	bresp := utils.BuildBaseResp(err)
-	// TODO 方法返回值不对
+
 	return &biz.CommentListResp{
 		CommentList: comments,
 		StatusCode:  bresp.StatusCode,

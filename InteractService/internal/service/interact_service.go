@@ -50,7 +50,7 @@ func DeleteComment(comment *model.Comment) error {
 	return comment.DeleteById()
 }
 
-func GetCommentByUserAndVideo(userId, videoId int64) ([]model.Comment, error) {
+func GetCommentByUserAndVideo(ctx context.Context, userId, videoId int64) ([]*biz.Comment, error) {
 	var (
 		c = &model.Comment{
 			UserId:  userId,
@@ -61,7 +61,38 @@ func GetCommentByUserAndVideo(userId, videoId int64) ([]model.Comment, error) {
 	if err != nil {
 		return nil, err
 	}
-	return list, nil
+	respList := make([]*biz.Comment, 0)
+	userInfoReq := &userBiz.UserInfoReq{
+		UserId: userId,
+	}
+	userInfoResp, err := internalClient.UserServiceClient.UserInfo(ctx, userInfoReq)
+	if err != nil {
+		return nil, err
+	}
+	user := &biz.UserInfo{
+		Id:              userInfoResp.User.Id,
+		Name:            userInfoResp.User.Name,
+		FollowCount:     userInfoResp.User.FollowCount,
+		FollowerCount:   userInfoResp.User.FollowerCount,
+		IsFollow:        userInfoResp.User.IsFollow,
+		Avatar:          userInfoResp.User.Avatar,
+		BackgroundImage: userInfoResp.User.BackgroundImage,
+		Signature:       userInfoResp.User.Signature,
+		TotalFavorited:  userInfoResp.User.TotalFavorited,
+		WorkCount:       userInfoResp.User.WorkCount,
+		FavoriteCount:   userInfoResp.User.FavoriteCount,
+	}
+	for _, comment := range list {
+
+		respList = append(respList, &biz.Comment{
+			Id:         comment.ID,
+			User:       user,
+			Content:    comment.Content,
+			CreateDate: comment.CreatedAt.Format("01-02"),
+		})
+	}
+
+	return respList, nil
 }
 
 // FavoriteAction 用户点赞或者取消赞
