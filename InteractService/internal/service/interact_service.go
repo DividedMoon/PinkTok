@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"interact_service/biz"
 	internalClient "interact_service/internal/client"
@@ -49,7 +50,7 @@ func DeleteComment(comment *model.Comment) error {
 	return comment.DeleteById()
 }
 
-func GetCommentByUserAndVideo(userId, videoId int64) ([]model.Comment, error) {
+func GetCommentByUserAndVideo(ctx context.Context, userId, videoId int64) ([]*biz.Comment, error) {
 	var (
 		c = &model.Comment{
 			UserId:  userId,
@@ -60,22 +61,38 @@ func GetCommentByUserAndVideo(userId, videoId int64) ([]model.Comment, error) {
 	if err != nil {
 		return nil, err
 	}
-	return list, nil
-}
+	respList := make([]*biz.Comment, 0)
+	userInfoReq := &userBiz.UserInfoReq{
+		UserId: userId,
+	}
+	userInfoResp, err := internalClient.UserServiceClient.UserInfo(ctx, userInfoReq)
+	if err != nil {
+		return nil, err
+	}
+	user := &biz.UserInfo{
+		Id:              userInfoResp.User.Id,
+		Name:            userInfoResp.User.Name,
+		FollowCount:     userInfoResp.User.FollowCount,
+		FollowerCount:   userInfoResp.User.FollowerCount,
+		IsFollow:        userInfoResp.User.IsFollow,
+		Avatar:          userInfoResp.User.Avatar,
+		BackgroundImage: userInfoResp.User.BackgroundImage,
+		Signature:       userInfoResp.User.Signature,
+		TotalFavorited:  userInfoResp.User.TotalFavorited,
+		WorkCount:       userInfoResp.User.WorkCount,
+		FavoriteCount:   userInfoResp.User.FavoriteCount,
+	}
+	for _, comment := range list {
 
-// FavoriteAction 用户点赞或者取消赞
-func FavoriteAction(userId, videoId int64) error {
-	liked, err := model.IsVideoLikedByUser(userId, videoId)
-	if err != nil {
-		hlog.Error("IsVideoLikedByUser error", err)
-		return err
+		respList = append(respList, &biz.Comment{
+			Id:         comment.ID,
+			User:       user,
+			Content:    comment.Content,
+			CreateDate: comment.CreatedAt.Format("01-02"),
+		})
 	}
-	err = model.UpdateVideoLikedStatus(userId, videoId, !liked)
-	if err != nil {
-		hlog.Error("UpdateVideoLikedStatus error", err)
-		return err
-	}
-	return nil
+
+	return respList, nil
 }
 
 // QueryFavoriteExist 查询用户是否点赞
@@ -96,4 +113,30 @@ func QueryUserFavoriteVideoIds(userId int64) ([]int64, error) {
 		return nil, err
 	}
 	return videoIds, nil
+}
+
+// AddFavoriteRecord 添加用户喜欢记录
+func AddFavoriteRecord(userId, videoId, actionType int64) error {
+	var err error
+	if actionType == 1 { //点赞
+		liked, err := model.IsVideoLikedByUser(videoId, userId)
+		if liked {
+			return err
+		} else {
+			err = model.UpdateVideoLikedStatus(userId, videoId, liked)
+		}
+	} else if actionType == 2 { //取消赞
+		liked, _ := model.IsVideoLikedByUser(videoId, userId)
+		if !liked {
+			return fmt.Errorf("cancel liked but not liked")
+		}
+		err = model.UpdateVideoLikedStatus(userId, videoId, liked)
+	} else {
+		return fmt.Errorf("actionType error")
+	}
+	if err != nil {
+		hlog.Error("InsertFavoriteVideo error", err)
+		return err
+	}
+	return nil
 }
