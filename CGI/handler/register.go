@@ -6,6 +6,7 @@ import (
 	"cgi/internal/utils"
 	"cgi/middleware"
 	"context"
+	"github.com/bytedance/gopkg/cloud/metainfo"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
@@ -59,6 +60,7 @@ func RegisterHandler(ctx context.Context, c *app.RequestContext) {
 		Password: cryPwd,
 	}
 	hlog.CtxInfof(ctx, "request user_service/Register : %+v with %+v", registerReq, c.ClientIP())
+	ctx = metainfo.WithBackwardValues(ctx)
 	registerResp, err := internalClient.UserServiceClient.Register(ctx, registerReq)
 	if err != nil {
 		hlog.CtxErrorf(ctx, "request user_service/Register error: %+v", err)

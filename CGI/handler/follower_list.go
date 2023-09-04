@@ -6,6 +6,7 @@ import (
 	"cgi/internal/utils"
 	"cgi/middleware"
 	"context"
+	"github.com/bytedance/gopkg/cloud/metainfo"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
@@ -66,6 +67,7 @@ func FollowerListHandler(ctx context.Context, c *app.RequestContext) {
 	followerReq := &biz.RelationFollowerListReq{
 		UserId: userId,
 	}
+	ctx = metainfo.WithBackwardValues(ctx)
 	followerResp, err := internalClient.RelationServiceClient.GetFollowerList(ctx, followerReq)
 	if err != nil {
 		hlog.CtxErrorf(ctx, "get follower list failed, err: %+v", err)

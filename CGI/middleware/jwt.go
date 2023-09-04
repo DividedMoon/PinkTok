@@ -118,8 +118,9 @@ func authorizator(data interface{}, ctx context.Context, c *app.RequestContext) 
 	hlog.CtxInfof(ctx, "Get authorizator clientIP: "+c.ClientIP())
 	userIdString, ok := c.GetQuery(IdentityKey)
 	if !ok {
-		hlog.CtxErrorf(ctx, "Can not get user_id in query")
-		return false
+		c.Set(CurrentUserIdKey, data)
+		hlog.CtxInfof(ctx, "No get user_id in query, just pass")
+		return true
 	}
 	userId, err := strconv.ParseInt(userIdString, 10, 64)
 	if err != nil {
