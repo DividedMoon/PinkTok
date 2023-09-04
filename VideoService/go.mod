@@ -18,6 +18,7 @@ require (
 	gorm.io/driver/mysql v1.5.1
 	gorm.io/gorm v1.25.3
 	user_service v0.0.0
+	interact_service v0.0.0
 )
 
 require (
@@ -91,3 +92,6 @@ require (
 )
 
 replace user_service => ../UserService
+replace interact_service => ../InteractService
+replace middleware => ../Middleware
+

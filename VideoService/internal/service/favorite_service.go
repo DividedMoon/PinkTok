@@ -3,7 +3,9 @@ package service
 import (
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/go-redis/redis/v7"
+	interactBiz "interact_service/biz"
 	client "video_service/biz"
+	internalClient "video_service/internal/client"
 	"video_service/internal/constants"
 	"video_service/internal/dal/db"
 	rd "video_service/internal/dal/redis"
@@ -11,8 +13,17 @@ import (
 
 func (s *VideoService) FavoriteAction(videoId, userId int64, actionType int32) error {
 	//1为点赞，0为取消点赞
-	// TODO 1. 调用interactService去修改点赞表 注意要等待返回值
-	err := error(nil)
+	//1. 调用interactService去修改点赞表 注意要等待返回值
+	updateFavoriteRecordReq := &interactBiz.AddFavoriteRecordReq{
+		UserId:     userId,
+		VideoId:    videoId,
+		ActionType: int64(actionType),
+	}
+	updateFavoriteRecordResp, err := internalClient.InteractServiceClient.AddFavoriteRecord(s.ctx, updateFavoriteRecordReq)
+	if err != nil || updateFavoriteRecordResp.StatusCode != 0 {
+		hlog.Error("AddFavoriteRecord error", err.Error())
+		return constants.NewErrNo(constants.RPCCallErrCode, constants.RPCCallErrMsg)
+	}
 
 	// 2. 修改video表中的点赞数，有两种，对于热门视频直接修改redis中的值，对于冷门视频可以直接修改数据库
 	if actionType == 1 { // 如果操作类型为1则为点赞
@@ -24,8 +35,19 @@ func (s *VideoService) FavoriteAction(videoId, userId int64, actionType int32) e
 		return constants.NewErrNo(constants.ParameterErrCode, constants.ParameterErrMsg)
 	}
 
+	// 3. 如果过程中出现错误则调用interactService去取消修改点赞表
 	if err != nil {
 		hlog.Error("AddVideoFavoriteCount error", err.Error())
+		if actionType == 1 {
+			updateFavoriteRecordReq.ActionType = 2
+		} else if actionType == 2 {
+			updateFavoriteRecordReq.ActionType = 1
+		}
+		cancelUpdateResp, err := internalClient.InteractServiceClient.AddFavoriteRecord(s.ctx, updateFavoriteRecordReq)
+		if err != nil || cancelUpdateResp.StatusCode != 0 {
+			hlog.Error("AddFavoriteRecord error", err.Error())
+			return constants.NewErrNo(constants.RPCCallErrCode, constants.RPCCallErrMsg+"while cancel update")
+		}
 		return constants.NewErrNo(constants.RedisErrCode, constants.RedisErrMsg)
 	}
 	// 3. 返回结果
@@ -34,9 +56,17 @@ func (s *VideoService) FavoriteAction(videoId, userId int64, actionType int32) e
 
 func (s *VideoService) GetFavoriteVideoList(userId int64) ([]*client.VideoInfo, error) {
 
-	// TODO 1. 调用 interactService 获取用户点赞的视频列表 返回值是videoIds 视频ID列表
-	err := error(nil)
-	favoriteVideoIds := []int64{10}
+	// 1. 调用 interactService 获取用户点赞的视频列表 返回值是videoIds 视频ID列表
+	getFavoriteVideoIdsReq := &interactBiz.FavoriteVideoReq{
+		UserId: userId,
+	}
+	getFavoriteVideoIdsResp, err := internalClient.InteractServiceClient.QueryUserFavoriteVideoIds(s.ctx, getFavoriteVideoIdsReq)
+	if err != nil || getFavoriteVideoIdsResp.StatusCode != 0 {
+		hlog.Error("QueryUserFavoriteVideoIds error", err.Error())
+		return nil, constants.NewErrNo(constants.RPCCallErrCode, constants.RPCCallErrMsg)
+	}
+	favoriteVideoIds := getFavoriteVideoIdsResp.VideoList
+
 	// 2. 调用copyVideo方法获取视频信息并返回
 	videoDBInfos, err := db.GetVideoDBInfoByIDs(favoriteVideoIds)
 	if err != nil {

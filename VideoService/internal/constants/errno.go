@@ -16,6 +16,7 @@ const (
 	FunctionErrCode
 	ParameterErrCode
 	RedisErrCode
+	RPCCallErrCode
 )
 
 const (
@@ -28,6 +29,7 @@ const (
 	FunctionErrMsg     = "Inner function call failed"
 	ParameterErrMsg    = "Wrong parameter"
 	RedisErrMsg        = "Redis call failed"
+	RPCCallErrMsg      = "RPC call failed"
 )
 
 type ErrNo struct {

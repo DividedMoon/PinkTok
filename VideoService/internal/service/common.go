@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/go-redis/redis/v7"
+	interactBiz "interact_service/biz"
 	"sync"
 	userBiz "user_service/biz"
 	client "video_service/biz"
@@ -34,7 +35,6 @@ func (s *VideoService) CopyVideos(result *[]*client.VideoInfo, data *[]*db.Video
 	return nil
 }
 
-// TODO userID没有用到 考虑一下为什么要有这个东西：： 用户给这个视频点赞
 func (s *VideoService) createVideo(data *db.VideoDBInfo, userId int64) (*client.VideoInfo, error) {
 	hlog.Infof("createVideo func data: %+v", data)
 
@@ -56,26 +56,11 @@ func (s *VideoService) createVideo(data *db.VideoDBInfo, userId int64) (*client.
 
 	// 调用UserService获取本条视频的作者信息
 	go func() {
-		//userInfoReq := &userModel.UserInfoReq{UserId: data.AuthorID}
-		//resp, _, err := userClient.UserServiceClient.UserInfo(s.ctx, userInfoReq)
 		err := *new(error)
 		if err != nil {
 			errChan <- fmt.Errorf("GetUserInfo func error:" + err.Error())
 		}
 		hlog.Infof("start to get user info")
-		//video.Author = &client.UserInfo{
-		//	Id:              1,
-		//	Name:            "testUser",
-		//	FollowCount:     2,
-		//	FollowerCount:   3,
-		//	IsFollow:        true,
-		//	Avatar:          "resp.User.Avatar",
-		//	BackgroundImage: "resp.User.BackgroundImage",
-		//	Signature:       "resp.User.Signature",
-		//	TotalFavorited:  5,
-		//	WorkCount:       6,
-		//	FavoriteCount:   7,
-		//}
 		userInfoReq := &userBiz.UserInfoReq{
 			UserId: data.AuthorID,
 		}
@@ -105,39 +90,22 @@ func (s *VideoService) createVideo(data *db.VideoDBInfo, userId int64) (*client.
 
 	}()
 
-	// 获取视频点赞数量和评论数量
-	//go func() {
-	//	err := *new(error)
-	//	hlog.Infof("start to get favorite count")
-	//
-	//	video.FavoriteCount, err = getVideoFavoriteCount(data.ID)
-	//	if err != nil {
-	//		errChan <- fmt.Errorf("GetFavoriteCount func error:" + err.Error())
-	//	}
-	//	hlog.Infof("get favorite count success : %+v", video.FavoriteCount)
-	//	wg.Done()
-	//}()
-	//
-	//// 调用VideoService返回评论数量
-	//go func() {
-	//	err := *new(error)
-	//	hlog.Infof("start to get comment count")
-	//	video.CommentCount, err = getVideoCommentCount(data.ID)
-	//	if err != nil {
-	//		errChan <- fmt.Errorf("GetCommentCountByVideoID func error:" + err.Error())
-	//	}
-	//	hlog.Infof("get comment count success : %+v", video.CommentCount)
-	//	wg.Done()
-	//}()
-
 	// Get favorite exist
 	go func() {
 		err := *new(error)
 		hlog.Infof("start to get favorite exist")
-		//TODO 调用FavoriteService查询当前用户是否已经点赞该视频
-		//video.IsFavorite, err = queryFavoriteExist(userId, data.ID)
-		//TODO 假数据 到时候要删除
-		video.IsFavorite = true
+		queryFavoriteExistReq := &interactBiz.QueryFavoriteExistReq{
+			UserId:  userId,
+			VideoId: data.ID,
+		}
+		queryFavoriteExistResp, err := internalClient.InteractServiceClient.QueryFavoriteExist(s.ctx, queryFavoriteExistReq)
+		if err != nil || queryFavoriteExistResp.StatusCode != 0 {
+			hlog.Error("rpc call interact service error: ", err)
+			errChan <- fmt.Errorf("GetCommentCountByVideoID func error:" + err.Error())
+			wg.Done()
+			return
+		}
+		video.IsFavorite = queryFavoriteExistResp.IsFavorite
 
 		if err != nil {
 			errChan <- fmt.Errorf("GetCommentCountByVideoID func error:" + err.Error())
@@ -252,7 +220,7 @@ func getVideoCommentCount(videoId int64) (int64, error) {
 //		hlog.Error("GetVideoFavoriteUserIds func error:" + err.Error())
 //		return err
 //	}
-//	//TODO 如果这条数据在数据库里没有 会返回什么错误?
+
 //	err = rd.SetVideoFavoriteSet(videoId, userIds)
 //	if err != nil {
 //		hlog.Error("SetVideoFavoriteSet func error:" + err.Error())
