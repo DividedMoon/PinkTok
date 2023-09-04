@@ -49,11 +49,13 @@ func UpdateVideoLikedStatus(userID, videoID int64, liked bool) error {
 					Deleted: 0,
 				},
 			}
+			dbInsertErr := DB.Model(&Favorite{}).Save(&favorite).Error
+			return dbInsertErr
 		} else { //如果原始状态为不喜欢且存在记录，则将记录标记为未删除
 			favorite.Deleted = 0
 		}
 	} else { // 如果原始状态喜欢且仍然存在错误 则说明出错
-		if err == nil {
+		if err != nil {
 			return fmt.Errorf("user already liked video but dont have record")
 		} else { //如果原始状态为喜欢且存在记录，则将该记录标记为删除
 			favorite.Deleted = 1
@@ -61,9 +63,11 @@ func UpdateVideoLikedStatus(userID, videoID int64, liked bool) error {
 	}
 
 	DB.Error = nil
-	dbSaveErr := DB.Model(&Favorite{}).Save(&favorite).Error
+	dbUpdateErr := DB.Model(&Favorite{}).
+		Where("user_id = ? AND video_id = ?", userID, videoID).
+		Save(&favorite).Error
 
-	return dbSaveErr
+	return dbUpdateErr
 }
 
 func SelectFavoriteVideoIdsByUserID(userId int64) (videoIds []int64, err error) {

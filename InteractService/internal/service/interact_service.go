@@ -95,24 +95,6 @@ func GetCommentByUserAndVideo(ctx context.Context, userId, videoId int64) ([]*bi
 	return respList, nil
 }
 
-// FavoriteAction 用户点赞或者取消赞
-func FavoriteAction(userId, videoId int64) error {
-	liked, err := model.IsVideoLikedByUser(userId, videoId)
-	if err != nil {
-		hlog.Error("IsVideoLikedByUser error", err)
-		return err
-	}
-	// TODO 调用videoService查询点赞数量
-	err = model.UpdateVideoLikedStatus(userId, videoId, !liked)
-	// TODO 调用videoService更新video表里的点赞数量
-
-	if err != nil {
-		hlog.Error("UpdateVideoLikedStatus error", err)
-		return err
-	}
-	return nil
-}
-
 // QueryFavoriteExist 查询用户是否点赞
 func QueryFavoriteExist(userId, videoId int64) (bool, error) {
 	liked, err := model.IsVideoLikedByUser(userId, videoId)
@@ -137,9 +119,18 @@ func QueryUserFavoriteVideoIds(userId int64) ([]int64, error) {
 func AddFavoriteRecord(userId, videoId, actionType int64) error {
 	var err error
 	if actionType == 1 { //点赞
-		err = model.UpdateVideoLikedStatus(userId, videoId, false)
+		liked, err := model.IsVideoLikedByUser(videoId, userId)
+		if liked {
+			return err
+		} else {
+			err = model.UpdateVideoLikedStatus(userId, videoId, liked)
+		}
 	} else if actionType == 2 { //取消赞
-		err = model.UpdateVideoLikedStatus(userId, videoId, true)
+		liked, _ := model.IsVideoLikedByUser(videoId, userId)
+		if !liked {
+			return fmt.Errorf("cancel liked but not liked")
+		}
+		err = model.UpdateVideoLikedStatus(userId, videoId, liked)
 	} else {
 		return fmt.Errorf("actionType error")
 	}
