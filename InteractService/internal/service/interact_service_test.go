@@ -91,10 +91,38 @@ func TestDeleteComment(t *testing.T) {
 }
 
 func TestGetCommentByUserAndVideo(t *testing.T) {
-	video, err := GetCommentByUserAndVideo(1001, 10)
+	video, err := GetCommentByUserAndVideo(context.Background(), 1001, 10)
 	assert.Nil(t, err)
 	assert.Assert(t, len(video) == 3)
 	hlog.Info(video)
+}
+
+// TestQueryFavoriteExist 查询喜欢是否存在 Done
+func TestQueryFavoriteExist(t *testing.T) {
+	exist, err := QueryFavoriteExist(1, 1)
+	if err != nil {
+		t.Error(err)
+	}
+	t.Log(exist)
+
+}
+
+// TestQueryUserFavoriteVideoIds 测试查询用户收藏视频id列表 Done
+func TestQueryUserFavoriteVideoIds(t *testing.T) {
+	ids, err := QueryUserFavoriteVideoIds(1)
+	if err != nil {
+		t.Error(err)
+	}
+	t.Log(ids)
+
+}
+
+// TestAddFavoriteRecord 测试点赞记录 Done
+func TestAddFavoriteRecord(t *testing.T) {
+	//_ = AddFavoriteRecord(1, 1, 1) //对已存在记录点赞
+	//_ = AddFavoriteRecord(1, 1, 2) //对已存在记录取消赞
+	_ = AddFavoriteRecord(8, 11, 1) //对未存在记录点赞
+	//_ = AddFavoriteRecord(8, 11, 2) //对未存在记录取消赞
 }
 
 type MockUserService struct {
