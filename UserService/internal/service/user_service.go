@@ -8,6 +8,7 @@ import (
 	"user_service/biz"
 	"user_service/internal/constant"
 	"user_service/internal/model"
+	"user_service/internal/mw/redis"
 	utils "user_service/internal/util"
 )
 
@@ -68,6 +69,11 @@ func GetUserInfo(userId int64) (u *biz.UserInfo, err error) {
 	var user = &model.User{
 		ID: userId,
 	}
+	if redis.ExistUser(userId) {
+		hlog.Info("GetUserInfo from redis")
+		u = redis.GetUser(userId)
+		return u, nil
+	}
 	err = user.SelectById(userId)
 	if err != nil {
 		return nil, err
@@ -107,6 +113,9 @@ func UpdateUserInfo(u *biz.UserInfo, changes map[string]int) (string, error) {
 	for k := range changes {
 		i := elem.FieldByName(k).Interface().(int64)
 		origin[k] = int(i)
+	}
+	if redis.ExistUser(user.ID) {
+		redis.UpdateUserByMap(user.ID, changes)
 	}
 	// 更新数据库
 	err := user.UpdateByCountMap(origin, changes)
