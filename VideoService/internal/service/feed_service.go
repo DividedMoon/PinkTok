@@ -12,7 +12,7 @@ import (
 )
 
 // NewFeedService create feed service
-
+// TODO 未登录状态下的UserID没有考虑
 func (s *VideoService) GetFeed(req *client.FeedReq) (*client.FeedResp, error) {
 	resp := &client.FeedResp{}
 	var lastTime time.Time

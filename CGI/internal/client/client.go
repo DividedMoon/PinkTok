@@ -66,7 +66,7 @@ func InitClient() {
 	}
 	VideoServiceClient, err =
 		videoservice.NewClient("video_service_client",
-			client.WithHostPorts(fmt.Sprintf("%s%s", Remote, ":11013")),
+			client.WithHostPorts(fmt.Sprintf("%s%s", Remote, ":11014")),
 			client.WithSuite(tracing.NewClientSuite()),
 			client.WithMiddleware(msgno.MsgNoMiddleware),
 			client.WithMiddleware(auth.AuthenticateClient),
@@ -79,7 +79,7 @@ func InitClient() {
 	}
 	InteractServiceClient, err =
 		interactservice.NewClient("interact_service_client",
-			client.WithHostPorts(fmt.Sprintf("%s%s", Remote, ":11014")),
+			client.WithHostPorts(fmt.Sprintf("%s%s", Remote, ":11013")),
 			client.WithSuite(tracing.NewClientSuite()),
 			client.WithMiddleware(msgno.MsgNoMiddleware),
 			client.WithMiddleware(auth.AuthenticateClient),

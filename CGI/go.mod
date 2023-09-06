@@ -16,9 +16,10 @@ require (
 	github.com/cloudwego/kitex v0.7.0
 	github.com/hertz-contrib/jwt v1.0.2
 	github.com/kitex-contrib/obs-opentelemetry v0.2.3
-	golang.org/x/crypto v0.6.0
+	golang.org/x/crypto v0.11.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 	gopkg.in/yaml.v3 v3.0.1
+	interact_service v0.0.0
 )
 
 require (
@@ -53,8 +54,8 @@ require (
 	github.com/iancoleman/strcase v0.2.0 // indirect
 	github.com/jhump/protoreflect v1.8.2 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
-	github.com/klauspost/cpuid/v2 v2.2.4 // indirect
-	github.com/modern-go/concurrent v0.0.0-20180228061459-e0a39a4cb421 // indirect
+	github.com/klauspost/cpuid/v2 v2.2.5 // indirect
+	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/gls v0.0.0-20220109145502-612d0167dce5 // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/nyaruka/phonenumbers v1.0.55 // indirect
@@ -85,10 +86,10 @@ require (
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.25.0 // indirect
 	golang.org/x/arch v0.2.0 // indirect
-	golang.org/x/net v0.10.0 // indirect
+	golang.org/x/net v0.12.0 // indirect
 	golang.org/x/sync v0.1.0 // indirect
-	golang.org/x/sys v0.8.0 // indirect
-	golang.org/x/text v0.9.0 // indirect
+	golang.org/x/sys v0.10.0 // indirect
+	golang.org/x/text v0.11.0 // indirect
 	google.golang.org/genproto v0.0.0-20230526203410-71b5a4ffd15e // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20230526203410-71b5a4ffd15e // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20230526203410-71b5a4ffd15e // indirect
@@ -97,10 +98,11 @@ require (
 )
 
 replace user_service v0.0.0 => ../UserService
+
 replace video_service => ../VideoService
-replace (
-	interact_service => ../InteractService
-)
+
+replace interact_service => ../InteractService
+
 replace relation_service v0.0.0 => ../RelationService
 
 replace middleware v0.0.0 => ../Middleware
